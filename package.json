@@ -1,0 +1,32 @@
+{
+  "name": "clark-ratings",
+  "version": "1.0.0",
+  "description": "A microservice for handlingy learning object ratings in the CLARK platform.",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm run gulp-tsc",
+    "build": "node_modules/.bin/gulp tsc",
+    "gulp-tsc": "node_modules/.bin/gulp start",
+    "lint": "node_modules/.bin/tslint --project ./src/**"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@cyber4all/clark-entity": "^2.0.5",
+    "@types/express": "^4.16.0",
+    "@types/mongodb": "^2.2.13",
+    "@types/node": "^10.5.2",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "mongodb": "^2.2.31"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-typescript": "^3.2.3",
+    "tslint": "^5.8.0",
+    "typescript": "^2.5.3"
+  }
+}
