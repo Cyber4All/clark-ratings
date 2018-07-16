@@ -50,10 +50,13 @@ export class ExpressRouteDriver {
     .patch(async (req, res) => {
       // update specified rating
       // TODO check to see if the cookie's user is the owner of the rating before allowing modification
+      interactor.updateRating(this.dataStore, this.getResponder(res), req.params.ratingId, req.body.rating); 
     })
     .delete(async (req, res) => {
       // delete specified rating
       // TODO check to see if the cookie's user is the owner of the rating before allowing deletion
+      
+      interactor.deleteRating(this.dataStore, this.getResponder(res), req.params.ratingId);
     })
 
     router.route('/users/:username/learning-objects/:learningObjectName/ratings')

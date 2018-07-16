@@ -52,8 +52,17 @@ export class MongoDriver implements DataStore {
         throw new Error('not yet implemented');
     }
 
-    updateRating(ratingId: string, rating: Rating): Promise<void> {
-        throw new Error('not yet implemented');
+    async updateRating(ratingId: string, rating: Rating): Promise<void> {
+        try {
+            await this.db.collection(Collections.ratings).update(
+                { _id: ratingId },
+                {
+                  $set: rating
+                }
+              );
+        } catch (error) {
+            return Promise.reject('Error updating rating with specified id!');
+        }
     }
 
     deleteRating(ratingId: string): Promise<void> {
