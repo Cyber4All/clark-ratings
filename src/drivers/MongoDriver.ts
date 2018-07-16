@@ -3,6 +3,7 @@ import { DataStore } from '../interfaces/DataStore';
 import { Rating } from '../types/Rating';
 import { MongoClient, Db } from 'mongodb';
 import * as dotenv from 'dotenv';
+import { promises } from 'fs';
 
 dotenv.config();
 
@@ -65,8 +66,14 @@ export class MongoDriver implements DataStore {
         }
     }
 
-    deleteRating(ratingId: string): Promise<void> {
-        throw new Error('not yet implemented');
+    async deleteRating(ratingId: string): Promise<void> {
+        try { 
+            await this.db.collection(Collections.ratings).deleteOne(
+                { "_id" : ratingId }
+            );
+        } catch (error) {
+            return Promise.reject('Error removing rating with specified id!');
+        }
     }
 
     getRating(ratingId: string): Promise<Rating> {

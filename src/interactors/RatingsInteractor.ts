@@ -43,8 +43,8 @@ export class RatingsInteractor {
      */
     async deleteRating(dataStore: DataStore, responder: Responder, id: string): Promise<void> {
         try {
-            let rating = await dataStore.getRating(id);
-            responder.sendRatings(rating);
+            await dataStore.deleteRating(id);
+            responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error)
         }

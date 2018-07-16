@@ -55,7 +55,6 @@ export class ExpressRouteDriver {
     .delete(async (req, res) => {
       // delete specified rating
       // TODO check to see if the cookie's user is the owner of the rating before allowing deletion
-      
       interactor.deleteRating(this.dataStore, this.getResponder(res), req.params.ratingId);
     })
 

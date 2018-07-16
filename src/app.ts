@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import * as express from 'express';
 import { ExpressRouteDriver } from './drivers/express/ExpressRouteDriver';
+import { enforceTokenAccess } from './middleware/jwt.config';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { MongoDriver } from './drivers/MongoDriver';
@@ -33,6 +34,14 @@ app.use(cors({ origin: true, credentials: true }));
 app.use('/', routeDriver);
 
 app.set('trust proxy', true);
+
+// Set Validation Middleware
+app.use(enforceTokenAccess);
+app.use((error: any, req: any, res: any, next: any) => {
+  if (error.name === 'UnauthorizedError') {
+    res.status(401).send('Invalid Access Token');
+  }
+});
 
 const port = process.env.PORT || '3000';
 let server = http.createServer(app);
