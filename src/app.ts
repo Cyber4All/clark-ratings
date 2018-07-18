@@ -1,9 +1,11 @@
-
-// import { enforceTokenAccess } from './middleware/jwt.config';
 import { Router } from 'express';
 import * as express from 'express';
-import { ExpressRouteDriver } from './drivers/express/ExpressRouteDriver';
+import { 
+    ExpressRouteDriver,
+    ExpressAuthRouteDriver
+} from './drivers/drivers';
 import { enforceTokenAccess } from './middleware/jwt.config';
+import { isAuthor } from './middleware/author-access';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { MongoDriver } from './drivers/MongoDriver';
@@ -14,8 +16,6 @@ let app = express();
 
 let dataStore = new MongoDriver();
 let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
-
-
 
 // configure app to use bodyParser()
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,9 +31,8 @@ app.use(cors({ origin: true, credentials: true }));
 //   }
 // });
 
+// Set our public api routes
 app.use('/', routeDriver);
-
-app.set('trust proxy', true);
 
 // Set Validation Middleware
 app.use(enforceTokenAccess);
@@ -42,6 +41,15 @@ app.use((error: any, req: any, res: any, next: any) => {
     res.status(401).send('Invalid Access Token');
   }
 });
+// Set user as a global variable for authorization
+app.use(isAuthor);
+
+// Set our authenticated api routes
+app.use('/', 
+    ExpressAuthRouteDriver.buildRouter(dataStore)
+);
+
+app.set('trust proxy', true);
 
 const port = process.env.PORT || '3000';
 let server = http.createServer(app);

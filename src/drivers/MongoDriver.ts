@@ -1,14 +1,16 @@
 
 import { DataStore } from '../interfaces/DataStore';
 import { Rating } from '../types/Rating';
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, ObjectId } from 'mongodb';
 import * as dotenv from 'dotenv';
-import { promises } from 'fs';
+import { User } from '../../node_modules/@cyber4all/clark-entity';
 
 dotenv.config();
 
 export class Collections {
     static ratings: string = 'ratings';
+    static objects: string = 'objects';
+    static users:   string = 'users';
 }
 
 export class MongoDriver implements DataStore {
@@ -49,16 +51,12 @@ export class MongoDriver implements DataStore {
         }
       }
 
-    createRating(learningObjectId: string, rating: Rating): Promise<void> {
-        throw new Error('not yet implemented');
-    }
-
-    async updateRating(ratingId: string, rating: Rating): Promise<void> {
+    async updateRating(ratingId: string, editRating: Rating): Promise<void> {
         try {
             await this.db.collection(Collections.ratings).update(
                 { _id: ratingId },
                 {
-                  $set: rating
+                  $set: editRating
                 }
               );
         } catch (error) {
@@ -69,7 +67,7 @@ export class MongoDriver implements DataStore {
     async deleteRating(ratingId: string): Promise<void> {
         try { 
             await this.db.collection(Collections.ratings).deleteOne(
-                { "_id" : ratingId }
+                { _id : ratingId }
             );
         } catch (error) {
             return Promise.reject('Error removing rating with specified id!');
@@ -90,11 +88,81 @@ export class MongoDriver implements DataStore {
         }
     }
 
-    getUsersRatings(userId: string): Promise<Rating[]> {
-        throw new Error('not yet implemented');
+    async getUsersRatings(username: string): Promise<Rating[]> {
+        try {
+            // Get user id from username
+            const user = await this.db.collection(Collections.users)
+                .findOne( {username: username} );
+            const userId = user._id;
+
+            // Find all ratings that have this username id
+            const ratings  = await this.db.collection(Collections.ratings)
+                .find( {user: userId} )
+                .toArray();
+            return ratings;
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 
-    getLearningObjectsRatings(learningObjectId: string): Promise<Rating[]> {
-        throw new Error('not yet implemented');
+    async getLearningObjectsRatings(learningObjectName: string): Promise<Rating[]> {
+        try {
+            // Get learning object id from name 
+            const learningObject = await this.db.collection(Collections.objects)
+                .findOne( {name: learningObjectName} );
+            const learningObjectId = learningObject._id;
+
+            // Find all ratings that have this learning object id 
+            const ratings= await this.db.collection(Collections.ratings)
+                .find( {learningObject: learningObjectId} )
+                .toArray();
+            return ratings;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async createNewRating(
+        rating: Rating, 
+        learningObjectName: string, 
+        username: string
+    ): Promise<void>{
+        try {
+            // Get learning object id from name 
+            const learningObject = await this.db.collection(Collections.objects)
+                .findOne( {name: learningObjectName} );
+            const learningObjectId = learningObject._id;
+
+            // Get user id from username 
+            const user = await this.db.collection(Collections.users)
+                .findOne( {username: username} );
+            const userId = user._id;
+
+            // Append both ids to rating object
+            rating.learningObject = learningObjectId;
+            rating.user = userId;
+            
+            // Insert new rating object as a document
+            rating._id = new ObjectId().toHexString();
+            await this.db.collection(Collections.ratings).insert(rating);
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    // Because the id of user is not on the jwt user object,
+    // we need to populate the user of the rating in order to 
+    // check author status.
+    async getPopulatedReviewAuthor(
+        authorId: string
+    ): Promise<User> {
+        try {
+            // Get user object from id
+            const user = await this.db.collection(Collections.users)
+                .findOne( {_id: authorId } );
+            return user;
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 }

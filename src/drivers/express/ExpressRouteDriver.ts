@@ -1,4 +1,4 @@
-import { ExpressResponder } from '../express/ExpressResponder';
+import { ExpressResponder } from './ExpressResponder';
 import { DataStore, Responder } from '../../interfaces/interfaces';
 import { Router } from 'express'; 
 import { RatingsInteractor } from '../../interactors/RatingsInteractor';
@@ -45,31 +45,40 @@ export class ExpressRouteDriver {
     router.route('/ratings/:ratingId')
     .get(async (req, res) => {
        // return the specified rating 
-       interactor.getRating(this.dataStore, this.getResponder(res), req.params.ratingId);
+       const responder = this.getResponder(res);
+       try {
+          const rating = await interactor.getRating(this.dataStore, req.params.ratingId);
+          responder.sendRatings(rating);
+       } catch (error) {
+          responder.sendOperationError(error);
+       }
     })
-    .patch(async (req, res) => {
-      // update specified rating
-      // TODO check to see if the cookie's user is the owner of the rating before allowing modification
-      interactor.updateRating(this.dataStore, this.getResponder(res), req.params.ratingId, req.body.rating); 
-    })
-    .delete(async (req, res) => {
-      // delete specified rating
-      // TODO check to see if the cookie's user is the owner of the rating before allowing deletion
-      interactor.deleteRating(this.dataStore, this.getResponder(res), req.params.ratingId);
-    })
-
+  
     router.route('/users/:username/learning-objects/:learningObjectName/ratings')
     .get(async (req, res) => {
       // return all ratings from the associated learning object
+      const responder  = this.getResponder(res);
+      const learningObjectName = req.params.learningObjectName;
+      try {
+        interactor.getLearningObjectRatings(this.dataStore, learningObjectName);
+        responder.sendOperationSuccess();
+      } catch (error) {
+        responder.sendOperationError(error);
+      }
     })
-    .post(async (req, res) => {
-      // create a new rating for the associated learning object
-    });
 
     router.route('/users/:username/ratings')
     .get(async (req, res) => {
       // get all of a user's ratings (all ratings made by a user)
       // FIXME is this functionality necessary?
+      const responder = this.getResponder(res);
+      const username = req.params.username;
+      try {
+        interactor.getUsersRatings(this.dataStore, username);
+        responder.sendOperationSuccess();
+      } catch (error) {
+        responder.sendOperationError(error);
+      }
     })
   }
 }
