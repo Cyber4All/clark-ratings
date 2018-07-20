@@ -40,10 +40,9 @@ export class ExpressAuthRouteDriver {
     router.route('/ratings/:ratingId')
       .patch(async (req, res) => {
         // update specified rating
-        // TODO check to see if the cookie's user is the owner of the rating before allowing modification
-        const responder = this.getResponder(res);
-        const editRating = req.body;
-        const ratingId = req.params.ratingId;
+        const responder   = this.getResponder(res);
+        const editRating  = req.body;
+        const ratingId    = req.params.ratingId;
         const currentUser = res.locals.user;
         try {
             interactor.updateRating(this.dataStore, ratingId, editRating, currentUser); 
@@ -54,10 +53,9 @@ export class ExpressAuthRouteDriver {
       })
       .delete(async (req, res) => {
         // delete specified rating
-        // TODO check to see if the cookie's user is the owner of the rating before allowing deletion
-        const responder  = this.getResponder(res);
-        const ratingId = req.params.ratingId;
-        const currentUser = res.locals.user;
+        const responder    = this.getResponder(res);
+        const ratingId     = req.params.ratingId;
+        const currentUser  = res.locals.user;
         try {
             interactor.deleteRating(this.dataStore, ratingId, currentUser);
             responder.sendOperationSuccess();
@@ -69,10 +67,10 @@ export class ExpressAuthRouteDriver {
     router.route('/users/:username/learning-objects/:learningObjectName/ratings')
     .post(async (req, res) => {
       // create a new rating for the associated learning object
-      const responder = this.getResponder(res);
-      const rating = req.body;
+      const responder          = this.getResponder(res);
+      const rating             = req.body;
       const learningObjectName = req.params.learningObjectName;
-      const username = req.params.username;
+      const username           = req.params.username;
       try {
         interactor.createNewRating(this.dataStore, rating, learningObjectName, username);
         responder.sendOperationSuccess();

@@ -52,33 +52,44 @@ export class ExpressRouteDriver {
        } catch (error) {
           responder.sendOperationError(error);
        }
-    })
+    });
   
     router.route('/users/:username/learning-objects/:learningObjectName/ratings')
     .get(async (req, res) => {
       // return all ratings from the associated learning object
-      const responder  = this.getResponder(res);
+      const responder          = this.getResponder(res);
       const learningObjectName = req.params.learningObjectName;
       try {
-        interactor.getLearningObjectRatings(this.dataStore, learningObjectName);
-        responder.sendOperationSuccess();
+        const ratings = await interactor.getLearningObjectRatings(this.dataStore, learningObjectName);
+        responder.sendRatings(ratings);
       } catch (error) {
         responder.sendOperationError(error);
       }
-    })
+    });
 
     router.route('/users/:username/ratings')
     .get(async (req, res) => {
       // get all of a user's ratings (all ratings made by a user)
-      // FIXME is this functionality necessary?
       const responder = this.getResponder(res);
-      const username = req.params.username;
+      const username  = req.params.username;
       try {
         interactor.getUsersRatings(this.dataStore, username);
         responder.sendOperationSuccess();
       } catch (error) {
         responder.sendOperationError(error);
       }
-    })
+    });
+
+    router.route('/learningobjectrating')
+    .get(async (req, res) => {
+      const responder = this.getResponder(res);
+      const username  = req.params.username;
+      try {
+        interactor.getUsersRatings(this.dataStore, username);
+        responder.sendOperationSuccess();
+      } catch (error) {
+        responder.sendOperationError(error);
+      }
+    });
   }
 }

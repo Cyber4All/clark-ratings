@@ -1,7 +1,7 @@
 
 import { DataStore } from '../interfaces/DataStore';
-import { Rating } from '../types/Rating';
-import { MongoClient, Db, ObjectId } from 'mongodb';
+import { Rating, LearningObjectContainer } from '../types/Rating';
+import { MongoClient, Db, ObjectId, Timestamp } from 'mongodb';
 import * as dotenv from 'dotenv';
 import { User } from '../../node_modules/@cyber4all/clark-entity';
 
@@ -34,7 +34,10 @@ export class MongoDriver implements DataStore {
         this.connect(dburi);
     }
 
-    async connect(dbURI: string, retryAttempt?: number): Promise<void> {
+    async connect(
+        dbURI:         string, 
+        retryAttempt?: number
+    ): Promise<void> {
         try {
           this.db = await MongoClient.connect(dbURI);
         } catch (e) {
@@ -51,7 +54,10 @@ export class MongoDriver implements DataStore {
         }
       }
 
-    async updateRating(ratingId: string, editRating: Rating): Promise<void> {
+    async updateRating(
+        ratingId:   string, 
+        editRating: Rating
+    ): Promise<void> {
         try {
             await this.db.collection(Collections.ratings).update(
                 { _id: ratingId },
@@ -59,22 +65,28 @@ export class MongoDriver implements DataStore {
                   $set: editRating
                 }
               );
+            return Promise.resolve();
         } catch (error) {
             return Promise.reject('Error updating rating with specified id!');
         }
     }
 
-    async deleteRating(ratingId: string): Promise<void> {
+    async deleteRating(
+        ratingId: string
+    ): Promise<void> {
         try { 
             await this.db.collection(Collections.ratings).deleteOne(
                 { _id : ratingId }
             );
+            return Promise.resolve();
         } catch (error) {
             return Promise.reject('Error removing rating with specified id!');
         }
     }
 
-    getRating(ratingId: string): Promise<Rating> {
+    getRating(
+        ratingId: string
+    ): Promise<Rating> {
         try {
             return this.db.collection(Collections.ratings).findOne({ _id: ratingId}).then(rating => {
                 if (rating) {
@@ -88,7 +100,9 @@ export class MongoDriver implements DataStore {
         }
     }
 
-    async getUsersRatings(username: string): Promise<Rating[]> {
+    async getUsersRatings(
+        username: string
+    ): Promise<Rating[]> {
         try {
             // Get user id from username
             const user = await this.db.collection(Collections.users)
@@ -105,17 +119,30 @@ export class MongoDriver implements DataStore {
         }
     }
 
-    async getLearningObjectsRatings(learningObjectName: string): Promise<Rating[]> {
+    async getLearningObjectsRatings(
+        learningObjectName: string
+    ): Promise<Rating[]> {
         try {
             // Get learning object id from name 
             const learningObject = await this.db.collection(Collections.objects)
                 .findOne( {name: learningObjectName} );
             const learningObjectId = learningObject._id;
+            
+            // Find all ratings that contain the learningObjectId and populate the user 
+            // field for each document
+            const ratings = this.db.collection(Collections.ratings).aggregate([
+                { $match: { learningObject: learningObjectId } },
+                {
+                    $lookup:
+                        {
+                            from: Collections.users,
+                            localField: 'user',
+                            foreignField: '_id',
+                            as: 'user'
+                        }
+                }
+            ]).toArray();
 
-            // Find all ratings that have this learning object id 
-            const ratings= await this.db.collection(Collections.ratings)
-                .find( {learningObject: learningObjectId} )
-                .toArray();
             return ratings;
         } catch (error) {
             return Promise.reject(error);
@@ -123,9 +150,9 @@ export class MongoDriver implements DataStore {
     }
 
     async createNewRating(
-        rating: Rating, 
+        rating:             Rating, 
         learningObjectName: string, 
-        username: string
+        username:           string
     ): Promise<void>{
         try {
             // Get learning object id from name 
@@ -138,20 +165,52 @@ export class MongoDriver implements DataStore {
                 .findOne( {username: username} );
             const userId = user._id;
 
-            // Append both ids to rating object
-            rating.learningObject = learningObjectId;
+            // Append id to rating object
             rating.user = userId;
-            
-            // Insert new rating object as a document
+            // FIXME - add correct date 
+            rating.date = new Timestamp(1412180887, 1).toString();
             rating._id = new ObjectId().toHexString();
-            await this.db.collection(Collections.ratings).insert(rating);
-        } catch (error) {
+
+            // Is this learning object already in the ratings collection?
+            const learningObjectStored = await this.db.collection(Collections.ratings)
+                .find( {learningObjectId: learningObjectId} ).limit(1).toArray();
+           
+            // If learning object is found, append rating to it and calculate avg rating
+            if (learningObjectStored.length > 0) {
+                const average = await this.findAvgRating(learningObjectId, rating);
+
+                learningObjectStored[0].avgRating = average['avgRating'];
+                learningObjectStored[0].ratings.push(rating);
+                
+                await this.db.collection(Collections.ratings).update(
+                    { learningObjectId: learningObjectId },
+                    {
+                      $set: learningObjectStored[0]
+                    }
+                );
+                return Promise.resolve();
+            } else {
+                const learningObjectContainer: LearningObjectContainer = {
+                    _id: new ObjectId().toHexString(),
+                    learningObjectId: learningObjectId,
+                    avgRating: rating.number, // No need to calculate average for first rating
+                    ratings: [
+                        rating
+                    ]
+                }
+
+                // Insert new learningObjectContainer as a document
+                await this.db.collection(Collections.ratings).insert(learningObjectContainer);
+                return Promise.resolve();
+            }
+        } catch(error) {
             return Promise.reject(error);
         }
+    
     }
 
     // Because the id of user is not on the jwt user object,
-    // we need to populate the user of the rating in order to 
+    // we need to populate the author of the rating in order to 
     // check author status.
     async getPopulatedReviewAuthor(
         authorId: string
@@ -164,5 +223,34 @@ export class MongoDriver implements DataStore {
         } catch (error) {
             return Promise.reject(error);
         }
+    }
+
+    /**
+     * Helper method for averaging all of the ratings for a specfied learning 
+     * object and appending the value to a learning object
+     * @param learningObjectName name of learning object to find average score
+     * @param newRatingNumber optional value used when creating a new rating
+     */
+    async findAvgRating(
+        learningObjectId,
+        newRating
+    ) { 
+        console.log('before');
+        const average = await this.db.collection(Collections.ratings).aggregate
+        ( 
+            [
+                { "$match": {"learningObjectId": learningObjectId }},
+                { "$unwind": '$ratings' },
+                { "$project": { allRatings: { $setUnion: [ "$ratings.number", [ newRating.number ] ] } } },
+                { "$unwind": '$allRatings' },
+              
+               
+            ]
+        )
+        .toArray();
+
+        console.log(average);
+
+        return average;
     }
 }
