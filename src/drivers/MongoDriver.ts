@@ -177,10 +177,9 @@ export class MongoDriver implements DataStore {
            
             // If learning object is found, append rating to it and calculate avg rating
             if (learningObjectStored.length > 0) {
-                const average = await this.findAvgRating(learningObjectId, rating);
-
-                learningObjectStored[0].avgRating = average['avgRating'];
                 learningObjectStored[0].ratings.push(rating);
+                const average = this.findAvgRating(learningObjectStored[0].ratings);
+                learningObjectStored[0].avgRating = average;
                 
                 await this.db.collection(Collections.ratings).update(
                     { learningObjectId: learningObjectId },
@@ -229,28 +228,14 @@ export class MongoDriver implements DataStore {
      * Helper method for averaging all of the ratings for a specfied learning 
      * object and appending the value to a learning object
      * @param learningObjectName name of learning object to find average score
-     * @param newRatingNumber optional value used when creating a new rating
+     * @param newRatingNumber number of incoming rating object
      */
-    async findAvgRating(
-        learningObjectId,
-        newRating
-    ) { 
-        console.log('before');
-        const average = await this.db.collection(Collections.ratings).aggregate
-        ( 
-            [
-                { "$match": {"learningObjectId": learningObjectId }},
-                { "$unwind": '$ratings' },
-                { "$project": { allRatings: { $setUnion: [ "$ratings.number", [ newRating.number ] ] } } },
-                { "$unwind": '$allRatings' },
-              
-               
-            ]
-        )
-        .toArray();
-
-        console.log(average);
-
-        return average;
+    findAvgRating(
+        learningObjectRatings
+    ) {
+        const numbers = learningObjectRatings.map(x => x.number);
+        const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+        const result = average( numbers );
+        return result;
     }
 }
