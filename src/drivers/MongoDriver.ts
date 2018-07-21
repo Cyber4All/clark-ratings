@@ -72,12 +72,20 @@ export class MongoDriver implements DataStore {
     }
 
     async deleteRating(
-        ratingId: string
+        ratingId:           string,
+        learningObjectName: string
     ): Promise<void> {
         try { 
-            await this.db.collection(Collections.ratings).deleteOne(
-                { _id : ratingId }
+            // Get learning object id from name 
+            const learningObject = await this.db.collection(Collections.objects)
+                .findOne( {name: learningObjectName} );
+            const learningObjectId = learningObject._id;
+
+            await this.db.collection(Collections.ratings).update(
+                { "_learningObjectId" : learningObjectId },
+                { $pull: { "ratings" : { id: ratingId } } },
             );
+            
             return Promise.resolve();
         } catch (error) {
             return Promise.reject('Error removing rating with specified id!');
@@ -130,20 +138,11 @@ export class MongoDriver implements DataStore {
             
             // Find all ratings that contain the learningObjectId and populate the user 
             // field for each document
-            const ratings = this.db.collection(Collections.ratings).aggregate([
-                { $match: { learningObject: learningObjectId } },
-                {
-                    $lookup:
-                        {
-                            from: Collections.users,
-                            localField: 'user',
-                            foreignField: '_id',
-                            as: 'user'
-                        }
-                }
+            const rating = await this.db.collection(Collections.ratings).aggregate([
+                { $match: { learningObjectId: learningObjectId } }
             ]).toArray();
 
-            return ratings;
+            return rating[0];
         } catch (error) {
             return Promise.reject(error);
         }
@@ -160,13 +159,13 @@ export class MongoDriver implements DataStore {
                 .findOne( {name: learningObjectName} );
             const learningObjectId = learningObject._id;
 
-            // Get user id from username 
+            // Get user email from username 
             const user = await this.db.collection(Collections.users)
                 .findOne( {username: username} );
-            const userId = user._id;
+            const email = user.email;
 
             // Append id to rating object
-            rating.user = userId;
+            rating.user = { username: username, email: email };
             // FIXME - add correct date 
             rating.date = new Timestamp(1412180887, 1).toString();
             rating._id = new ObjectId().toHexString();

@@ -3,7 +3,7 @@ import { User } from '../../node_modules/@cyber4all/clark-entity';
 
 export interface DataStore {
     updateRating(ratingId: string, editRating: Rating): Promise<void>;
-    deleteRating(ratingId: string): Promise<void>
+    deleteRating(ratingId: string, learningObjectName: string): Promise<void>
 
     getRating(ratingId: string): Promise<Rating>;
     getUsersRatings(userId: string): Promise<Rating[]>;

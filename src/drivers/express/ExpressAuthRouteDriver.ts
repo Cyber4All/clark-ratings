@@ -50,20 +50,8 @@ export class ExpressAuthRouteDriver {
         } catch (error) {
             responder.sendOperationError(error);
         }
-      })
-      .delete(async (req, res) => {
-        // delete specified rating
-        const responder    = this.getResponder(res);
-        const ratingId     = req.params.ratingId;
-        const currentUser  = res.locals.user;
-        try {
-            interactor.deleteRating(this.dataStore, ratingId, currentUser);
-            responder.sendOperationSuccess();
-        } catch (error) {
-            responder.sendOperationError(error);
-        }
-      })
-    
+      });
+      
     router.route('/users/:username/learning-objects/:learningObjectName/ratings')
     .post(async (req, res) => {
       // create a new rating for the associated learning object
@@ -77,6 +65,19 @@ export class ExpressAuthRouteDriver {
       } catch (error) {
         responder.sendOperationError(error);
       }
-    });
+    })
+    .delete(async (req, res) => {
+      // delete specified rating
+      const responder    = this.getResponder(res);
+      const ratingId     = req.params.ratingId;
+      const learningObjectName = req.params.learningObjectName;
+      const currentUser  = res.locals.user;
+      try {
+          interactor.deleteRating(this.dataStore, ratingId, learningObjectName, currentUser);
+          responder.sendOperationSuccess();
+      } catch (error) {
+          responder.sendOperationError(error);
+      }
+    })
   }
 }

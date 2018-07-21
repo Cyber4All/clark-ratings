@@ -2,7 +2,7 @@ import { LearningObject } from '@cyber4all/clark-entity';
 
 export interface Rating {
     _id?: string;
-    user?: string; // either the user or the user's ID
+    user?: { username: string, email: string }; // either the user or the user's ID
 
     number: number;
     comment: string;
