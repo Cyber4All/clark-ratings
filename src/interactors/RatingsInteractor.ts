@@ -123,7 +123,6 @@ export class RatingsInteractor {
     ): Promise<Rating[]> {
         try {
             const ratings =  await dataStore.getUsersRatings(username);
-            console.log(ratings);
             return ratings;
         } catch (error) {
             return Promise.reject('Error finding ratings for specified user!');

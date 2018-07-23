@@ -74,7 +74,7 @@ export class ExpressRouteDriver {
       const responder = this.getResponder(res);
       const username  = req.params.username;
       try {
-        interactor.getUsersRatings(this.dataStore, username);
+        await interactor.getUsersRatings(this.dataStore, username);
         responder.sendOperationSuccess();
       } catch (error) {
         responder.sendOperationError(error);
