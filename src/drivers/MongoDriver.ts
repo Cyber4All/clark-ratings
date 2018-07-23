@@ -81,28 +81,37 @@ export class MongoDriver implements DataStore {
                 .findOne( {name: learningObjectName} );
             const learningObjectId = learningObject._id;
 
+            console.log(learningObjectId);
+
             await this.db.collection(Collections.ratings).update(
-                { "_learningObjectId" : learningObjectId },
-                { $pull: { "ratings" : { id: ratingId } } },
+                { "learningObjectId" : learningObjectId },
+                { $pull: { "ratings" : { _id: ratingId } } },
             );
-            
+
             return Promise.resolve();
         } catch (error) {
             return Promise.reject('Error removing rating with specified id!');
         }
     }
 
-    getRating(
+    async getRating(
         ratingId: string
     ): Promise<Rating> {
         try {
-            return this.db.collection(Collections.ratings).findOne({ _id: ratingId}).then(rating => {
-                if (rating) {
-                    return rating;
-                } else {
-                    return Promise.reject('Error retrieving rating with specified id!');
-                }
-            })
+            const rating = await this.db.collection(Collections.ratings).aggregate(
+                [
+                    {$match: {'ratings._id': ratingId }},
+                    {$project: {
+                        ratings: {$filter: {
+                            input: '$ratings',
+                            as: 'rating',
+                            cond: {$eq: ['$$rating._id', ratingId ]}
+                        }},
+                        _id: 0
+                    }}
+                ]
+            ).toArray();
+            return rating[0].ratings[0];
         } catch (error) {
             return Promise.reject('Problem retrieving rating! Error: ' + error);
         }
@@ -205,22 +214,6 @@ export class MongoDriver implements DataStore {
             return Promise.reject(error);
         }
     
-    }
-
-    // Because the id of user is not on the jwt user object,
-    // we need to populate the author of the rating in order to 
-    // check author status.
-    async getPopulatedReviewAuthor(
-        authorId: string
-    ): Promise<User> {
-        try {
-            // Get user object from id
-            const user = await this.db.collection(Collections.users)
-                .findOne( {_id: authorId } );
-            return user;
-        } catch (error) {
-            return Promise.reject(error);
-        }
     }
 
     /**

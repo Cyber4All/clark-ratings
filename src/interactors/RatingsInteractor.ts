@@ -134,9 +134,9 @@ export class RatingsInteractor {
      * @param dataStore instance of DataStore
      */
     private async checkAuthor(
-        currentUser: User,
-        ratingId:    string,
-        dataStore:   DataStore
+        currentUser:        User,
+        ratingId:           string,
+        dataStore:          DataStore
     ): Promise<boolean> {
         let isAuthor: boolean = false;
         try {
@@ -144,10 +144,10 @@ export class RatingsInteractor {
             const rating: Rating = await dataStore.getRating(ratingId);
 
             // Get populated user object 
-            const populatedUser = await dataStore.getPopulatedReviewAuthor(rating.user);
+            const ratingUsername = rating.user.username;
 
             // Compare current user and specified rating author
-            if (populatedUser.username === currentUser.username) {
+            if (ratingUsername === currentUser.username) {
                 isAuthor = true;
             }
 

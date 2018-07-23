@@ -9,5 +9,4 @@ export interface DataStore {
     getUsersRatings(userId: string): Promise<Rating[]>;
     getLearningObjectsRatings(learningObjectId: string): Promise<Rating[]>;
     createNewRating(rating: Rating, learningObjectName: string, username: string): Promise<void>;
-    getPopulatedReviewAuthor(authorId: string): Promise<User>;
 }
