@@ -75,7 +75,10 @@ export class ExpressAuthRouteDriver {
       const rating               = req.body;
       const learningObjectName   = req.params.learningObjectName;
       const learningObjectAuthor = req.params.learningObjectAuthor;
-      const username             = req.params.username;
+      const username             = req['user'].username;
+
+      console.log('USER', req['user']);
+
       try {
         await interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username);
         responder.sendOperationSuccess();

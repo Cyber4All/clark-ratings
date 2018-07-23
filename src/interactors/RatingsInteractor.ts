@@ -108,6 +108,7 @@ export class RatingsInteractor {
         try {
             await dataStore.createNewRating(rating, learningObjectName, username);
         } catch (error) {
+            console.log(error)
             return Promise.reject('Error creating new rating!');
         }
     }
