@@ -55,14 +55,20 @@ export class MongoDriver implements DataStore {
       }
 
     async updateRating(
-        ratingId:   string, 
-        editRating: Rating
+        ratingId:           string, 
+        learningObjectName: string,
+        editRating:         Rating
     ): Promise<void> {
         try {
+            // Get learning object id from name 
+            const learningObject = await this.db.collection(Collections.objects)
+                .findOne( {name: learningObjectName} );
+            const learningObjectId = learningObject._id;
+
             await this.db.collection(Collections.ratings).update(
-                { _id: ratingId },
+                { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
                 {
-                  $set: editRating
+                  $set: {"ratings.$.number": editRating.number, "ratings.$.comment": editRating.comment }
                 }
               );
             return Promise.resolve();
@@ -80,8 +86,6 @@ export class MongoDriver implements DataStore {
             const learningObject = await this.db.collection(Collections.objects)
                 .findOne( {name: learningObjectName} );
             const learningObjectId = learningObject._id;
-
-            console.log(learningObjectId);
 
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId },

@@ -30,15 +30,16 @@ export class RatingsInteractor {
      * @param currentUser object containing information of user that made request
      */
     async updateRating(
-        dataStore:   DataStore, 
-        ratingId:    string, 
-        editRating:  Rating,
-        currentUser: User
+        dataStore:          DataStore, 
+        ratingId:           string, 
+        learningObjectName: string,
+        editRating:         Rating,
+        currentUser:        User
     ): Promise<void> {
         try {
             const isAuthor = await this.checkAuthor(currentUser, ratingId, dataStore);
             if (isAuthor) {
-                await dataStore.updateRating(ratingId, editRating);
+                await dataStore.updateRating(ratingId, learningObjectName, editRating);
             } else {
                 return Promise.reject(new Error('Error! Current user is not the author of this review!'));
             }
