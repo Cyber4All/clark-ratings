@@ -55,10 +55,11 @@ export class RatingsInteractor {
      * @param currentUser object containing information of user that made request
      */
     async deleteRating(
-        dataStore:          DataStore, 
-        ratingId:           string, 
-        learningObjectName: string,
-        currentUser:        User
+        dataStore:            DataStore, 
+        ratingId:             string, 
+        learningObjectName:   string,
+        learningObjectAuthor: string,
+        currentUser:          User
     ): Promise<void> {
         try {
             const isAuthor = await this.checkAuthor(currentUser, ratingId, dataStore);
@@ -78,8 +79,9 @@ export class RatingsInteractor {
      * @param learningObjectName name of learning object
      */
     async getLearningObjectRatings(
-        dataStore:          DataStore, 
-        learningObjectName: string
+        dataStore:            DataStore, 
+        learningObjectName:   string,
+        learningObjectAuthor: string
     ): Promise <Rating[]> {
         try {
             const ratings = await dataStore.getLearningObjectsRatings(learningObjectName);
@@ -97,10 +99,11 @@ export class RatingsInteractor {
      * @param username username to be appended to new rating document
      */
     async createNewRating(
-        dataStore:          DataStore, 
-        rating:             Rating, 
-        learningObjectName: string, 
-        username:           string
+        dataStore:            DataStore, 
+        rating:               Rating, 
+        learningObjectName:   string, 
+        learningObjectAuthor: string,
+        username:             string
     ): Promise<void> {
         try {
             await dataStore.createNewRating(rating, learningObjectName, username);

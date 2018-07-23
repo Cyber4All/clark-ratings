@@ -54,13 +54,14 @@ export class ExpressRouteDriver {
        }
     });
   
-    router.route('/users/:username/learning-objects/:learningObjectName/ratings')
+    router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
     .get(async (req, res) => {
       // return all ratings from the associated learning object
-      const responder          = this.getResponder(res);
-      const learningObjectName = req.params.learningObjectName;
+      const responder            = this.getResponder(res);
+      const learningObjectName   = req.params.learningObjectName;
+      const learningObjectAuthor = req.params.learningObjectAuthor;
       try {
-        const ratings = await interactor.getLearningObjectRatings(this.dataStore, learningObjectName);
+        const ratings = await interactor.getLearningObjectRatings(this.dataStore, learningObjectName, learningObjectAuthor);
         responder.sendRatings(ratings);
       } catch (error) {
         responder.sendOperationError(error);
@@ -70,18 +71,6 @@ export class ExpressRouteDriver {
     router.route('/users/:username/ratings')
     .get(async (req, res) => {
       // get all of a user's ratings (all ratings made by a user)
-      const responder = this.getResponder(res);
-      const username  = req.params.username;
-      try {
-        interactor.getUsersRatings(this.dataStore, username);
-        responder.sendOperationSuccess();
-      } catch (error) {
-        responder.sendOperationError(error);
-      }
-    });
-
-    router.route('/learningobjectrating')
-    .get(async (req, res) => {
       const responder = this.getResponder(res);
       const username  = req.params.username;
       try {

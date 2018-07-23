@@ -61,9 +61,7 @@ export class MongoDriver implements DataStore {
     ): Promise<void> {
         try {
             // Get learning object id from name 
-            const learningObject = await this.db.collection(Collections.objects)
-                .findOne( {name: learningObjectName} );
-            const learningObjectId = learningObject._id;
+            const learningObjectId = await this.getLearningObjectId(learningObjectName);
 
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
@@ -83,9 +81,7 @@ export class MongoDriver implements DataStore {
     ): Promise<void> {
         try { 
             // Get learning object id from name 
-            const learningObject = await this.db.collection(Collections.objects)
-                .findOne( {name: learningObjectName} );
-            const learningObjectId = learningObject._id;
+            const learningObjectId = await this.getLearningObjectId(learningObjectName);
 
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId },
@@ -145,9 +141,7 @@ export class MongoDriver implements DataStore {
     ): Promise<Rating[]> {
         try {
             // Get learning object id from name 
-            const learningObject = await this.db.collection(Collections.objects)
-                .findOne( {name: learningObjectName} );
-            const learningObjectId = learningObject._id;
+            const learningObjectId = await this.getLearningObjectId(learningObjectName);
             
             // Find all ratings that contain the learningObjectId and populate the user 
             // field for each document
@@ -168,9 +162,7 @@ export class MongoDriver implements DataStore {
     ): Promise<void>{
         try {
             // Get learning object id from name 
-            const learningObject = await this.db.collection(Collections.objects)
-                .findOne( {name: learningObjectName} );
-            const learningObjectId = learningObject._id;
+            const learningObjectId = await this.getLearningObjectId(learningObjectName);
 
             // Get user email from username 
             const user = await this.db.collection(Collections.users)
@@ -180,7 +172,7 @@ export class MongoDriver implements DataStore {
             // Append id to rating object
             rating.user = { username: username, email: email };
             // FIXME - add correct date 
-            rating.date = new Timestamp(1412180887, 1).toString();
+            rating.date = Date.now().toString();
             rating._id = new ObjectId().toHexString();
 
             // Is this learning object already in the ratings collection?
@@ -218,6 +210,13 @@ export class MongoDriver implements DataStore {
             return Promise.reject(error);
         }
     
+    }
+
+    private async getLearningObjectId(learningObjectName: string) {
+        const learningObject = await this.db.collection(Collections.objects)
+            .findOne({ name: learningObjectName });
+        const learningObjectId = learningObject._id;
+        return learningObjectId;
     }
 
     /**
