@@ -1,5 +1,5 @@
 import { DataStore } from "../interfaces/interfaces";
-import { Rating } from "../types/Rating";
+import { Rating, Flag } from "../types/Rating";
 import { User } from "../../node_modules/@cyber4all/clark-entity";
 
 
@@ -37,8 +37,8 @@ export class RatingsInteractor {
         currentUser:        User
     ): Promise<void> {
         try {
-            const isAuthor = await this.checkAuthor(currentUser, ratingId, dataStore);
-            if (isAuthor) {
+            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            if (isRatingAuthor) {
                 await dataStore.updateRating(ratingId, learningObjectName, editRating);
             } else {
                 return Promise.reject(new Error('Error! Current user is not the author of this review!'));
@@ -62,9 +62,9 @@ export class RatingsInteractor {
         currentUser:          User
     ): Promise<void> {
         try {
-            const isAuthor = await this.checkAuthor(currentUser, ratingId, dataStore);
-            if(isAuthor) {
-                await dataStore.deleteRating(ratingId, learningObjectName);
+            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            if(isRatingAuthor) {
+                await dataStore.deleteRating(ratingId, learningObjectName, learningObjectAuthor);
             } else {
                 return Promise.reject(new Error('Error! Current user is not the author of this review!'));
             }
@@ -84,7 +84,7 @@ export class RatingsInteractor {
         learningObjectAuthor: string
     ): Promise <Rating[]> {
         try {
-            const ratings = await dataStore.getLearningObjectsRatings(learningObjectName);
+            const ratings = await dataStore.getLearningObjectsRatings(learningObjectName, learningObjectAuthor);
             return ratings;
         } catch (erorr) {
             return Promise.reject('Error getting ratings for specified learning object!');
@@ -103,10 +103,12 @@ export class RatingsInteractor {
         rating:               Rating, 
         learningObjectName:   string, 
         learningObjectAuthor: string,
-        username:             string
+        username:             string,
+        email:                string,
+        name:                 string
     ): Promise<void> {
         try {
-            await dataStore.createNewRating(rating, learningObjectName, username);
+            await dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
         } catch (error) {
             return Promise.reject('Error creating new rating!');
         }
@@ -123,10 +125,30 @@ export class RatingsInteractor {
     ): Promise<Rating[]> {
         try {
             const ratings =  await dataStore.getUsersRatings(username);
-            console.log(ratings);
             return ratings;
         } catch (error) {
             return Promise.reject('Error finding ratings for specified user!');
+        }
+    }
+
+    async flagRating(
+        dataStore:            DataStore,
+        learningObjectAuthor: string,
+        learningObjectName:   string,
+        ratingId:             string,
+        currentUser:          User,
+        flag:                 Flag  
+    ): Promise<void> {
+        try {
+            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            if(!isRatingAuthor) {
+                await dataStore.flagRating(ratingId, flag);
+                return Promise.resolve();
+            } else {
+                return Promise.reject('Error the author of the rating cannot perform this action!');
+            }
+        } catch (error) {
+            return Promise.reject('Error could not flag rating');
         }
     }
 
@@ -137,7 +159,7 @@ export class RatingsInteractor {
      * @param ratingId id of a rating object
      * @param dataStore instance of DataStore
      */
-    private async checkAuthor(
+    private async checkRatingAuthor(
         currentUser:        User,
         ratingId:           string,
         dataStore:          DataStore
@@ -159,5 +181,16 @@ export class RatingsInteractor {
         } catch (error) {
             return Promise.reject(error);
         }
+    }
+
+    private checkLearningObjectAuthor(
+        currentUser:          User,
+        learningObjectAuthor: string
+    ) {
+        const isAuthor = false;
+        if (currentUser.username === learningObjectAuthor) {
+            isAuthor = true;
+        }
+        return isAuthor;
     }
 }

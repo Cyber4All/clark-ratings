@@ -1,20 +1,30 @@
 
 import { DataStore } from '../interfaces/DataStore';
-import { Rating, LearningObjectContainer } from '../types/Rating';
+import { Rating, LearningObjectContainer, Flag } from '../types/Rating';
 import { MongoClient, Db, ObjectId, Timestamp } from 'mongodb';
+import * as request from 'request-promise';
 import * as dotenv from 'dotenv';
-import { User } from '../../node_modules/@cyber4all/clark-entity';
-
+import { generateServiceToken } from './TokenManager';
+import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
 dotenv.config();
 
 export class Collections {
     static ratings: string = 'ratings';
     static objects: string = 'objects';
     static users:   string = 'users';
+    static flags:   string = 'flags';
 }
 
 export class MongoDriver implements DataStore {
     private db: Db;
+
+    private options = {
+        uri: '',
+        json: true,
+        headers: {
+          Authorization: 'Bearer'
+        }
+      };
     
     constructor() {
         let dburi =
@@ -55,13 +65,14 @@ export class MongoDriver implements DataStore {
       }
 
     async updateRating(
-        ratingId:           string, 
-        learningObjectName: string,
-        editRating:         Rating
+        ratingId:             string, 
+        learningObjectName:   string,
+        learningObjectAuthor: string,
+        editRating:           Rating
     ): Promise<void> {
         try {
             // Get learning object id from name 
-            const learningObjectId = await this.getLearningObjectId(learningObjectName);
+            const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
 
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
@@ -76,17 +87,25 @@ export class MongoDriver implements DataStore {
     }
 
     async deleteRating(
-        ratingId:           string,
-        learningObjectName: string
+        ratingId:             string,
+        learningObjectName:   string,
+        learningObjectAuthor: string
     ): Promise<void> {
         try { 
             // Get learning object id from name 
-            const learningObjectId = await this.getLearningObjectId(learningObjectName);
-
+            const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
+            
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId },
                 { $pull: { "ratings" : { _id: ratingId } } },
             );
+
+            // await this.db.collection(Collections.ratings).update(
+            //     { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
+            //     {
+            //       $set: {"ratings.$.number": editRating.number, "ratings.$.comment": editRating.comment }
+            //     }
+            //   );
 
             return Promise.resolve();
         } catch (error) {
@@ -137,11 +156,12 @@ export class MongoDriver implements DataStore {
     }
 
     async getLearningObjectsRatings(
-        learningObjectName: string
+        learningObjectName:   string,
+        learningObjectAuthor: string
     ): Promise<Rating[]> {
         try {
             // Get learning object id from name 
-            const learningObjectId = await this.getLearningObjectId(learningObjectName);
+            const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
             
             // Find all ratings that contain the learningObjectId and populate the user 
             // field for each document
@@ -156,25 +176,20 @@ export class MongoDriver implements DataStore {
     }
 
     async createNewRating(
-        rating:             Rating, 
-        learningObjectName: string, 
-        username:           string
-    ): Promise<void>{
+        rating:               Rating, 
+        learningObjectName:   string, 
+        learningObjectAuthor: string,
+        username:             string,
+        email:                string,
+        name:                 string
+    ): Promise<void> {
         try {
             // Get learning object id from name 
-            const learningObjectId = await this.getLearningObjectId(learningObjectName);
-
-            // Get user email from username 
-            const user = await this.db.collection(Collections.users)
-                .findOne( {username: username} );
-            const email = user.email;
-
+            const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
             // Append id to rating object
-            rating.user = { username: username, email: email };
-            // FIXME - add correct date 
-            rating.date = Date.now().toString();
-            rating._id = new ObjectId().toHexString();
-
+            rating.user = { name: name, username: username, email: email };
+            rating._id   = new ObjectId().toHexString();
+            rating.date  = rating._id.toString().substring(0,8);
             // Is this learning object already in the ratings collection?
             const learningObjectStored = await this.db.collection(Collections.ratings)
                 .find( {learningObjectId: learningObjectId} ).limit(1).toArray();
@@ -184,7 +199,6 @@ export class MongoDriver implements DataStore {
                 learningObjectStored[0].ratings.push(rating);
                 const average = this.findAvgRating(learningObjectStored[0].ratings);
                 learningObjectStored[0].avgRating = average;
-                
                 await this.db.collection(Collections.ratings).update(
                     { learningObjectId: learningObjectId },
                     {
@@ -209,14 +223,42 @@ export class MongoDriver implements DataStore {
         } catch(error) {
             return Promise.reject(error);
         }
-    
     }
 
-    private async getLearningObjectId(learningObjectName: string) {
-        const learningObject = await this.db.collection(Collections.objects)
-            .findOne({ name: learningObjectName });
-        const learningObjectId = learningObject._id;
-        return learningObjectId;
+    async flagRating(
+        ratingId:             string,
+        flag:                 Flag 
+    ): Promise<void> {
+        try {
+            flag.ratingId =ratingId;
+            flag._id   = new ObjectId().toHexString();
+            flag.date  = flag._id.toString().substring(0,8);
+            await this.db.collection(Collections.flags).insert(flag);
+            return Promise.resolve();
+        } catch (error) {
+            return Promise.reject("Error cannot flag rating");
+        }
+    }
+
+    private async getLearningObjectId(learningObjectName: string, learningObjectAuthor: string) {
+            // try {
+            //   this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(
+            //     learningObjectAuthor,
+            //     learningObjectName
+            //   );
+            //   this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
+            //   console.log(request(this.options));
+            //   return request(this.options);
+            // } catch (e) {
+            //   return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
+            // }
+            try {
+                const learningObject = await this.db.collection(Collections.objects).findOne({'name': learningObjectName});
+                const learningObjectId = learningObject._id;
+                return learningObjectId;
+            } catch (error) {
+                return Promise.reject(error);
+            }
     }
 
     /**
@@ -225,7 +267,7 @@ export class MongoDriver implements DataStore {
      * @param learningObjectName name of learning object to find average score
      * @param newRatingNumber number of incoming rating object
      */
-    findAvgRating(
+    private findAvgRating(
         learningObjectRatings
     ) {
         const numbers = learningObjectRatings.map(x => x.number);

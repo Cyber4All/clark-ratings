@@ -44,7 +44,7 @@ export class ExpressAuthRouteDriver {
         const ratingId             = req.params.ratingId;
         const learningObjectName   = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor 
-        const currentUser          = res.locals.user;
+        const currentUser          = req['user'];
         try {
             interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUser);
             responder.sendOperationSuccess();
@@ -59,7 +59,7 @@ export class ExpressAuthRouteDriver {
         const ratingId             = req.params.ratingId;
         const learningObjectName   = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUser          = res.locals.user;
+        const currentUser          = req['user'];
         try {
             interactor.updateRating(this.dataStore, ratingId, learningObjectName, editRating, currentUser); 
             responder.sendOperationSuccess();
@@ -69,19 +69,38 @@ export class ExpressAuthRouteDriver {
       });
       
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
-    .post(async (req, res) => {
-      // create a new rating for the associated learning object
-      const responder            = this.getResponder(res);
-      const rating               = req.body;
-      const learningObjectName   = req.params.learningObjectName;
-      const learningObjectAuthor = req.params.learningObjectAuthor;
-      const username             = req.params.username;
-      try {
-        interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username);
-        responder.sendOperationSuccess();
-      } catch (error) {
-        responder.sendOperationError(error);
-      }
-    })
+      .post(async (req, res) => {
+        // create a new rating for the associated learning object
+        const responder            = this.getResponder(res);
+        const rating               = req.body;
+        const learningObjectName   = req.params.learningObjectName;
+        const learningObjectAuthor = req.params.learningObjectAuthor;
+        const username             = req['user'].username;
+        const email                = req['user'].email;
+        const name                 = req['user'].name
+        try {
+          interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username, email, name);
+          responder.sendOperationSuccess();
+        } catch (error) {
+          responder.sendOperationError(error);
+        }
+      });
+
+    router.route('learning-objects/:learningObjectAuthor/:LearningObjectName/ratings/:ratingId/flag')
+      .post(async (req, res) => {
+        // flag a rating
+        const responder            = this.getResponder(res);
+        const learningObjectAuthor = req.params.learningObjectAuthor;
+        const learningObjectName   = req.params.learningObjectName;
+        const ratingId             = req.params.ratingId;
+        const flag                 = req.body;
+        const currentUser          = req['user'];
+        try {
+          interactor.flagRating(this.dataStore, learningObjectAuthor, learningObjectName, ratingId, currentUser, flag);
+          responder.sendOperationSuccess();
+        } catch (error) {
+          responder.sendOperationError(error);
+        }
+      });
   }
 }
