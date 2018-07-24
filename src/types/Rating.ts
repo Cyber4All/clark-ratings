@@ -21,9 +21,10 @@ export interface LearningObjectContainer {
 export interface Flag {
     _id?:      string,
     comment?:  string;
+    ratingId?: string,
+    date?:     string
 
     username: string;
-    ratingId: string,
     concern:  string,
-    date:     string
+    
 }

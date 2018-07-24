@@ -205,7 +205,6 @@ export class MongoDriver implements DataStore {
                       $set: learningObjectStored[0]
                     }
                 );
-                return Promise.resolve();
             } else {
                 const learningObjectContainer: LearningObjectContainer = {
                     _id: new ObjectId().toHexString(),
@@ -218,7 +217,6 @@ export class MongoDriver implements DataStore {
 
                 // Insert new learningObjectContainer as a document
                 await this.db.collection(Collections.ratings).insert(learningObjectContainer);
-                return Promise.resolve();
             }
         } catch(error) {
             return Promise.reject(error);

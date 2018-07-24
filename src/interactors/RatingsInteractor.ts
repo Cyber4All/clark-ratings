@@ -109,7 +109,7 @@ export class RatingsInteractor {
         name:                 string
     ): Promise<void> {
         try {
-            await dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
+            dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
         } catch (error) {
             console.log(error)
             return Promise.reject('Error creating new rating!');
@@ -135,8 +135,6 @@ export class RatingsInteractor {
 
     async flagRating(
         dataStore:            DataStore,
-        learningObjectAuthor: string,
-        learningObjectName:   string,
         ratingId:             string,
         currentUsername:      string,
         flag:                 Flag  

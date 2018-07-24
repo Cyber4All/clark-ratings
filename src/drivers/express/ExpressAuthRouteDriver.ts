@@ -96,7 +96,7 @@ export class ExpressAuthRouteDriver {
         const flag                 = req.body;
         const currentUsername      = req['user']['username'];
         try {
-          interactor.flagRating(this.dataStore, learningObjectAuthor, learningObjectName, ratingId, currentUsername, flag);
+          interactor.flagRating(this.dataStore, ratingId, currentUsername, flag);
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);
