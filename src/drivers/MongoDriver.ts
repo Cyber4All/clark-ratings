@@ -230,7 +230,7 @@ export class MongoDriver implements DataStore {
         flag:                 Flag 
     ): Promise<void> {
         try {
-            flag.ratingId =ratingId;
+            flag.ratingId = ratingId;
             flag._id   = new ObjectId().toHexString();
             flag.date  = flag._id.toString().substring(0,8);
             await this.db.collection(Collections.flags).insert(flag);

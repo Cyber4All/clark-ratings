@@ -30,16 +30,17 @@ export class RatingsInteractor {
      * @param currentUser object containing information of user that made request
      */
     async updateRating(
-        dataStore:          DataStore, 
-        ratingId:           string, 
-        learningObjectName: string,
-        editRating:         Rating,
-        currentUser:        User
+        dataStore:            DataStore, 
+        ratingId:             string, 
+        learningObjectName:   string,
+        learningObjectAuthor: string,
+        editRating:           Rating,
+        currentUsername:      string
     ): Promise<void> {
         try {
-            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            const isRatingAuthor = await this.checkRatingAuthor(currentUsername, ratingId, dataStore);
             if (isRatingAuthor) {
-                await dataStore.updateRating(ratingId, learningObjectName, editRating);
+                await dataStore.updateRating(ratingId, learningObjectName, learningObjectAuthor, editRating);
             } else {
                 return Promise.reject(new Error('Error! Current user is not the author of this review!'));
             }
@@ -59,10 +60,10 @@ export class RatingsInteractor {
         ratingId:             string, 
         learningObjectName:   string,
         learningObjectAuthor: string,
-        currentUser:          User
+        currentUsername:      string
     ): Promise<void> {
         try {
-            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            const isRatingAuthor = await this.checkRatingAuthor(currentUsername, ratingId, dataStore);
             if(isRatingAuthor) {
                 await dataStore.deleteRating(ratingId, learningObjectName, learningObjectAuthor);
             } else {
@@ -137,11 +138,11 @@ export class RatingsInteractor {
         learningObjectAuthor: string,
         learningObjectName:   string,
         ratingId:             string,
-        currentUser:          User,
+        currentUsername:      string,
         flag:                 Flag  
     ): Promise<void> {
         try {
-            const isRatingAuthor = await this.checkRatingAuthor(currentUser, ratingId, dataStore);
+            const isRatingAuthor = await this.checkRatingAuthor(currentUsername, ratingId, dataStore);
             if(!isRatingAuthor) {
                 await dataStore.flagRating(ratingId, flag);
                 return Promise.resolve();
@@ -161,7 +162,7 @@ export class RatingsInteractor {
      * @param dataStore instance of DataStore
      */
     private async checkRatingAuthor(
-        currentUser:        User,
+        currentUsername:    string,
         ratingId:           string,
         dataStore:          DataStore
     ): Promise<boolean> {
@@ -174,7 +175,7 @@ export class RatingsInteractor {
             const ratingUsername = rating.user.username;
 
             // Compare current user and specified rating author
-            if (ratingUsername === currentUser.username) {
+            if (ratingUsername === currentUsername) {
                 isAuthor = true;
             }
 
@@ -188,7 +189,7 @@ export class RatingsInteractor {
         currentUser:          User,
         learningObjectAuthor: string
     ) {
-        const isAuthor = false;
+        let isAuthor = false;
         if (currentUser.username === learningObjectAuthor) {
             isAuthor = true;
         }

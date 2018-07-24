@@ -44,9 +44,9 @@ export class ExpressAuthRouteDriver {
         const ratingId             = req.params.ratingId;
         const learningObjectName   = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor 
-        const currentUser          = req['user'];
+        const currentUsername      = req['user']['username'];
         try {
-            await interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUser);
+            interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUsername);
             responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error);
@@ -59,9 +59,9 @@ export class ExpressAuthRouteDriver {
         const ratingId             = req.params.ratingId;
         const learningObjectName   = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUser          = req['user'];
+        const currentUsername      = req['user']['username'];
         try {
-            await interactor.updateRating(this.dataStore, ratingId, learningObjectName, editRating, currentUser); 
+            await interactor.updateRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, editRating, currentUsername); 
             responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error);
@@ -75,9 +75,9 @@ export class ExpressAuthRouteDriver {
         const rating               = req.body;
         const learningObjectName   = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const username             = req['user'].username;
-        const email                = req['user'].email;
-        const name                 = req['user'].name
+        const username             = req['user']['username'];
+        const email                = req['user']['email'];
+        const name                 = req['user']['name'];
         try {
           interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username, email, name);
           responder.sendOperationSuccess();
@@ -94,9 +94,9 @@ export class ExpressAuthRouteDriver {
         const learningObjectName   = req.params.learningObjectName;
         const ratingId             = req.params.ratingId;
         const flag                 = req.body;
-        const currentUser          = req['user'];
+        const currentUsername      = req['user']['username'];
         try {
-          interactor.flagRating(this.dataStore, learningObjectAuthor, learningObjectName, ratingId, currentUser, flag);
+          interactor.flagRating(this.dataStore, learningObjectAuthor, learningObjectName, ratingId, currentUsername, flag);
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);
