@@ -69,7 +69,6 @@ export class ExpressAuthRouteDriver {
       });
       
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
-<<<<<<< HEAD
       .post(async (req, res) => {
         // create a new rating for the associated learning object
         const responder            = this.getResponder(res);
@@ -103,24 +102,5 @@ export class ExpressAuthRouteDriver {
           responder.sendOperationError(error);
         }
       });
-=======
-    .post(async (req, res) => {
-      // create a new rating for the associated learning object
-      const responder            = this.getResponder(res);
-      const rating               = req.body;
-      const learningObjectName   = req.params.learningObjectName;
-      const learningObjectAuthor = req.params.learningObjectAuthor;
-      const username             = req['user'].username;
-
-      console.log('USER', req['user']);
-
-      try {
-        await interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username);
-        responder.sendOperationSuccess();
-      } catch (error) {
-        responder.sendOperationError(error);
-      }
-    })
->>>>>>> 0b1b8cce203e8bb678bde168b6fba39649ec21ab
   }
 }
