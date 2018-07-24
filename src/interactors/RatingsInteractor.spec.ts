@@ -60,6 +60,23 @@ describe('getLearningObjectRatings', () => {
 });
 
 describe('updateRating', () => {
+  it('Should throw error - only author of rating can do this', done => {
+    const editRating: Rating = {
+      number:  3,
+      comment: 'unit test edit'
+    };
+    const learningObjectName   = "Cybersecurity for Future Presidents";
+    const learningObjectAuthor = "skaza";
+    const username             = 'skaza';
+    return interactor.updateRating(driver, ratingId, learningObjectName, learningObjectAuthor, editRating, username).then(val => {
+      expect.fail();
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect(error).to.exist;
+      done();
+    });
+  });
   it('Should update the rating object created in first test', done => {
     const editRating: Rating = {
       number:  3,
@@ -98,9 +115,6 @@ describe('flagRating', () => {
       done();
     });
   });
-});
-
-describe('flagRating', () => {
   it('Should flag the rating created during test 1', done => {
     const flag: Flag = {
       comment: 'unit test flag',
@@ -121,12 +135,21 @@ describe('flagRating', () => {
 });
 
 describe('deleteRating', () => {
+  it('Should throw error - only the author of rating can do this', done => {
+    const learningObjectName   = "Cybersecurity for Future Presidents";
+    const learningObjectAuthor = "skaza";
+    const username             = 'skaza';
+    return interactor.deleteRating(driver, ratingId, learningObjectName, learningObjectAuthor, username).then(val => {
+      console.log(val);
+      expect.fail();
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect(error).to.exist;
+      done();
+    });
+  });
   it('Should delete the rating created during test 1', done => {
-    const flag: Flag = {
-      comment: 'unit test flag',
-      username: 'skaza',
-      concern: 'unit test concern label'
-    }
     const learningObjectName   = "Cybersecurity for Future Presidents";
     const learningObjectAuthor = "skaza";
     const username             = 'nvisal1';

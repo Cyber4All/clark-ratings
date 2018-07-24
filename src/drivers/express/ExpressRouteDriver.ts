@@ -68,17 +68,18 @@ export class ExpressRouteDriver {
       }
     });
 
-    router.route('/users/:username/ratings')
-    .get(async (req, res) => {
-      // get all of a user's ratings (all ratings made by a user)
-      const responder = this.getResponder(res);
-      const username  = req.params.username;
-      try {
-        await interactor.getUsersRatings(this.dataStore, username);
-        responder.sendOperationSuccess();
-      } catch (error) {
-        responder.sendOperationError(error);
-      }
-    });
+    // TODO - no use case for this route yet
+    // router.route('/users/:username/ratings')
+    // .get(async (req, res) => {
+    //   // get all of a user's ratings (all ratings made by a user)
+    //   const responder = this.getResponder(res);
+    //   const username  = req.params.username;
+    //   try {
+    //     await interactor.getUsersRatings(this.dataStore, username);
+    //     responder.sendOperationSuccess();
+    //   } catch (error) {
+    //     responder.sendOperationError(error);
+    //   }
+    // });
   }
 }
