@@ -46,7 +46,7 @@ export class ExpressAuthRouteDriver {
         const learningObjectAuthor = req.params.learningObjectAuthor 
         const currentUser          = req['user'];
         try {
-            interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUser);
+            await interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUser);
             responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error);
@@ -61,7 +61,7 @@ export class ExpressAuthRouteDriver {
         const learningObjectAuthor = req.params.learningObjectAuthor;
         const currentUser          = req['user'];
         try {
-            interactor.updateRating(this.dataStore, ratingId, learningObjectName, editRating, currentUser); 
+            await interactor.updateRating(this.dataStore, ratingId, learningObjectName, editRating, currentUser); 
             responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error);
@@ -69,6 +69,7 @@ export class ExpressAuthRouteDriver {
       });
       
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
+<<<<<<< HEAD
       .post(async (req, res) => {
         // create a new rating for the associated learning object
         const responder            = this.getResponder(res);
@@ -102,5 +103,24 @@ export class ExpressAuthRouteDriver {
           responder.sendOperationError(error);
         }
       });
+=======
+    .post(async (req, res) => {
+      // create a new rating for the associated learning object
+      const responder            = this.getResponder(res);
+      const rating               = req.body;
+      const learningObjectName   = req.params.learningObjectName;
+      const learningObjectAuthor = req.params.learningObjectAuthor;
+      const username             = req['user'].username;
+
+      console.log('USER', req['user']);
+
+      try {
+        await interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username);
+        responder.sendOperationSuccess();
+      } catch (error) {
+        responder.sendOperationError(error);
+      }
+    })
+>>>>>>> 0b1b8cce203e8bb678bde168b6fba39649ec21ab
   }
 }
