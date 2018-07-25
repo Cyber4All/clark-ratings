@@ -46,7 +46,7 @@ export class ExpressAuthRouteDriver {
         const learningObjectAuthor = req.params.learningObjectAuthor 
         const currentUsername      = req['user']['username'];
         try {
-            interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUsername);
+            await interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUsername);
             responder.sendOperationSuccess();
         } catch (error) {
             responder.sendOperationError(error);
@@ -79,7 +79,7 @@ export class ExpressAuthRouteDriver {
         const email                = req['user']['email'];
         const name                 = req['user']['name'];
         try {
-          interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username, email, name);
+          await interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username, email, name);
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);
@@ -96,7 +96,7 @@ export class ExpressAuthRouteDriver {
         const flag                 = req.body;
         const currentUsername      = req['user']['username'];
         try {
-          interactor.flagRating(this.dataStore, ratingId, currentUsername, flag);
+          await interactor.flagRating(this.dataStore, ratingId, currentUsername, flag);
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);

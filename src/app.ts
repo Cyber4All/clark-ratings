@@ -5,7 +5,6 @@ import {
     ExpressAuthRouteDriver
 } from './drivers/drivers';
 import { enforceTokenAccess } from './middleware/jwt.config';
-import { isAuthor } from './middleware/author-access';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { MongoDriver } from './drivers/MongoDriver';
@@ -14,7 +13,32 @@ import * as http from 'http';
 
 let app = express();
 
-let dataStore = new MongoDriver();
+let dburi;
+switch (process.env.NODE_ENV) {
+  case 'development':
+    dburi = process.env.CLARK_DB_URI_DEV.replace(
+      /<DB_PASSWORD>/g,
+      process.env.CLARK_DB_PWD
+    )
+      .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
+      .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME);
+    break;
+  case 'production':
+    dburi = process.env.CLARK_DB_URI.replace(
+      /<DB_PASSWORD>/g,
+      process.env.CLARK_DB_PWD
+    )
+      .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
+      .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME);
+    break;
+  case 'test':
+    dburi = process.env.CLARK_DB_URI_TEST;
+    break;
+  default:
+    break;
+}
+
+let dataStore = new MongoDriver(dburi);
 let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
 
 // configure app to use bodyParser()
@@ -41,8 +65,6 @@ app.use((error: any, req: any, res: any, next: any) => {
     res.status(401).send('Invalid Access Token');
   }
 });
-// Set user as a global variable for authorization
-app.use(isAuthor);
 
 // Set our authenticated api routes
 app.use('/', 

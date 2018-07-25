@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import * as jwt from 'express-jwt';
 
 export function generateServiceToken() {
     const payload = {

@@ -22,8 +22,6 @@ export class ExpressResponder implements Responder {
     }
 
     sendRatings(ratings: Rating | Rating[]) {
-        // Remove id before sending to client 
-        delete ratings._id;
         this.res.status(200).json(ratings);
     }
 }

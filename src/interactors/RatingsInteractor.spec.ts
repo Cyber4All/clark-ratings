@@ -3,7 +3,7 @@ import { MongoDriver } from '../drivers/MongoDriver';
 import { expect } from 'chai';
 import { Rating, Flag } from '../types/Rating';
 
-const driver = new MongoDriver();
+const driver =  new MongoDriver(process.env.CLARK_DB_URI_TEST);
 const interactor = new RatingsInteractor();
 let ratingId: string; 
 
@@ -21,6 +21,7 @@ beforeAll(done => {
 
 describe('createNewRating', () => {
   it('Should create a new rating object', done => {
+    jest.setTimeout(30000);
     const rating: Rating = {
       number:  4,
       comment: 'unit test'
@@ -31,8 +32,7 @@ describe('createNewRating', () => {
     const email                = 'nvisal1@students.towson.edu';
     const name                 = 'nick visalli';
     return interactor.createNewRating(driver, rating, learningObjectName, learningObjectAuthor, username, email, name).then(val => {
-      console.log(val);
-      expect(val).to.exist;
+      expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
       console.log(error);
@@ -47,9 +47,8 @@ describe('getLearningObjectRatings', () => {
     const learningObjectName   = "Cybersecurity for Future Presidents";
     const learningObjectAuthor = "skaza";
     return interactor.getLearningObjectRatings(driver, learningObjectName, learningObjectAuthor).then(val => {
-      console.log(val);
       ratingId = val['ratings'][0]['_id'];
-      expect(val).to.exist;
+      expect(val).to.be.an('object');
       done();
     }).catch((error) => {
       console.log(error);
@@ -69,11 +68,11 @@ describe('updateRating', () => {
     const learningObjectAuthor = "skaza";
     const username             = 'skaza';
     return interactor.updateRating(driver, ratingId, learningObjectName, learningObjectAuthor, editRating, username).then(val => {
+      console.log(val);
       expect.fail();
       done();
     }).catch((error) => {
-      console.log(error);
-      expect(error).to.exist;
+      expect(error).to.be.a('string');
       done();
     });
   });
@@ -86,8 +85,7 @@ describe('updateRating', () => {
     const learningObjectAuthor = "skaza";
     const username             = 'nvisal1';
     return interactor.updateRating(driver, ratingId, learningObjectName, learningObjectAuthor, editRating, username).then(val => {
-      console.log(val);
-      expect(val).to.exist;
+      expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
       console.log(error);
@@ -107,11 +105,10 @@ describe('flagRating', () => {
     const username = 'nvisal1';
     return interactor.flagRating(driver, ratingId, username, flag).then(val => {
       console.log(val);
-      expect(val).to.exist;
+      expect.fail();
       done();
     }).catch((error) => {
-      console.log(error);
-      expect.fail();
+      expect(error).to.be.a('string');
       done();
     });
   });
@@ -123,8 +120,7 @@ describe('flagRating', () => {
     }
     const username = 'skaza';
     return interactor.flagRating(driver, ratingId, username, flag).then(val => {
-      console.log(val);
-      expect(val).to.exist;
+      expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
       console.log(error);
@@ -144,8 +140,7 @@ describe('deleteRating', () => {
       expect.fail();
       done();
     }).catch((error) => {
-      console.log(error);
-      expect(error).to.exist;
+      expect(error).to.be.a('string');
       done();
     });
   });
@@ -154,8 +149,7 @@ describe('deleteRating', () => {
     const learningObjectAuthor = "skaza";
     const username             = 'nvisal1';
     return interactor.deleteRating(driver, ratingId, learningObjectName, learningObjectAuthor, username).then(val => {
-      console.log(val);
-      expect(val).to.exist;
+      expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
       console.log(error);
@@ -163,6 +157,11 @@ describe('deleteRating', () => {
       done();
     });
   });
+});
+
+afterAll(() => {
+  driver.disconnect();
+  console.log('Disconnected from database');
 });
 
 

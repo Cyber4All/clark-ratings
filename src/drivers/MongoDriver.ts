@@ -26,21 +26,7 @@ export class MongoDriver implements DataStore {
         }
       };
     
-    constructor() {
-        let dburi =
-        process.env.NODE_ENV === 'production'
-          ? process.env.CLARK_DB_URI.replace(
-              /<DB_PASSWORD>/g,
-              process.env.CLARK_DB_PWD
-            )
-              .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
-              .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME)
-          : process.env.CLARK_DB_URI_DEV.replace(
-              /<DB_PASSWORD>/g,
-              process.env.CLARK_DB_PWD
-            )
-              .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
-              .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME);
+    constructor(dburi: string) {
         this.connect(dburi);
     }
 
@@ -63,6 +49,14 @@ export class MongoDriver implements DataStore {
           }
         }
       }
+     /**
+   * Close the database. Note that this will affect all services
+   * and scripts using the database, so only do this if it's very
+   * important or if you are sure that *everything* is finished.
+   */
+  disconnect(): void {
+    this.db.close();
+  }
 
     async updateRating(
         ratingId:             string, 
@@ -73,16 +67,21 @@ export class MongoDriver implements DataStore {
         try {
             // Get learning object id from name 
             const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
-
+            const ratings = await this.getLearningObjectsRatings(learningObjectName, learningObjectAuthor);
+            const index = ratings['ratings'].map(function(e) { return e._id; }).indexOf(ratingId);
+            ratings['ratings'][index].number = editRating.number;
+            ratings['ratings'][index].comment = editRating.comment;
+            const average = await this.findAvgRating(ratings['ratings']);
+            ratings['avgRating'] = average;
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
                 {
-                  $set: {"ratings.$.number": editRating.number, "ratings.$.comment": editRating.comment }
+                  $set: ratings
                 }
               );
             return Promise.resolve();
         } catch (error) {
-            return Promise.reject('Error updating rating with specified id!');
+            return Promise.reject(error);
         }
     }
 
@@ -93,23 +92,26 @@ export class MongoDriver implements DataStore {
     ): Promise<void> {
         try { 
             // Get learning object id from name 
+            let average: number;
             const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
-            
+            const ratings = await this.getLearningObjectsRatings(learningObjectName, learningObjectAuthor);
+            const index = ratings['ratings'].map(function(e) { return e._id; }).indexOf(ratingId);
+            ratings['ratings'].splice(index, 1);
+            // Prevent avgRating from being NaN
+            if(ratings['ratings'].length > 0) {
+                average = await this.findAvgRating(ratings['ratings']);
+            } else {
+                average = 0;
+            }
+            ratings['avgRating'] = average;
             await this.db.collection(Collections.ratings).update(
                 { "learningObjectId" : learningObjectId },
-                { $pull: { "ratings" : { _id: ratingId } } },
+                { $set: ratings }
             );
-
-            // await this.db.collection(Collections.ratings).update(
-            //     { "learningObjectId" : learningObjectId, "ratings._id": ratingId },
-            //     {
-            //       $set: {"ratings.$.number": editRating.number, "ratings.$.comment": editRating.comment }
-            //     }
-            //   );
 
             return Promise.resolve();
         } catch (error) {
-            return Promise.reject('Error removing rating with specified id!');
+            return Promise.reject(error);
         }
     }
 
@@ -218,6 +220,7 @@ export class MongoDriver implements DataStore {
                 // Insert new learningObjectContainer as a document
                 await this.db.collection(Collections.ratings).insert(learningObjectContainer);
             }
+            return Promise.resolve();
         } catch(error) {
             return Promise.reject(error);
         }
@@ -234,7 +237,7 @@ export class MongoDriver implements DataStore {
             await this.db.collection(Collections.flags).insert(flag);
             return Promise.resolve();
         } catch (error) {
-            return Promise.reject("Error cannot flag rating");
+            return Promise.reject(error);
         }
     }
 
