@@ -240,6 +240,81 @@ export class MongoDriver implements DataStore {
         }
     }
 
+    async getAllFlags(): Promise<Flag[]> {
+        try {
+            const flags = await this.db.collection(Collections.flags).find({}).toArray();
+            return flags;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getUserFlags(
+        username: string
+    ): Promise<Flag[]> {
+        try {
+            const flags = await this.db.collection(Collections.flags).find({username: username}).toArray();
+            return flags;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getLearningObjectFlags(
+        learningObjectName:   string,
+        learningObjectAuthor: string
+    ): Promise<Flag[]> {
+        try {
+            // get learning object id
+            const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
+            // get all rating ids that are attached to the specified learning object
+            const ratingIds = await this.db.collection(Collections.ratings).aggregate(
+                [
+                    { $match: learningObjectId },
+                    { $unwind: '$ratings'},
+                    { $project: 
+                        {
+                            id: '$ratings._id'
+                        }
+                    }
+                ]
+            ).toArray();
+            const flags = await this.db.collection(Collections.flags).find({ratingId: ratingIds}).toArray();
+            return flags;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async getRatingFlags(
+        learningObjectName:   string,
+        learningObjectAuthor: string,
+        ratingId:             string
+    ): Promise<Flag[]> {
+        try {
+            // get learning object id
+            const flags = await this.db.collection(Collections.flags).find({ratingId: ratingId}).toArray();
+            return flags;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async deleteFlag(
+        learningObjectName:   string,
+        learningObjectAuthor: string,
+        ratingId:             string,
+        flagId:               string
+    ): Promise<void> {
+        try {
+            // get learning object id
+            await this.db.collection(Collections.flags).deleteOne({_id: flagId});
+            return Promise.resolve();
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
     private async getLearningObjectId(learningObjectName: string, learningObjectAuthor: string) {
             try {
               this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(

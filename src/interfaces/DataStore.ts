@@ -10,4 +10,9 @@ export interface DataStore {
     getLearningObjectsRatings(learningObjectName: string, learningObjectAuthor: string): Promise<Rating[]>;
     createNewRating(rating: Rating, learningObjectName: string, learningObjectAuthor: string, username: string, email: string, name: string): Promise<void>;
     flagRating(ratingId: string, flag: Flag);
+    getAllFlags();
+    getUserFlags(username: string);
+    getLearningObjectFlags(learningObjectName: string, learningObjectAuthor: string);
+    getRatingFlags(learningObjectName: string, learningObjectAuthor: string, ratingId: string);
+    deleteFlag(learningObjectName, learningObjectAuthor, ratingId, flagId);
 }

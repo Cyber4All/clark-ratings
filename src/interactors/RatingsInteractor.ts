@@ -2,7 +2,6 @@ import { DataStore } from "../interfaces/interfaces";
 import { Rating, Flag } from "../types/Rating";
 import { User } from "../../node_modules/@cyber4all/clark-entity";
 
-
 export class RatingsInteractor {
 
     /**

@@ -86,7 +86,7 @@ export class ExpressAuthRouteDriver {
         }
       });
 
-    router.route('learning-objects/:learningObjectAuthor/:LearningObjectName/ratings/:ratingId/flag')
+    router.route('learning-objects/:learningObjectAuthor/:LearningObjectName/ratings/:ratingId/flags')
       .post(async (req, res) => {
         // flag a rating
         const responder            = this.getResponder(res);

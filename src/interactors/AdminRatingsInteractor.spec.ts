@@ -163,6 +163,3 @@ afterAll(() => {
   driver.disconnect();
   console.log('Disconnected from database');
 });
-
-
-

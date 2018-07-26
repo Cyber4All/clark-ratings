@@ -2,9 +2,11 @@ import { Router } from 'express';
 import * as express from 'express';
 import { 
     ExpressRouteDriver,
-    ExpressAuthRouteDriver
+    ExpressAuthRouteDriver,
+    ExpressAdminRouteDriver
 } from './drivers/drivers';
 import { enforceTokenAccess } from './middleware/jwt.config';
+import { enforceAdminAccess } from './middleware/admin-access';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { MongoDriver } from './drivers/MongoDriver';
@@ -58,7 +60,7 @@ app.use(cors({ origin: true, credentials: true }));
 // Set our public api routes
 app.use('/', routeDriver);
 
-// Set Validation Middleware
+// Set Validation Middleware - auth
 app.use(enforceTokenAccess);
 app.use((error: any, req: any, res: any, next: any) => {
   if (error.name === 'UnauthorizedError') {
@@ -69,6 +71,14 @@ app.use((error: any, req: any, res: any, next: any) => {
 // Set our authenticated api routes
 app.use('/', 
     ExpressAuthRouteDriver.buildRouter(dataStore)
+);
+
+// Set Admin Middleware
+app.use(enforceAdminAccess);
+
+// Set our admin api routes
+app.use('/', 
+    ExpressAdminRouteDriver.buildRouter(dataStore)
 );
 
 app.set('trust proxy', true);
