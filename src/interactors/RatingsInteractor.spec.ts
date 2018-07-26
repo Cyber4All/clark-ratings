@@ -1,10 +1,12 @@
 import { RatingsInteractor } from './RatingsInteractor';
+import { AdminRatingsInteractor } from './AdminRatingsInteractor';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { expect } from 'chai';
 import { Rating, Flag } from '../types/Rating';
 
 const driver = new MongoDriver(process.env.CLARK_DB_URI_TEST);
 const interactor = new RatingsInteractor();
+const adminInteractor = new AdminRatingsInteractor();
 let ratingId: string; 
 
 beforeAll(done => {
@@ -121,6 +123,48 @@ describe('flagRating', () => {
     const username = 'skaza';
     return interactor.flagRating(driver, ratingId, username, flag).then(val => {
       expect(val).to.be.an('undefined');
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect.fail();
+      done();
+    });
+  });
+});
+
+describe('getAllFlags', () => {
+  it('Should return all flags - this is an admin operation', done => {
+    return adminInteractor.getAllFlags(driver).then(val => {
+      expect(val).to.be.an('array');
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect.fail();
+      done();
+    });
+  });
+});
+
+describe('getUserFlags', () => {
+  it('Should return all flags for a specified user - this is an admin operation', done => {
+    const username = 'nvisal1';
+    return adminInteractor.getUserFlags(driver, username).then(val => {
+      expect(val).to.be.an('array');
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect.fail();
+      done();
+    });
+  });
+});
+
+describe('getRatingFlags', () => {
+  const learningObjectName   = "Cybersecurity for Future Presidents";
+  const learningObjectAuthor = "skaza";
+  it('Should return all flags for a specified rating - this is an admin operation', done => {
+    return adminInteractor.getRatingFlags(driver, learningObjectName, learningObjectAuthor, ratingId).then(val => {
+      expect(val).to.be.an('array');
       done();
     }).catch((error) => {
       console.log(error);
