@@ -164,7 +164,6 @@ export class MongoDriver implements DataStore {
         try {
             // Get learning object id from name 
             const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
-            
             // Find all ratings that contain the learningObjectId and populate the user 
             // field for each document
             const rating = await this.db.collection(Collections.ratings).aggregate([
@@ -242,24 +241,23 @@ export class MongoDriver implements DataStore {
     }
 
     private async getLearningObjectId(learningObjectName: string, learningObjectAuthor: string) {
-            // try {
-            //   this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(
-            //     learningObjectAuthor,
-            //     learningObjectName
-            //   );
-            //   this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
-            //   console.log(request(this.options));
-            //   return request(this.options);
-            // } catch (e) {
-            //   return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
-            // }
             try {
-                const learningObject = await this.db.collection(Collections.objects).findOne({'name': learningObjectName});
-                const learningObjectId = learningObject._id;
-                return learningObjectId;
-            } catch (error) {
-                return Promise.reject(error);
+              this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(
+                learningObjectAuthor,
+                learningObjectName
+              );
+              this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
+              return request(this.options);
+            } catch (e) {
+              return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
             }
+            // try {
+            //     const learningObject = await this.db.collection(Collections.objects).findOne({'name': learningObjectName});
+            //     const learningObjectId = learningObject._id;
+            //     return learningObjectId;
+            // } catch (error) {
+            //     return Promise.reject(error);
+            // }
     }
 
     /**
