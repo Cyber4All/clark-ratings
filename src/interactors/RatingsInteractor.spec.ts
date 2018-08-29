@@ -203,6 +203,21 @@ describe('deleteRating', () => {
   });
 });
 
+describe('getRatingFlags - after', () => {
+  const learningObjectName   = "test";
+  const learningObjectAuthor = "nvisal1";
+  it('Check flags after rating was deleted. Associated flags should be deleted at this point.', done => {
+    return adminInteractor.getRatingFlags(driver, learningObjectName, learningObjectAuthor, ratingId).then(val => {
+      expect(val).to.be.empty;
+      done();
+    }).catch((error) => {
+      console.log(error);
+      expect.fail();
+      done();
+    });
+  });
+});
+
 afterAll(() => {
   driver.disconnect();
   console.log('Disconnected from database');
