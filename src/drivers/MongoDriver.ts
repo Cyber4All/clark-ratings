@@ -109,6 +109,9 @@ export class MongoDriver implements DataStore {
                 { $set: ratings }
             );
 
+            // Destory all associated flags for this particular rating
+           await this.db.collection(Collections.flags).remove({ ratingId: ratingId });
+
             return Promise.resolve();
         } catch (error) {
             return Promise.reject(error);
