@@ -1,0 +1,339 @@
+openapi: 3.0.0
+info:
+  title: Clark-Ratings API documentation
+  description: Documentation that describes how the routes work
+  version: 0.1.9
+tags:
+  - name: Express Admin Route Driver
+    description: >-
+      Get requests for admin accounts and deletes any flagged ratings with admin
+      permission
+  - name: Express Auth Route Driver
+    description: 'Create, Delete, Update for clark ratings'
+  - name: Express Route Driver
+    description: Creates Localhost for clark-ratings
+paths:
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingid}':
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: Before deleting rating it requests for learning object author and name
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Parameter grabs learning object author
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Parameter grabs learning object Name
+          schema:
+            type: string
+        - name: ratingid
+          in: path
+          required: true
+          description: checks for ratings id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  /flags:
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: Get All flags
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/users/{username}/flags':
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: Get All flags for a specific user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: grabs flags for specific username
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/flags':
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: Get all flags for a specfic learning object
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Parameter grabs specific learning object author
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Parameter grabs specific learning object name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}/flags':
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: Get all flags for a specific rating
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Parameter grabs specific learning object author
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Parameter grabs specific learning object name
+          schema:
+            type: string
+        - name: ratingId
+          in: path
+          required: true
+          description: checks for ratings id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}/flags/{flagId}':
+    get:
+      tags:
+        - Express Admin Route Driver
+      summary: >-
+        To delete a flag the route obtains ratingid, learning object name and
+        author, flagid
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: grabs the author of the learning object
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: grabs the name of the learning object
+          schema:
+            type: string
+        - name: ratingId
+          in: path
+          required: true
+          description: grabs the rating id
+          schema:
+            type: string
+        - name: flagId
+          in: path
+          required: true
+          description: grabs the flag id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}':
+    delete:
+      tags:
+        - Express Auth Route Driver
+      summary: 'User can delete, update and create clark ratings with specified routes'
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Gets the author of the learning object to be deleted
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: gets the name of specific learning object being deleted
+          schema:
+            type: string
+        - name: ratingId
+          in: path
+          required: true
+          description: gets the id of the rating to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+    patch:
+      tags:
+        - Express Auth Route Driver
+      summary: Updates specified rating
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Author of the updated learning object
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Name of the learning object being updated
+          schema:
+            type: string
+        - name: ratingId
+          in: path
+          required: true
+          description: Id of the rating that is being udpated
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings':
+    post:
+      tags:
+        - Express Auth Route Driver
+      summary: creates a new rating for the associated learing object
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: >-
+            grabs the author of the associated learning object for the created
+            rating
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: >-
+            Grabs the Name of the associated learning object for the created
+            rating
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  '/ratings/{ratingId}/flags':
+    post:
+      tags:
+        - Express Auth Route Driver
+      summary: Gives the user the ability to flag a rating
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: Grabs the author of the learning object where the rating is flagged
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Grabs the name of the flagged learning object rating
+          schema:
+            type: string
+        - name: ratingId
+          in: path
+          required: true
+          description: Grabs the id of the rating being flagged
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Server error encountered
+        '401':
+          description: invalid access!
+  /default Route:
+    get:
+      responses:
+        '200':
+          description: Welcome to the CLARK Rating Service
+  '/ratings/{ratingId}':
+    get:
+      tags:
+        - Express Route Driver
+      summary: return specificed rating
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          description: Obtains the rating id of the specified rating
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rating has been found
+        '400':
+          description: Server error encountered
+  '/learning-objects/:learningObjectAuthor/:learningObjectName/ratings':
+    get:
+      tags:
+        - Express Route Driver
+      parameters:
+        - name: learningObjectAuthor
+          in: path
+          required: true
+          description: >-
+            Obtains the author of the specified learning object with all of the
+            ratings
+          schema:
+            type: string
+        - name: learningObjectName
+          in: path
+          required: true
+          description: Obtains the name of the learning object and associated ratings
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rating has been found
+        '400':
+          description: Server error encountered
