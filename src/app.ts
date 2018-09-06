@@ -7,7 +7,7 @@ import {
 } from './drivers/drivers';
 import { enforceTokenAccess } from './middleware/jwt.config';
 import { enforceAdminAccess } from './middleware/admin-access';
-import { enforceEmailVerification } from './middleware/email-verification';
+import { enforceEmailVerification } from './middleware/auth-access';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import { MongoDriver } from './drivers/MongoDriver';

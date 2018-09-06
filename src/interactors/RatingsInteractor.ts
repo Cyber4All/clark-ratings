@@ -1,6 +1,5 @@
 import { DataStore } from "../interfaces/interfaces";
 import { Rating, Flag } from "../types/Rating";
-import { User } from "../../node_modules/@cyber4all/clark-entity";
 
 export class RatingsInteractor {
 
@@ -108,7 +107,12 @@ export class RatingsInteractor {
         name:                 string
     ): Promise<void> {
         try {
-            await dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
+            const islearningObjectAuthor = await this.checkLearningObjectAuthor(username, learningObjectAuthor);
+            if (!islearningObjectAuthor) {
+                await dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
+            } else {
+                return Promise.reject('The Learning Object Author cannot submit a review.');
+            }
         } catch (error) {
             return Promise.reject(error);
         }
@@ -182,11 +186,11 @@ export class RatingsInteractor {
     }
 
     private checkLearningObjectAuthor(
-        currentUser:          User,
+        username:          string,
         learningObjectAuthor: string
     ) {
         let isAuthor = false;
-        if (currentUser.username === learningObjectAuthor) {
+        if (username === learningObjectAuthor) {
             isAuthor = true;
         }
         return isAuthor;
