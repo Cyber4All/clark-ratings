@@ -39,8 +39,8 @@ export class ExpressAdminRouteDriver {
 
     // Delete rating - admin permission
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId')
-      .get(async (req, res) => {
-        const responder = this.getResponder(res);
+      .delete(async (req, res) => {
+        const responder            = this.getResponder(res);
         const learningObjectAuthor = req.params.learningObjectAuthor;
         const learningObjectName   = req.params.learningObjectName;
         const ratingId             = req.params.ratingId;
@@ -110,7 +110,7 @@ export class ExpressAdminRouteDriver {
 
     // Delete a flag
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags/:flagId')
-      .get(async (req, res) => {
+      .delete(async (req, res) => {
         // delete specified rating
         const responder            = this.getResponder(res);
         const ratingId             = req.params.ratingId;
