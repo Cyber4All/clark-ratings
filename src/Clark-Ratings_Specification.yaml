@@ -3,9 +3,7 @@ info:
   title: Clark-Ratings Microservices 
   description: Describes how the clark-ratings microservices are routed based around the HTTP request methods and status codes. Within this file you'll see how flagged ratings are handled for specific learning-objects and from users. You'll also be able to see the routes for when a user uses CRUD(Create, Read, Update, Delete) operations for ratings.
   version: 1.0.0
-tags: 
-  - name: learning-objects 
-    description: Ratings that are created or published on a learning-object 
+tags:
   - name: flags
     description: Ratings that have been reported for review by administrator
   - name: users
@@ -14,10 +12,10 @@ tags:
     description: returning a specific rating 
 paths:
 #Admin route when the user is logged in with admin privaleges
-  /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}:
+  /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}/admin:
     delete:
       tags:
-       - "learning-objects"
+       - "ratings"
       summary: Before deleting rating it requests for learning object author and name 
       parameters:
         - name: learningObjectAuthor
@@ -62,6 +60,7 @@ paths:
     get: 
       tags:
        - "users"
+       - "flags"
       summary: Get All flags for a specific user
       parameters: 
         - name: username
@@ -81,7 +80,8 @@ paths:
   /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/flags:
    get:
      tags: 
-     - "learning-objects"
+     - "flags"
+     - "ratings"
      summary: Get all flags for a specfic learning object 
      parameters: 
        - name: learningObjectAuthor 
@@ -106,7 +106,8 @@ paths:
   /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}/flags:
    get:
      tags: 
-     - "learning-objects"
+     - "ratings"
+     - "flags"
      summary: Get all flags for a specific rating 
      parameters: 
        - name: learningObjectAuthor 
@@ -137,7 +138,8 @@ paths:
   /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}/flags/{flagId}:
     delete:
       tags: 
-      - "learning-objects"
+      - "ratings"
+      - "flags"
       summary: To delete a flag the route obtains ratingid, learning object name and author, flagid 
       parameters: 
         - name: learningObjectAuthor
@@ -175,7 +177,7 @@ paths:
   /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings/{ratingId}:
     delete:
       tags: 
-      - "learning-objects"
+      - "ratings"
       summary: User can delete, update and create clark ratings with specified routes 
       parameters: 
         - name: learningObjectAuthor 
@@ -205,7 +207,7 @@ paths:
           description: "invalid access!"
     patch:
       tags: 
-      - "learning-objects"
+      - "ratings"
       summary: Updates specified rating 
       parameters: 
         - name: learningObjectAuthor
@@ -236,7 +238,7 @@ paths:
   /learning-objects/{learningObjectAuthor}/{learningObjectName}/ratings:
    post:
      tags: 
-     - "learning-objects"
+     - "ratings"
      summary: creates a new rating for the associated learing object 
      parameters: 
       - name: learningObjectAuthor
@@ -260,7 +262,7 @@ paths:
           description: "invalid access!"
    get:
       tags: 
-      - "learning-objects"
+      - "ratings"
       summary: Returns all of the ratings from the associated learning object 
       parameters: 
         - name: learningObjectAuthor
@@ -284,6 +286,7 @@ paths:
     post:
       tags: 
       - "ratings"
+      - "flags"
       summary: Gives the user the ability to flag a rating 
       parameters: 
        - name: learningObjectAuthor
