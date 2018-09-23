@@ -26,6 +26,7 @@
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "jest": "^23.4.1",
+    "lokijs": "^1.5.5",
     "mongodb": "^2.2.31",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/dotenv": "^4.0.3",
+    "@types/lokijs": "^1.5.2",
     "@types/request-promise": "^4.1.42",
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.2.1",
