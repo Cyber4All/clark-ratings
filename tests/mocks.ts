@@ -14,7 +14,21 @@ export const MOCK_OBJECTS = {
   NAME: 'nick testing',
   RATING: {
     number:  4,
-    comment: 'unit test'
+    comment: 'unit test',
+    user: {
+      name: 'nick testing',
+      username: 'cypress',
+      email: 'test@test.com'
+    }
+  },
+  AUTH_CHECK_RATING: {
+    number:  4,
+    comment: 'unit test',
+    user: {
+      name: 'nick testing',
+      username: 'notusername',
+      email: 'test@test.com'
+    }
   },
   EDIT_RATING: {
     number:  3,

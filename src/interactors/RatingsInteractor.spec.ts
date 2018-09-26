@@ -1,11 +1,10 @@
 import { RatingsInteractor } from './RatingsInteractor';
 import { AdminRatingsInteractor } from './AdminRatingsInteractor';
 import { expect } from 'chai';
-import { Rating, Flag } from '../types/Rating';
-import { LokiDriver } from '../drivers/LokiDriver';
+import { MockDriver } from '../drivers/MockDriver';
 import { MOCK_OBJECTS } from '../../tests/mocks';
 
-const driver = new LokiDriver();
+const driver = new MockDriver();
 const interactor = new RatingsInteractor();
 const adminInteractor = new AdminRatingsInteractor();
 let ratingId: string; 
@@ -39,8 +38,7 @@ describe('getLearningObjectRatings', () => {
       MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
       MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR
     ).then(val => {
-      ratingId = val['ratings'][0]['_id'];
-      expect(val).to.be.an('object');
+      expect(val).to.be.an('array');
       done();
     }).catch((error) => {
       console.log(error);
@@ -58,7 +56,7 @@ describe('updateRating', () => {
       MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
       MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
       MOCK_OBJECTS.EDIT_RATING, 
-      MOCK_OBJECTS.USERNAME
+      MOCK_OBJECTS.USERNAME_OTHER
     ).then(val => {
       console.log(val);
       expect.fail();
@@ -199,28 +197,6 @@ describe('deleteRating', () => {
   });
 });
 
-describe('getRatingFlags - after', () => {
-  it('Check flags after rating was deleted. Associated flags should be deleted at this point.', done => {
-    return adminInteractor.getRatingFlags(
-      driver, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      ratingId
-    ).then(val => {
-      expect(val).to.be.empty;
-      done();
-    }).catch((error) => {
-      console.log(error);
-      expect.fail();
-      done();
-    });
-  });
-});
-
-afterAll(() => {
-  // driver.disconnect();
-  console.log('Disconnected from database');
-});
 
 
 

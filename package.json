@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "npm run gulp-tsc",
-    "test": "node_modules/.bin/jest --verbose  --coverage --detectOpenHandles",
+    "test": "node_modules/.bin/jest --verbose  --coverage ",
     "build": "node_modules/.bin/gulp tsc",
     "gulp-tsc": "node_modules/.bin/gulp start",
     "lint": "node_modules/.bin/tslint --project ./src/**"
@@ -26,7 +26,6 @@
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "jest": "^23.4.1",
-    "lokijs": "^1.5.5",
     "mongodb": "^2.2.31",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
