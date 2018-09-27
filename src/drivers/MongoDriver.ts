@@ -163,7 +163,7 @@ export class MongoDriver implements DataStore {
     async getLearningObjectsRatings(
         learningObjectName:   string,
         learningObjectAuthor: string
-    ): Promise<Rating[]> {
+    ): Promise<LearningObjectContainer> {
         try {
             // Get learning object id from name 
             const learningObjectId = await this.getLearningObjectId(learningObjectName, learningObjectAuthor);
@@ -173,7 +173,15 @@ export class MongoDriver implements DataStore {
                 { $match: { learningObjectId: learningObjectId } }
             ]).toArray();
 
-            return rating[0];
+            if (!rating.length) {
+                return {
+                    learningObjectId: learningObjectId,
+                    avgRating: 0,
+                    ratings: []
+                };
+            }
+            else
+                return rating[0];
         } catch (error) {
             return Promise.reject(error);
         }
