@@ -1,4 +1,4 @@
-import { Rating, Flag } from '../types/Rating';
+import { LearningObjectContainer, Rating, Flag } from '../types/Rating';
 import { User } from '../../node_modules/@cyber4all/clark-entity';
 
 export interface DataStore {
@@ -7,7 +7,7 @@ export interface DataStore {
 
     getRating(ratingId: string): Promise<Rating>;
     getUsersRatings(userId: string): Promise<Rating[]>;
-    getLearningObjectsRatings(learningObjectName: string, learningObjectAuthor: string): Promise<Rating[]>;
+    getLearningObjectsRatings(learningObjectName: string, learningObjectAuthor: string): Promise<LearningObjectContainer>;
     createNewRating(rating: Rating, learningObjectName: string, learningObjectAuthor: string, username: string, email: string, name: string): Promise<void>;
     flagRating(ratingId: string, flag: Flag);
     getAllFlags();
