@@ -1,5 +1,5 @@
 import { DataStore } from "../interfaces/interfaces";
-import { Rating, Flag } from "../types/Rating";
+import { LearningObjectContainer, Rating, Flag } from "../types/Rating";
 import { User } from "../../node_modules/@cyber4all/clark-entity";
 
 export class RatingsInteractor {
@@ -82,7 +82,7 @@ export class RatingsInteractor {
         dataStore:            DataStore, 
         learningObjectName:   string,
         learningObjectAuthor: string
-    ): Promise <Rating[]> {
+    ): Promise <LearningObjectContainer> {
         try {
             const ratings = await dataStore.getLearningObjectsRatings(learningObjectName, learningObjectAuthor);
             return ratings;
