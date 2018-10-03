@@ -46,9 +46,9 @@ let dataStore = new MongoDriver(dburi);
 let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
 
 // Setup route logger
-this.app.use(logger('dev'));
+app.use(logger('dev'));
 
-    this.app.use(
+    app.use(
       cors({
         origin: true,
         credentials: true,
