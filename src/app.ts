@@ -5,6 +5,7 @@ import {
     ExpressAuthRouteDriver,
     ExpressAdminRouteDriver
 } from './drivers/drivers';
+import * logger from 'morgan';
 import { enforceTokenAccess } from './middleware/jwt.config';
 import { enforceAdminAccess } from './middleware/admin-access';
 import { enforceEmailVerification } from './middleware/email-verification';
@@ -43,6 +44,16 @@ switch (process.env.NODE_ENV) {
 
 let dataStore = new MongoDriver(dburi);
 let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
+
+// Setup route logger
+this.app.use(logger('dev'));
+
+    this.app.use(
+      cors({
+        origin: true,
+        credentials: true,
+      }),
+    );
 
 // configure app to use bodyParser()
 app.use(bodyParser.urlencoded({ extended: true }));

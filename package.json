@@ -27,6 +27,7 @@
     "express-jwt": "^5.3.1",
     "jest": "^23.4.1",
     "mongodb": "^2.2.31",
+    "morgan": "^1.9.1",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
   },
