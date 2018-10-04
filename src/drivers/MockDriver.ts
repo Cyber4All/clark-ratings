@@ -1,5 +1,5 @@
 import { DataStore } from '../interfaces/DataStore';
-import { Rating, Flag } from '../types/Rating';
+import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
 import { MOCK_OBJECTS } from '../../tests/mocks';
 
 export class MockDriver implements DataStore {
@@ -36,8 +36,8 @@ export class MockDriver implements DataStore {
     getLearningObjectsRatings(
         learningObjectName: string, 
         learningObjectAuthor: string
-    ): Promise<Rating[]> {
-       return Promise.resolve([MOCK_OBJECTS.RATING]);
+    ): Promise<LearningObjectContainer> {
+       return Promise.resolve(MOCK_OBJECTS.CONTAINER);
     }
     
     createNewRating(
