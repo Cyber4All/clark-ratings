@@ -43,5 +43,10 @@ export const MOCK_OBJECTS = {
     comment: 'unit test flag',
     username: 'nvisal1',
     concern: 'unit test concern label'
+  },
+  CONTAINER: {
+    learningObjectId: '5a73843552d76b71726242a7',
+    avgRating: 3.2,
+    ratings: []
   }
 };

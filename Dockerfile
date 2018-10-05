@@ -1,7 +1,7 @@
 # Anything beyond local dev should pin this to a specific version at https://hub.docker.com/_/node/
 FROM node:8 as builder
 
-ARG UNIT_TEST=0
+ARG UNIT_TEST=1
 
 ARG CLARK_DB_URI_TEST
 ARG OTA_CODE_SECRET=TEST_SECRET
@@ -37,9 +37,12 @@ COPY . /opt/app
 RUN npm run build
 
 FROM node:8 as tester
-# Swtich working dir to opt to use node_modules for testing
-WORKDIR /opt
-RUN if [ "$UNIT_TEST" = "1" ] ; then npm test ; else echo Not running unit tests ; fi
+COPY --from=builder . .
+ENV PATH /opt/node_modules/.bin:$PATH
+
+# # Switch working dir to opt to use node_modules for testing
+WORKDIR /opt/app
+RUN npm test
 
 FROM node:8-alpine
 # Defaults the node environment to production, however compose will override this to use development
