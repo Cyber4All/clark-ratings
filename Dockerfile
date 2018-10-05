@@ -39,7 +39,7 @@ RUN npm run build
 FROM node:8 as tester
 # Swtich working dir to opt to use node_modules for testing
 WORKDIR /opt
-RUN if [ "$UNIT_TEST" = "1" ] ; then npm test ; else echo Not running unit tests ; fi
+RUN npm test
 
 FROM node:8-alpine
 # Defaults the node environment to production, however compose will override this to use development
