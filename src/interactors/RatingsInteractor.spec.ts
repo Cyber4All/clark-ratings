@@ -38,7 +38,7 @@ describe('getLearningObjectRatings', () => {
       MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
       MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR
     ).then(val => {
-      expect(val).to.be.an('array');
+      expect(val).to.be.an('object');
       done();
     }).catch((error) => {
       console.log(error);
