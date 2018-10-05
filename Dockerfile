@@ -1,7 +1,7 @@
 # Anything beyond local dev should pin this to a specific version at https://hub.docker.com/_/node/
 FROM node:8 as builder
 
-ARG UNIT_TEST=0
+ARG UNIT_TEST=1
 
 ARG CLARK_DB_URI_TEST
 ARG OTA_CODE_SECRET=TEST_SECRET
