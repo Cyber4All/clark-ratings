@@ -38,7 +38,7 @@ RUN npm run build
 
 FROM node:8 as tester
 # Swtich working dir to opt to use node_modules for testing
-WORKDIR /opt
+WORKDIR /
 RUN npm test
 
 FROM node:8-alpine
