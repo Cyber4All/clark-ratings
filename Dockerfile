@@ -37,8 +37,11 @@ COPY . /opt/app
 RUN npm run build
 
 FROM node:8 as tester
-# Swtich working dir to opt to use node_modules for testing
-WORKDIR /
+COPY --from=builder . .
+ENV PATH /opt/node_modules/.bin:$PATH
+
+# # Switch working dir to opt to use node_modules for testing
+WORKDIR /opt/app
 RUN npm test
 
 FROM node:8-alpine
