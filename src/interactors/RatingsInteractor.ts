@@ -17,7 +17,7 @@ export class RatingsInteractor {
             let rating = await dataStore.getRating(ratingId);
             return rating;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting rating. Error: ${error}`);
         }
     }
 
@@ -44,7 +44,7 @@ export class RatingsInteractor {
                 return Promise.reject('Error! Current user is not the author of this review!');
             }
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem updating rating. Error: ${error}`);
         }
     }
 
@@ -69,7 +69,7 @@ export class RatingsInteractor {
                 return Promise.reject('Error! Current user is not the author of this review!');
             }
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem deleting rating. Error: ${error}`);
         }
     }
 
@@ -87,7 +87,7 @@ export class RatingsInteractor {
             const ratings = await dataStore.getLearningObjectsRatings(learningObjectName, learningObjectAuthor);
             return ratings;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting learning object ratings. Error: ${error}`);
         }
     }
 
@@ -110,7 +110,7 @@ export class RatingsInteractor {
         try {
             await dataStore.createNewRating(rating, learningObjectName, learningObjectAuthor, username, email, name);
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem creating new rating. Error: ${error}`);
         }
     }
 
@@ -127,7 +127,7 @@ export class RatingsInteractor {
             const ratings =  await dataStore.getUsersRatings(username);
             return ratings;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting user ratings. Error ${error}`);
         }
     }
 
@@ -146,7 +146,7 @@ export class RatingsInteractor {
                 return Promise.reject('Error the author of the rating cannot perform this action!');
             }
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem flaging rating. Error: ${error}`);
         }
     }
 
@@ -177,7 +177,7 @@ export class RatingsInteractor {
 
             return isAuthor;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Probelm checking rating author.  Error: ${error}`);
         }
     }
 
