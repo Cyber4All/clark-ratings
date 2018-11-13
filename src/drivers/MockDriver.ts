@@ -1,6 +1,6 @@
 import { DataStore } from '../interfaces/DataStore';
 import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
-import { MOCK_OBJECTS } from '../../tests/mocks';
+import { MOCK_OBJECTS } from '../tests/mocks';
 
 export class MockDriver implements DataStore {
 

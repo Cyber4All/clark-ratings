@@ -2,7 +2,7 @@ import { RatingsInteractor } from './RatingsInteractor';
 import { AdminRatingsInteractor } from './AdminRatingsInteractor';
 import { expect } from 'chai';
 import { MockDriver } from '../drivers/MockDriver';
-import { MOCK_OBJECTS } from '../../tests/mocks';
+import { MOCK_OBJECTS } from '../tests/mocks';
 
 const driver = new MockDriver();
 const interactor = new RatingsInteractor();
