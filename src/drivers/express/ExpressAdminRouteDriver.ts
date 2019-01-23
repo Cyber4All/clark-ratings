@@ -39,7 +39,7 @@ export class ExpressAdminRouteDriver {
 
     // Delete rating - admin permission
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId')
-      .delete(async (req, res) => {
+      .get(async (req, res) => {
         const responder = this.getResponder(res);
         const learningObjectAuthor = req.params.learningObjectAuthor;
         const learningObjectName   = req.params.learningObjectName;
@@ -83,7 +83,7 @@ export class ExpressAdminRouteDriver {
         // delete specified rating
         const responder            = this.getResponder(res);
         const learningObjectName   = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor
+        const learningObjectAuthor = req.params.learningObjectAuthor 
         try {
             await interactor.getLearningObjectFlags(this.dataStore, learningObjectName, learningObjectAuthor);
             responder.sendOperationSuccess();
@@ -110,7 +110,7 @@ export class ExpressAdminRouteDriver {
 
     // Delete a flag
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags/:flagId')
-      .delete(async (req, res) => {
+      .get(async (req, res) => {
         // delete specified rating
         const responder            = this.getResponder(res);
         const ratingId             = req.params.ratingId;
