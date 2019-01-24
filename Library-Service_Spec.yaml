@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: Library-Service
+  description: >-
+    This service is responsible for storing learning objects inside 
+    their own library. The user dynamically adds other users learning objects. 
+  version: 1.0.6
+tags:
+  - name: cart
+    description: >-
+      When the user adds a learning object to there cart before saving it to
+      their own library on their profile
+paths:
+  '/users/cart/learning-objects/{id}':
+    get:
+      tags:
+        - cart
+      summary: Gets a list of users with learning object in that library
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: >-
+            Grabs the id of the user with the learning objects in their library
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered.
+  '/users/{username}/cart':
+    get:
+      tags:
+        - cart
+      summary: Gets the associated users library based on the username passed in
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Gets the library of the user by username
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encoutered
+    delete:
+      tags:
+        - cart
+      summary: >-
+        Clears the users library after fetching the username
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: clears a users library with the associated username
+      responses:
+        '200':
+          description: Successful!
+        '400':
+          description: Server error encountered
+  '/users/{username}/cart/learning-objects/{author}/{learningObjectName}':
+    post:
+      tags:
+        - cart
+      summary: Updates the library with the added learning object
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: >-
+            Generates the username of the library the learning object is being
+            saved to. 
+        - in: path
+          name: author
+          schema:
+            type: string
+          required: true
+          description: Gets the author of the associated learning object
+        - in: path
+          name: learningObjectName
+          schema:
+            type: string
+          required: true
+          description: Gets the name of the associated learning object
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered
+    delete:
+      tags:
+        - cart
+      summary: Removes from the cart route
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Gets the username of the learning object
+        - in: path
+          name: author
+          schema:
+            type: string
+          required: true
+          description: Gets the author of the associated learning objects
+        - in: path
+          name: learningObjectName
+          schema:
+            type: string
+          required: true
+          description: Gets the name of the associated learning object
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered
+  '/users/{username}/library/learning-objects/{author}/{learningObjectName}':
+    get:
+      tags:
+        - cart
+      summary: Download single learning Object and add to library
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Gets the username of the library
+        - in: path
+          name: author
+          schema:
+            type: string
+          required: true
+          description: Gets the author of the learning object in the library
+        - in: path
+          name: learningObjectName
+          schema:
+            type: string
+          required: true
+          description: Gets the name of the learning object within the library
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered
+  '/libraries/learning-objects/{ids}/clean':
+    patch:
+      tags:
+        - cart
+      summary: Cleans the learning objects from the library
+      parameters:
+        - in: path
+          name: ids
+          schema:
+            type: string
+          required: true
+          description: >-
+            Gets a collection of ids of the corresponding learning objects
+            within the library being cleaned
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered
+  '/learning-objects/{objectID}/metrics':
+    get:
+      tags:
+        - cart
+      summary: Gets the metrics of the learning objects
+      parameters:
+        - in: path
+          name: objectID
+          schema:
+            type: string
+          required: true
+          description: Gets the learning object ID
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: Server error encountered
