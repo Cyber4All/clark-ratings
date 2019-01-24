@@ -1,39 +1,26 @@
 import { RatingsInteractor } from './RatingsInteractor';
 import { AdminRatingsInteractor } from './AdminRatingsInteractor';
-import { MongoDriver } from '../drivers/MongoDriver';
 import { expect } from 'chai';
-import { Rating, Flag } from '../types/Rating';
+import { MockDriver } from '../drivers/MockDriver';
+import { MOCK_OBJECTS } from '../tests/mocks';
 
-const driver = new MongoDriver(process.env.CLARK_DB_URI_TEST);
+const driver = new MockDriver();
 const interactor = new RatingsInteractor();
 const adminInteractor = new AdminRatingsInteractor();
 let ratingId: string; 
 
-beforeAll(done => {
-     // Before running any tests, connect to database
-     const dburi = process.env.CLARK_DB_URI_TEST;
-     driver.connect(dburi).then(val => {
-      console.log('connected to database');
-      done();
-    }).catch((error) => {
-      console.log('failed to connect to database');
-      done();
-    });
-});
-
 describe('createNewRating', () => {
   it('Should create a new rating object', done => {
     jest.setTimeout(30000);
-    const rating: Rating = {
-      number:  4,
-      comment: 'unit test'
-    };
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    const username             = 'nvisal1';
-    const email                = 'nvisal1@students.towson.edu';
-    const name                 = 'nick visalli';
-    return interactor.createNewRating(driver, rating, learningObjectName, learningObjectAuthor, username, email, name).then(val => {
+    return interactor.createNewRating(
+      driver, 
+      MOCK_OBJECTS.RATING,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      MOCK_OBJECTS.USERNAME, 
+      MOCK_OBJECTS.EMAIL, 
+      MOCK_OBJECTS.NAME
+    ).then(val => {
       expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
@@ -46,10 +33,11 @@ describe('createNewRating', () => {
 
 describe('getLearningObjectRatings', () => {
   it('Should get rating created in first test', done => {
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    return interactor.getLearningObjectRatings(driver, learningObjectName, learningObjectAuthor).then(val => {
-      ratingId = val['ratings'][0]['_id'];
+    return interactor.getLearningObjectRatings(
+      driver, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR
+    ).then(val => {
       expect(val).to.be.an('object');
       done();
     }).catch((error) => {
@@ -62,14 +50,14 @@ describe('getLearningObjectRatings', () => {
 
 describe('updateRating', () => {
   it('Should throw error - only author of rating can do this', done => {
-    const editRating: Rating = {
-      number:  3,
-      comment: 'unit test edit'
-    };
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    const username             = 'skaza';
-    return interactor.updateRating(driver, ratingId, learningObjectName, learningObjectAuthor, editRating, username).then(val => {
+    return interactor.updateRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      MOCK_OBJECTS.EDIT_RATING, 
+      MOCK_OBJECTS.USERNAME_OTHER
+    ).then(val => {
       console.log(val);
       expect.fail();
       done();
@@ -79,14 +67,14 @@ describe('updateRating', () => {
     });
   });
   it('Should update the rating object created in first test', done => {
-    const editRating: Rating = {
-      number:  3,
-      comment: 'unit test edit'
-    };
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    const username             = 'nvisal1';
-    return interactor.updateRating(driver, ratingId, learningObjectName, learningObjectAuthor, editRating, username).then(val => {
+    return interactor.updateRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      MOCK_OBJECTS.EDIT_RATING, 
+      MOCK_OBJECTS.USERNAME
+    ).then(val => {
       expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
@@ -99,13 +87,12 @@ describe('updateRating', () => {
 
 describe('flagRating', () => {
   it('Should return error - author of rating cannot perform this action!', done => {
-    const flag: Flag = {
-      comment: 'unit test flag',
-      username: 'nvisal1',
-      concern: 'unit test concern label'
-    }
-    const username = 'nvisal1';
-    return interactor.flagRating(driver, ratingId, username, flag).then(val => {
+    return interactor.flagRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.USERNAME, 
+      MOCK_OBJECTS.FLAG
+    ).then(val => {
       console.log(val);
       expect.fail();
       done();
@@ -115,13 +102,12 @@ describe('flagRating', () => {
     });
   });
   it('Should flag the rating created during test 1', done => {
-    const flag: Flag = {
-      comment: 'unit test flag',
-      username: 'skaza',
-      concern: 'unit test concern label'
-    }
-    const username = 'skaza';
-    return interactor.flagRating(driver, ratingId, username, flag).then(val => {
+    return interactor.flagRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.USERNAME_OTHER, 
+      MOCK_OBJECTS.FLAG
+    ).then(val => {
       expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
@@ -147,8 +133,7 @@ describe('getAllFlags', () => {
 
 describe('getUserFlags', () => {
   it('Should return all flags for a specified user - this is an admin operation', done => {
-    const username = 'nvisal1';
-    return adminInteractor.getUserFlags(driver, username).then(val => {
+    return adminInteractor.getUserFlags(driver, MOCK_OBJECTS.USERNAME).then(val => {
       expect(val).to.be.an('array');
       done();
     }).catch((error) => {
@@ -160,10 +145,13 @@ describe('getUserFlags', () => {
 });
 
 describe('getRatingFlags', () => {
-  const learningObjectName   = "Cybersecurity for Future Presidents";
-  const learningObjectAuthor = "skaza";
   it('Should return all flags for a specified rating - this is an admin operation', done => {
-    return adminInteractor.getRatingFlags(driver, learningObjectName, learningObjectAuthor, ratingId).then(val => {
+    return adminInteractor.getRatingFlags(
+      driver, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      ratingId
+    ).then(val => {
       expect(val).to.be.an('array');
       done();
     }).catch((error) => {
@@ -176,10 +164,13 @@ describe('getRatingFlags', () => {
 
 describe('deleteRating', () => {
   it('Should throw error - only the author of rating can do this', done => {
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    const username             = 'skaza';
-    return interactor.deleteRating(driver, ratingId, learningObjectName, learningObjectAuthor, username).then(val => {
+    return interactor.deleteRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      MOCK_OBJECTS.USERNAME_OTHER
+    ).then(val => {
       console.log(val);
       expect.fail();
       done();
@@ -189,10 +180,13 @@ describe('deleteRating', () => {
     });
   });
   it('Should delete the rating created during test 1', done => {
-    const learningObjectName   = "Cybersecurity for Future Presidents";
-    const learningObjectAuthor = "skaza";
-    const username             = 'nvisal1';
-    return interactor.deleteRating(driver, ratingId, learningObjectName, learningObjectAuthor, username).then(val => {
+    return interactor.deleteRating(
+      driver, 
+      ratingId, 
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
+      MOCK_OBJECTS.USERNAME
+    ).then(val => {
       expect(val).to.be.an('undefined');
       done();
     }).catch((error) => {
@@ -203,10 +197,6 @@ describe('deleteRating', () => {
   });
 });
 
-afterAll(() => {
-  driver.disconnect();
-  console.log('Disconnected from database');
-});
 
 
 

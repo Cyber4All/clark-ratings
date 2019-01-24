@@ -14,7 +14,7 @@ export class AdminRatingsInteractor {
             await dataStore.deleteRating(ratingId,learningObjectName, learningObjectAuthor);
             return Promise.resolve();
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem deleting rating (ADMIN). Error: ${error}`);
         }
     }
 
@@ -25,7 +25,7 @@ export class AdminRatingsInteractor {
             const flags = await dataStore.getAllFlags();
             return flags;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting all flags (ADMIN). Error: ${error}`);
         }
     }
 
@@ -37,7 +37,7 @@ export class AdminRatingsInteractor {
             const flags = await dataStore.getUserFlags(username);
             return flags;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting user flags (ADMIN). Error: ${error}`);
         }
     }
 
@@ -50,7 +50,7 @@ export class AdminRatingsInteractor {
             const flags = await dataStore.getLearningObjectFlags(learningObjectName, learningObjectAuthor);
             return flags;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting learning object flags (ADMIN). Error: ${error}`);
         }
     }
 
@@ -64,7 +64,7 @@ export class AdminRatingsInteractor {
             const flags = await dataStore.getRatingFlags(learningObjectName, learningObjectAuthor, ratingId);
             return flags;
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem getting rating flags (ADMIN). Error: ${error}`);
         }
     }
 
@@ -79,7 +79,7 @@ export class AdminRatingsInteractor {
             await dataStore.deleteFlag(learningObjectName, learningObjectAuthor, ratingId, flagId);
             return Promise.resolve();
         } catch (error) {
-            return Promise.reject(error);
+            return Promise.reject(`Problem deleting flag (ADMIN). Error: ${error}`);
         }
     }
 }
