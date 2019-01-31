@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: ~/clark-ratings
+  working_directory: ~/rating-service
   docker:
     - image: cyber4all/circleci-aws:docker-git
 version: 2
@@ -12,15 +12,15 @@ jobs:
       - run:
           name: Build Image & Unit Test
           command: | 
-            docker build -t clark-ratings:$CIRCLE_SHA1 . --build-arg CLARK_DB_URI_TEST=$CLARK_DB_URI_TEST
+            docker build -t rating-service:$CIRCLE_SHA1 .
       - run:
           name: Login to docker
           command: docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
       - run:
           name: Publish Image 
           command: |
-            docker tag clark-ratings:$CIRCLE_SHA1 "${DOCKER_USER_ORG}/clark-ratings:${CIRCLE_SHA1}"
-            docker push "${DOCKER_USER_ORG}/clark-ratings:${CIRCLE_SHA1}"
+            docker tag rating-service:$CIRCLE_SHA1 "${DOCKER_USER_ORG}/rating-service:${CIRCLE_SHA1}"
+            docker push "${DOCKER_USER_ORG}/rating-service:${CIRCLE_SHA1}"
       - persist_to_workspace: 
           root: ./
           paths: 
@@ -31,39 +31,39 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace: 
-          at: ~/clark-ratings
+          at: ~/rating-service
       - setup_remote_docker
       - run:
           name: Pull Image
-          command: docker pull "${DOCKER_USER_ORG}/clark-ratings:${CIRCLE_SHA1}"
+          command: docker pull "${DOCKER_USER_ORG}/rating-service:${CIRCLE_SHA1}"
       - run:
           name: Run Integration Test
           command: |
-            echo docker run -it clark-ratings:$CIRCLE_SHA1 npm test
+            echo docker run -it rating-service:$CIRCLE_SHA1 npm test
 
   deploy-production:
     <<: *defaults
     steps:
       - attach_workspace: 
-          at: ~/clark-ratings
+          at: ~/rating-service
       - setup_remote_docker
       - run:
           name: Login to docker
           command: docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
       - run:
           name: Pull Image
-          command: docker pull "${DOCKER_USER_ORG}/clark-ratings:${CIRCLE_SHA1}"
+          command: docker pull "${DOCKER_USER_ORG}/rating-service:${CIRCLE_SHA1}"
       - run:
           name: Publish Image 
           command: |
             export SEMVER=$(cat ./package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
-            docker tag "${DOCKER_USER_ORG}/clark-ratings:${CIRCLE_SHA1}" "${DOCKER_USER_ORG}/clark-ratings:${SEMVER}"
-            docker push "${DOCKER_USER_ORG}/clark-ratings:${SEMVER}"
+            docker tag "${DOCKER_USER_ORG}/rating-service:${CIRCLE_SHA1}" "${DOCKER_USER_ORG}/rating-service:${SEMVER}"
+            docker push "${DOCKER_USER_ORG}/rating-service:${SEMVER}"
       - run:
           name: Deploy to ECS
           command: |
             export SEMVER=$(cat ./package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
-            export DOCKER_IMAGE="${DOCKER_USER_ORG}/clark-ratings:${SEMVER}"
+            export DOCKER_IMAGE="${DOCKER_USER_ORG}/rating-service:${SEMVER}"
             chmod +x ./deploy.sh
             sh ./deploy.sh
             
