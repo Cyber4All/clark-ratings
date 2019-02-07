@@ -42,59 +42,60 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
-let dataStore = new MongoDriver(dburi);
-let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
+MongoDriver.build(dburi).then(dataStore => {
+  let routeDriver: Router = ExpressRouteDriver.buildRouter(dataStore);
 
-// Setup route logger
-app.use(logger('dev'));
-
-    app.use(
-      cors({
-        origin: true,
-        credentials: true,
-      }),
-    );
-
-// configure app to use bodyParser()
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-app.use(cookieParser());
-app.use(cors({ origin: true, credentials: true }));
-
-// Set our public api routes
-app.use('/', routeDriver);
-
-// Set Validation Middleware - auth
-app.use(enforceTokenAccess);
-app.use((error: any, req: any, res: any, next: any) => {
-  if (error.name === 'UnauthorizedError') {
-    res.status(401).send('Invalid Access Token');
-  }
+  // Setup route logger
+  app.use(logger('dev'));
+  
+      app.use(
+        cors({
+          origin: true,
+          credentials: true,
+        }),
+      );
+  
+  // configure app to use bodyParser()
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+  
+  app.use(cookieParser());
+  app.use(cors({ origin: true, credentials: true }));
+  
+  // Set our public api routes
+  app.use('/', routeDriver);
+  
+  // Set Validation Middleware - auth
+  app.use(enforceTokenAccess);
+  app.use((error: any, req: any, res: any, next: any) => {
+    if (error.name === 'UnauthorizedError') {
+      res.status(401).send('Invalid Access Token');
+    }
+  });
+  
+  // Set Validation Middleware - email verification
+  app.use(enforceEmailVerification);
+  
+  // Set our authenticated api routes
+  app.use('/', 
+      ExpressAuthRouteDriver.buildRouter(dataStore)
+  );
+  
+  // Set Admin Middleware
+  app.use(enforceAdminAccess);
+  
+  // Set our admin api routes
+  app.use('/', 
+      ExpressAdminRouteDriver.buildRouter(dataStore)
+  );
+  
+  app.set('trust proxy', true);
+  
+  const port = process.env.PORT || '3000';
+  let server = http.createServer(app);
+  
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  server.listen(port, () => console.log(`Clark Rating Service running on port ${port}!`));
 });
-
-// Set Validation Middleware - email verification
-app.use(enforceEmailVerification);
-
-// Set our authenticated api routes
-app.use('/', 
-    ExpressAuthRouteDriver.buildRouter(dataStore)
-);
-
-// Set Admin Middleware
-app.use(enforceAdminAccess);
-
-// Set our admin api routes
-app.use('/', 
-    ExpressAdminRouteDriver.buildRouter(dataStore)
-);
-
-app.set('trust proxy', true);
-
-const port = process.env.PORT || '3000';
-let server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port, () => console.log(`Clark Rating Service running on port ${port}!`));

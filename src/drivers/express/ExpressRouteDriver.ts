@@ -1,6 +1,6 @@
 import { ExpressResponder } from './ExpressResponder';
 import { DataStore, Responder } from '../../interfaces/interfaces';
-import { Router } from 'express'; 
+import { Router } from 'express';
 import { RatingsInteractor } from '../../interactors/RatingsInteractor';
 
 /**
@@ -15,7 +15,7 @@ export class ExpressRouteDriver {
    * @param dataStore the data store that the routes should utilize
    */
   public static buildRouter(dataStore: DataStore) {
-    let e = new ExpressRouteDriver(dataStore,);
+    let e = new ExpressRouteDriver(dataStore);
     let router: Router = Router();
     e.setRoutes(router);
     return router;
@@ -24,6 +24,7 @@ export class ExpressRouteDriver {
   private constructor(private dataStore: DataStore) {}
 
   private getResponder(res): Responder {
+    // @ts-ignore FIXME remove this
     return new ExpressResponder(res);
   }
 
@@ -39,34 +40,41 @@ export class ExpressRouteDriver {
 
     router.get('/', (req, res) => {
       // default route
-        res.send('Welcome to the CLARK Rating Service');
+      res.send('Welcome to the CLARK Rating Service');
     });
 
-    router.route('/ratings/:ratingId')
-    .get(async (req, res) => {
-       // return the specified rating 
-       const responder = this.getResponder(res);
-       try {
-          const rating = await interactor.getRating(this.dataStore, req.params.ratingId);
-          responder.sendRatings(rating);
-       } catch (error) {
-          responder.sendOperationError(error);
-       }
-    });
-  
-    router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
-    .get(async (req, res) => {
-      // return all ratings from the associated learning object
-      const responder            = this.getResponder(res);
-      const learningObjectName   = req.params.learningObjectName;
-      const learningObjectAuthor = req.params.learningObjectAuthor;
+    router.route('/ratings/:ratingId').get(async (req, res) => {
+      // return the specified rating
+      const responder = this.getResponder(res);
       try {
-        const ratings = await interactor.getLearningObjectRatings(this.dataStore, learningObjectName, learningObjectAuthor);
-        responder.sendRatings(ratings);
+        const rating = await interactor.getRating(
+          this.dataStore,
+          req.params.ratingId
+        );
+        responder.sendRatings(rating);
       } catch (error) {
         responder.sendOperationError(error);
       }
     });
+
+    router
+      .route(
+        '/learning-objects/:learningObjectId/ratings'
+      )
+      .get(async (req, res) => {
+        // return all ratings from the associated learning object
+        const responder = this.getResponder(res);
+
+        try {
+          const ratings = await interactor.getLearningObjectRatings(
+            this.dataStore,
+            req.params.learningObjectId
+          );
+          responder.sendRatings(ratings);
+        } catch (error) {
+          responder.sendOperationError(error);
+        }
+      });
 
     // TODO - no use case for this route yet
     // router.route('/users/:username/ratings')
