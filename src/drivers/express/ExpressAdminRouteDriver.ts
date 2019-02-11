@@ -1,5 +1,5 @@
-import { DataStore, Responder } from '../../interfaces/interfaces';
-import { Router } from 'express'; 
+import { DataStore } from '../../interfaces/interfaces';
+import { Router } from 'express';
 import { AdminRatingsInteractor } from '../../interactors/AdminRatingsInteractor';
 
 /**
@@ -68,13 +68,13 @@ export class ExpressAdminRouteDriver {
             res.send(500).json({message: error.message});
         }
       });
-    
+
     // Get all flags for a specific learning object
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/flags')
       .get(async (req, res) => {
         // delete specified rating
         const learningObjectName   = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor 
+        const learningObjectAuthor = req.params.learningObjectAuthor;
         try {
             await interactor.getLearningObjectFlags(this.dataStore, learningObjectName, learningObjectAuthor);
             res.sendStatus(200);
@@ -82,14 +82,14 @@ export class ExpressAdminRouteDriver {
             res.send(500).json({message: error.message});
         }
       });
-    
+
     // Get all flags for a specific rating
     router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags')
       .get(async (req, res) => {
         // delete specified rating
         const ratingId             = req.params.ratingId;
         const learningObjectName   = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor 
+        const learningObjectAuthor = req.params.learningObjectAuthor;
         try {
             await interactor.getRatingFlags(this.dataStore, learningObjectName, learningObjectAuthor, ratingId);
             res.sendStatus(200);

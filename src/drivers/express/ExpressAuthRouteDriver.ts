@@ -1,6 +1,6 @@
-import { DataStore, Responder } from "../../interfaces/interfaces";
-import { Router } from "express";
-import { RatingsInteractor } from "../../interactors/RatingsInteractor";
+import { DataStore } from '../../interfaces/interfaces';
+import { Router } from 'express';
+import { RatingsInteractor } from '../../interactors/RatingsInteractor';
 
 /**
  * A factory for producing a router for the express app.
@@ -34,21 +34,21 @@ export class ExpressAuthRouteDriver {
 
     router
       .route(
-        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId"
+        '/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId',
       )
       .delete(async (req, res) => {
         // delete specified rating
         const ratingId = req.params.ratingId;
         const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUsername = req["user"]["username"];
+        const currentUsername = req['user']['username'];
         try {
           await interactor.deleteRating(
             this.dataStore,
             ratingId,
             learningObjectName,
             learningObjectAuthor,
-            currentUsername
+            currentUsername,
           );
           res.sendStatus(200);
         } catch (error) {
@@ -61,7 +61,7 @@ export class ExpressAuthRouteDriver {
         const ratingId = req.params.ratingId;
         const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUsername = req["user"]["username"];
+        const currentUsername = req['user']['username'];
         try {
           await interactor.updateRating(
             this.dataStore,
@@ -69,7 +69,7 @@ export class ExpressAuthRouteDriver {
             learningObjectName,
             learningObjectAuthor,
             editRating,
-            currentUsername
+            currentUsername,
           );
           res.sendStatus(200);
         } catch (error) {
@@ -79,16 +79,16 @@ export class ExpressAuthRouteDriver {
 
     router
       .route(
-        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings"
+        '/learning-objects/:learningObjectAuthor/:learningObjectName/ratings',
       )
       .post(async (req, res) => {
         // create a new rating for the associated learning object
         const rating = req.body;
         const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const username = req["user"]["username"];
-        const email = req["user"]["email"];
-        const name = req["user"]["name"];
+        const username = req['user']['username'];
+        const email = req['user']['email'];
+        const name = req['user']['name'];
         try {
           await interactor.createNewRating(
             this.dataStore,
@@ -97,7 +97,7 @@ export class ExpressAuthRouteDriver {
             learningObjectAuthor,
             username,
             email,
-            name
+            name,
           );
           res.sendStatus(200);
         } catch (error) {
@@ -107,21 +107,19 @@ export class ExpressAuthRouteDriver {
 
     router
       .route(
-        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags"
+        '/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags',
       )
       .post(async (req, res) => {
         // flag a rating
-        const learningObjectAuthor = req.params.learningObjectAuthor;
-        const learningObjectName = req.params.learningObjectName;
         const ratingId = req.params.ratingId;
         const flag = req.body;
-        const currentUsername = req["user"]["username"];
+        const currentUsername = req['user']['username'];
         try {
           await interactor.flagRating(
             this.dataStore,
             ratingId,
             currentUsername,
-            flag
+            flag,
           );
           res.sendStatus(200);
         } catch (error) {
@@ -130,3 +128,4 @@ export class ExpressAuthRouteDriver {
       });
   }
 }
+
