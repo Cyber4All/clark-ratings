@@ -30,24 +30,22 @@ export class RatingsInteractor {
     learningObjectName: string,
     learningObjectAuthor: string,
     editRating: Rating,
-    currentUsername: string
+    currentUsername: string,
   ): Promise<void> {
     try {
       const isRatingAuthor = await this.checkRatingAuthor(
         currentUsername,
         ratingId,
-        dataStore
+        dataStore,
       );
       if (isRatingAuthor) {
         await dataStore.updateRating(
           ratingId,
-          learningObjectName,
-          learningObjectAuthor,
-          editRating
+          editRating,
         );
       } else {
         return Promise.reject(
-          'Error! Current user is not the author of this review!'
+          'Error! Current user is not the author of this review!',
         );
       }
     } catch (error) {
@@ -66,23 +64,23 @@ export class RatingsInteractor {
     ratingId: string,
     learningObjectName: string,
     learningObjectAuthor: string,
-    currentUsername: string
+    currentUsername: string,
   ): Promise<void> {
     try {
       const isRatingAuthor = await this.checkRatingAuthor(
         currentUsername,
         ratingId,
-        dataStore
+        dataStore,
       );
       if (isRatingAuthor) {
         await dataStore.deleteRating(
           ratingId,
           learningObjectName,
-          learningObjectAuthor
+          learningObjectAuthor,
         );
       } else {
         return Promise.reject(
-          'Error! Current user is not the author of this review!'
+          'Error! Current user is not the author of this review!',
         );
       }
     } catch (error) {
@@ -97,16 +95,16 @@ export class RatingsInteractor {
    */
   async getLearningObjectRatings(
     dataStore: DataStore,
-    learningObjectId: string
+    learningObjectId: string,
   ): Promise<LearningObjectContainer> {
     try {
       const ratings = await dataStore.getLearningObjectsRatings(
-        learningObjectId
+        learningObjectId,
       );
       return ratings;
     } catch (error) {
       return Promise.reject(
-        `Problem getting learning object ratings. Error: ${error}`
+        `Problem getting learning object ratings. Error: ${error}`,
       );
     }
   }
@@ -125,7 +123,7 @@ export class RatingsInteractor {
     learningObjectAuthor: string,
     username: string,
     email: string,
-    name: string
+    name: string,
   ): Promise<void> {
     try {
       await dataStore.createNewRating(
@@ -134,7 +132,7 @@ export class RatingsInteractor {
         learningObjectAuthor,
         username,
         email,
-        name
+        name,
       );
     } catch (error) {
       return Promise.reject(`Problem creating new rating. Error: ${error}`);
@@ -146,36 +144,36 @@ export class RatingsInteractor {
    * @param dataStore instance of DataStore
    * @param username username to search with
    */
-  async getUsersRatings(
-    dataStore: DataStore,
-    username: string
-  ): Promise<Rating[]> {
-    try {
-      const ratings = await dataStore.getUsersRatings(username);
-      return ratings;
-    } catch (error) {
-      return Promise.reject(`Problem getting user ratings. Error ${error}`);
-    }
-  }
+  // async getUsersRatings(
+  //   dataStore: DataStore,
+  //   username: string,
+  // ): Promise<Rating[]> {
+  //   try {
+  //     const ratings = await dataStore.getUsersRatings(username);
+  //     return ratings;
+  //   } catch (error) {
+  //     return Promise.reject(`Problem getting user ratings. Error ${error}`);
+  //   }
+  // }
 
   async flagRating(
     dataStore: DataStore,
     ratingId: string,
     currentUsername: string,
-    flag: Flag
+    flag: Flag,
   ): Promise<void> {
     try {
       const isRatingAuthor = await this.checkRatingAuthor(
         currentUsername,
         ratingId,
-        dataStore
+        dataStore,
       );
       if (!isRatingAuthor) {
         await dataStore.flagRating(ratingId, flag);
         return Promise.resolve();
       } else {
         return Promise.reject(
-          'Error the author of the rating cannot perform this action!'
+          'Error the author of the rating cannot perform this action!',
         );
       }
     } catch (error) {
@@ -193,7 +191,7 @@ export class RatingsInteractor {
   private async checkRatingAuthor(
     currentUsername: string,
     ratingId: string,
-    dataStore: DataStore
+    dataStore: DataStore,
   ): Promise<boolean> {
     let isAuthor: boolean = false;
     try {
@@ -216,7 +214,7 @@ export class RatingsInteractor {
 
   private checkLearningObjectAuthor(
     currentUser: User,
-    learningObjectAuthor: string
+    learningObjectAuthor: string,
   ) {
     let isAuthor = false;
     if (currentUser.username === learningObjectAuthor) {

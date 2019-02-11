@@ -11,6 +11,7 @@ export const MOCK_OBJECTS = {
   EMPTY_STRING: '',
   LEARNING_OBJECT_NAME: 'test',
   LEARNING_OBJECT_AUTHOR: 'nvisal1',
+  LEARNING_OBJECT_ID: 'default_id',
   NAME: 'nick testing',
   RATING: {
     value:  4,
@@ -32,8 +33,9 @@ export const MOCK_OBJECTS = {
     },
   },
   EDIT_RATING: {
-    number:  3,
+    value:  3,
     comment: 'unit test edit',
+    source: 'default_id',
   },
   CYPRESS_FLAG: {
     comment: 'unit test flag',

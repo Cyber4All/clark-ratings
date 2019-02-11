@@ -22,6 +22,6 @@ export const enforceAuthenticatedAccess = jwt({
       return req.headers.authorization.split(' ')[1];
     }
     return null;
-  }
+  },
 });
 

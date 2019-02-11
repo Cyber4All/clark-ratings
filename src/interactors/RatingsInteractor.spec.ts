@@ -7,19 +7,19 @@ import { MOCK_OBJECTS } from '../tests/mocks';
 const driver = new MockDriver();
 const interactor = new RatingsInteractor();
 const adminInteractor = new AdminRatingsInteractor();
-let ratingId: string; 
+let ratingId: string;
 
 describe('createNewRating', () => {
   it('Should create a new rating object', done => {
     jest.setTimeout(30000);
     return interactor.createNewRating(
-      driver, 
+      driver,
       MOCK_OBJECTS.RATING,
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      MOCK_OBJECTS.USERNAME, 
-      MOCK_OBJECTS.EMAIL, 
-      MOCK_OBJECTS.NAME
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      MOCK_OBJECTS.USERNAME,
+      MOCK_OBJECTS.EMAIL,
+      MOCK_OBJECTS.NAME,
     ).then(val => {
       expect(val).to.be.an('undefined');
       done();
@@ -34,9 +34,8 @@ describe('createNewRating', () => {
 describe('getLearningObjectRatings', () => {
   it('Should get rating created in first test', done => {
     return interactor.getLearningObjectRatings(
-      driver, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR
+      driver,
+      MOCK_OBJECTS.LEARNING_OBJECT_ID,
     ).then(val => {
       expect(val).to.be.an('object');
       done();
@@ -51,12 +50,12 @@ describe('getLearningObjectRatings', () => {
 describe('updateRating', () => {
   it('Should throw error - only author of rating can do this', done => {
     return interactor.updateRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      MOCK_OBJECTS.EDIT_RATING, 
-      MOCK_OBJECTS.USERNAME_OTHER
+      driver,
+      ratingId,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      MOCK_OBJECTS.EDIT_RATING,
+      MOCK_OBJECTS.USERNAME_OTHER,
     ).then(val => {
       console.log(val);
       expect.fail();
@@ -68,12 +67,12 @@ describe('updateRating', () => {
   });
   it('Should update the rating object created in first test', done => {
     return interactor.updateRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      MOCK_OBJECTS.EDIT_RATING, 
-      MOCK_OBJECTS.USERNAME
+      driver,
+      ratingId,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      MOCK_OBJECTS.EDIT_RATING,
+      MOCK_OBJECTS.USERNAME,
     ).then(val => {
       expect(val).to.be.an('undefined');
       done();
@@ -88,10 +87,10 @@ describe('updateRating', () => {
 describe('flagRating', () => {
   it('Should return error - author of rating cannot perform this action!', done => {
     return interactor.flagRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.USERNAME, 
-      MOCK_OBJECTS.FLAG
+      driver,
+      ratingId,
+      MOCK_OBJECTS.USERNAME,
+      MOCK_OBJECTS.FLAG,
     ).then(val => {
       console.log(val);
       expect.fail();
@@ -103,10 +102,10 @@ describe('flagRating', () => {
   });
   it('Should flag the rating created during test 1', done => {
     return interactor.flagRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.USERNAME_OTHER, 
-      MOCK_OBJECTS.FLAG
+      driver,
+      ratingId,
+      MOCK_OBJECTS.USERNAME_OTHER,
+      MOCK_OBJECTS.FLAG,
     ).then(val => {
       expect(val).to.be.an('undefined');
       done();
@@ -147,10 +146,10 @@ describe('getUserFlags', () => {
 describe('getRatingFlags', () => {
   it('Should return all flags for a specified rating - this is an admin operation', done => {
     return adminInteractor.getRatingFlags(
-      driver, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      ratingId
+      driver,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      ratingId,
     ).then(val => {
       expect(val).to.be.an('array');
       done();
@@ -165,11 +164,11 @@ describe('getRatingFlags', () => {
 describe('deleteRating', () => {
   it('Should throw error - only the author of rating can do this', done => {
     return interactor.deleteRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      MOCK_OBJECTS.USERNAME_OTHER
+      driver,
+      ratingId,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      MOCK_OBJECTS.USERNAME_OTHER,
     ).then(val => {
       console.log(val);
       expect.fail();
@@ -181,11 +180,11 @@ describe('deleteRating', () => {
   });
   it('Should delete the rating created during test 1', done => {
     return interactor.deleteRating(
-      driver, 
-      ratingId, 
-      MOCK_OBJECTS.LEARNING_OBJECT_NAME, 
-      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR, 
-      MOCK_OBJECTS.USERNAME
+      driver,
+      ratingId,
+      MOCK_OBJECTS.LEARNING_OBJECT_NAME,
+      MOCK_OBJECTS.LEARNING_OBJECT_AUTHOR,
+      MOCK_OBJECTS.USERNAME,
     ).then(val => {
       expect(val).to.be.an('undefined');
       done();

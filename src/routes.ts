@@ -3,7 +3,7 @@ export const LEARNING_OBJECT_SERVICE_ROUTES = {
       return `${
         process.env.LEARNING_OBJECT_SERVICE_URI
       }/learning-objects/${encodeURIComponent(author)}/${encodeURIComponent(
-        objectName
+        objectName,
       )}/id`;
-    }
+    },
 };

@@ -6,7 +6,7 @@ switch (process.env.NODE_ENV) {
   case 'development':
     dburi = process.env.CLARK_DB_URI_DEV.replace(
       /<DB_PASSWORD>/g,
-      process.env.CLARK_DB_PWD
+      process.env.CLARK_DB_PWD,
     )
       .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
       .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME);
@@ -14,7 +14,7 @@ switch (process.env.NODE_ENV) {
   case 'production':
     dburi = process.env.CLARK_DB_URI.replace(
       /<DB_PASSWORD>/g,
-      process.env.CLARK_DB_PWD
+      process.env.CLARK_DB_PWD,
     )
       .replace(/<DB_PORT>/g, process.env.CLARK_DB_PORT)
       .replace(/<DB_NAME>/g, process.env.CLARK_DB_NAME);
