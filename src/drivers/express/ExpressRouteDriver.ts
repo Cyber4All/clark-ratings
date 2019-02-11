@@ -1,4 +1,3 @@
-import { ExpressResponder } from './ExpressResponder';
 import { DataStore, Responder } from '../../interfaces/interfaces';
 import { Router } from 'express';
 import { RatingsInteractor } from '../../interactors/RatingsInteractor';
@@ -49,7 +48,7 @@ export class ExpressRouteDriver {
       try {
         const rating = await interactor.getRating(
           this.dataStore,
-          req.params.ratingId
+          req.params.ratingId,
         );
         responder.sendRatings(rating);
       } catch (error) {
@@ -59,7 +58,7 @@ export class ExpressRouteDriver {
 
     router
       .route(
-        '/learning-objects/:learningObjectId/ratings'
+        '/learning-objects/:learningObjectId/ratings',
       )
       .get(async (req, res) => {
         // return all ratings from the associated learning object
@@ -68,7 +67,7 @@ export class ExpressRouteDriver {
         try {
           const ratings = await interactor.getLearningObjectRatings(
             this.dataStore,
-            req.params.learningObjectId
+            req.params.learningObjectId,
           );
           responder.sendRatings(ratings);
         } catch (error) {

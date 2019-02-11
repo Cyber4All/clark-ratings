@@ -13,13 +13,14 @@ export const MOCK_OBJECTS = {
   LEARNING_OBJECT_AUTHOR: 'nvisal1',
   NAME: 'nick testing',
   RATING: {
-    number:  4,
+    value:  4,
     comment: 'unit test',
     user: {
       name: 'nick testing',
       username: 'cypress',
-      email: 'test@test.com'
-    }
+      email: 'test@test.com',
+    },
+    source: '123',
   },
   AUTH_CHECK_RATING: {
     number:  4,
@@ -27,26 +28,26 @@ export const MOCK_OBJECTS = {
     user: {
       name: 'nick testing',
       username: 'notusername',
-      email: 'test@test.com'
-    }
+      email: 'test@test.com',
+    },
   },
   EDIT_RATING: {
     number:  3,
-    comment: 'unit test edit'
+    comment: 'unit test edit',
   },
   CYPRESS_FLAG: {
     comment: 'unit test flag',
     username: 'cypress',
-    concern: 'unit test concern label'
+    concern: 'unit test concern label',
   },
   FLAG: {
     comment: 'unit test flag',
     username: 'nvisal1',
-    concern: 'unit test concern label'
+    concern: 'unit test concern label',
   },
   CONTAINER: {
     learningObjectId: '5a73843552d76b71726242a7',
     avgRating: 3.2,
-    ratings: []
-  }
+    ratings: [],
+  },
 };
