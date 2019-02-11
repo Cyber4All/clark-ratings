@@ -1,7 +1,7 @@
-import { ExpressResponder } from './ExpressResponder';
-import { DataStore, Responder } from '../../interfaces/interfaces';
-import { Router } from 'express'; 
-import { RatingsInteractor } from '../../interactors/RatingsInteractor';
+import { ExpressResponder } from "./ExpressResponder";
+import { DataStore, Responder } from "../../interfaces/interfaces";
+import { Router } from "express";
+import { RatingsInteractor } from "../../interactors/RatingsInteractor";
 
 /**
  * A factory for producing a router for the express app.
@@ -37,66 +37,101 @@ export class ExpressAuthRouteDriver {
     // new instance of RatingsInteractor
     const interactor = new RatingsInteractor();
 
-    router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId')
+    router
+      .route(
+        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId"
+      )
       .delete(async (req, res) => {
         // delete specified rating
-        const responder            = this.getResponder(res);
-        const ratingId             = req.params.ratingId;
-        const learningObjectName   = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor 
-        const currentUsername      = req['user']['username'];
+        const responder = this.getResponder(res);
+        const ratingId = req.params.ratingId;
+        const learningObjectName = req.params.learningObjectName;
+        const learningObjectAuthor = req.params.learningObjectAuthor;
+        const currentUsername = req["user"]["username"];
         try {
-            await interactor.deleteRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, currentUsername);
-            responder.sendOperationSuccess();
+          await interactor.deleteRating(
+            this.dataStore,
+            ratingId,
+            learningObjectName,
+            learningObjectAuthor,
+            currentUsername
+          );
+          responder.sendOperationSuccess();
         } catch (error) {
-            responder.sendOperationError(error);
+          responder.sendOperationError(error);
         }
       })
       .patch(async (req, res) => {
         // update specified rating
-        const responder            = this.getResponder(res);
-        const editRating           = req.body;
-        const ratingId             = req.params.ratingId;
-        const learningObjectName   = req.params.learningObjectName;
+        const responder = this.getResponder(res);
+        const editRating = req.body;
+        const ratingId = req.params.ratingId;
+        const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUsername      = req['user']['username'];
+        const currentUsername = req["user"]["username"];
         try {
-            await interactor.updateRating(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, editRating, currentUsername); 
-            responder.sendOperationSuccess();
-        } catch (error) {
-            responder.sendOperationError(error);
-        }
-      });
-      
-    router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings')
-      .post(async (req, res) => {
-        // create a new rating for the associated learning object
-        const responder            = this.getResponder(res);
-        const rating               = req.body;
-        const learningObjectName   = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor;
-        const username             = req['user']['username'];
-        const email                = req['user']['email'];
-        const name                 = req['user']['name'];
-        try {
-          await interactor.createNewRating(this.dataStore, rating, learningObjectName, learningObjectAuthor, username, email, name);
+          await interactor.updateRating(
+            this.dataStore,
+            ratingId,
+            learningObjectName,
+            learningObjectAuthor,
+            editRating,
+            currentUsername
+          );
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);
         }
       });
 
-    router.route('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags')
+    router
+      .route(
+        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings"
+      )
+      .post(async (req, res) => {
+        // create a new rating for the associated learning object
+        const responder = this.getResponder(res);
+        const rating = req.body;
+        const learningObjectName = req.params.learningObjectName;
+        const learningObjectAuthor = req.params.learningObjectAuthor;
+        const username = req["user"]["username"];
+        const email = req["user"]["email"];
+        const name = req["user"]["name"];
+        try {
+          await interactor.createNewRating(
+            this.dataStore,
+            rating,
+            learningObjectName,
+            learningObjectAuthor,
+            username,
+            email,
+            name
+          );
+          responder.sendOperationSuccess();
+        } catch (error) {
+          responder.sendOperationError(error);
+        }
+      });
+
+    router
+      .route(
+        "/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags"
+      )
       .post(async (req, res) => {
         // flag a rating
-        const responder            = this.getResponder(res);
+        const responder = this.getResponder(res);
         const learningObjectAuthor = req.params.learningObjectAuthor;
-        const learningObjectName   = req.params.learningObjectName;
-        const ratingId             = req.params.ratingId;
-        const flag                 = req.body;
-        const currentUsername      = req['user']['username'];
+        const learningObjectName = req.params.learningObjectName;
+        const ratingId = req.params.ratingId;
+        const flag = req.body;
+        const currentUsername = req["user"]["username"];
         try {
-          await interactor.flagRating(this.dataStore, ratingId, currentUsername, flag);
+          await interactor.flagRating(
+            this.dataStore,
+            ratingId,
+            currentUsername,
+            flag
+          );
           responder.sendOperationSuccess();
         } catch (error) {
           responder.sendOperationError(error);

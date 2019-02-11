@@ -1,7 +1,7 @@
 import { LearningObjectContainer, Rating, Flag } from '../types/Rating';
 
 export interface DataStore {
-    updateRating(ratingId: string, learningObjectName: string, learningObjectAuthor: string, editRating: Rating): Promise<void>;
+    updateRating(ratingId: string, updatedRating: Rating): Promise<void>;
     deleteRating(ratingId: string, learningObjectName: string, learningObjectAuthor: string): Promise<void>
 
     getRating(ratingId: string): Promise<Rating>;

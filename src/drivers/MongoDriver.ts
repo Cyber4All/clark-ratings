@@ -1,21 +1,21 @@
-import { DataStore } from '../interfaces/DataStore';
-import { Rating, LearningObjectContainer, Flag } from '../types/Rating';
-import { MongoClient, Db, ObjectId } from 'mongodb';
+import { DataStore } from "../interfaces/DataStore";
+import { Rating, Flag, LearningObjectContainer } from "../types/Rating";
+import { MongoClient, Db, ObjectId, ObjectID } from "mongodb";
 
 export class Collections {
-  static ratings: string = 'ratings';
-  static objects: string = 'objects';
-  static users: string = 'users';
-  static flags: string = 'flags';
+  static ratings: string = "ratings";
+  static objects: string = "objects";
+  static users: string = "users";
+  static flags: string = "flags";
 }
 
 export class MongoDriver implements DataStore {
   private db: Db;
   private mongoClient: MongoClient;
 
-  constructor() { }
+  constructor() {}
 
-/**
+  /**
    * Connect to the database. Must be called before any other functions.
    * @async
    *
@@ -35,13 +35,10 @@ export class MongoDriver implements DataStore {
       this.db = this.mongoClient.db();
     } catch (e) {
       if (!retryAttempt) {
-        this.connect(
-          dbURI,
-          1,
-        );
+        this.connect(dbURI, 1);
       } else {
         return Promise.reject(
-          'Problem connecting to database at ' + dbURI + ':\n\t' + e,
+          "Problem connecting to database at " + dbURI + ":\n\t" + e
         );
       }
     }
@@ -62,37 +59,9 @@ export class MongoDriver implements DataStore {
     this.mongoClient.close();
   }
 
-  async updateRating(
-    ratingId: string,
-    learningObjectName: string,
-    learningObjectAuthor: string,
-    editRating: Rating
-  ): Promise<void> {
+  async updateRating(ratingId: string, updatedRating: Rating): Promise<void> {
     try {
-      // Get learning object id from name
-      const learningObjectId = await this.getLearningObjectId(
-        learningObjectName,
-        learningObjectAuthor
-      );
-      const ratings = await this.getLearningObjectsRatings(
-        learningObjectName,
-        learningObjectAuthor
-      );
-      const index = ratings['ratings']
-        .map(function(e) {
-          return e._id;
-        })
-        .indexOf(ratingId);
-      ratings['ratings'][index].number = editRating.number;
-      ratings['ratings'][index].comment = editRating.comment;
-      const average = await this.findAvgRating(ratings['ratings']);
-      ratings['avgRating'] = average;
-      await this.db.collection(Collections.ratings).update(
-        { learningObjectId: learningObjectId, 'ratings._id': ratingId },
-        {
-          $set: ratings
-        }
-      );
+      await this.db.collection(Collections.ratings).findOneAndUpdate({ _id: new ObjectID(ratingId) }, { $set: { value: updatedRating.value, comment: updatedRating.comment, date: Date.now() } })
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -101,90 +70,19 @@ export class MongoDriver implements DataStore {
 
   async deleteRating(
     ratingId: string,
-    learningObjectName: string,
-    learningObjectAuthor: string
   ): Promise<void> {
     try {
-      // Get learning object id from name
-      let average: number;
-      const learningObjectId = await this.getLearningObjectId(
-        learningObjectName,
-        learningObjectAuthor
-      );
-      const ratings = await this.getLearningObjectsRatings(
-        learningObjectName,
-        learningObjectAuthor
-      );
-      const index = ratings['ratings']
-        .map(function(e) {
-          return e._id;
-        })
-        .indexOf(ratingId);
-      ratings['ratings'].splice(index, 1);
-      // Prevent avgRating from being NaN
-      if (ratings['ratings'].length > 0) {
-        average = await this.findAvgRating(ratings['ratings']);
-      } else {
-        average = 0;
-      }
-      ratings['avgRating'] = average;
-      await this.db
-        .collection(Collections.ratings)
-        .update({ learningObjectId: learningObjectId }, { $set: ratings });
-
-      // Destory all associated flags for this particular rating
-      await this.db
-        .collection(Collections.flags)
-        .remove({ ratingId: ratingId });
-
-      return Promise.resolve();
+      await this.db.collection(Collections.ratings).findOneAndDelete({ _id: new ObjectID(ratingId) });
     } catch (error) {
-      return Promise.reject(error);
+      // TODO handle this
     }
   }
 
   async getRating(ratingId: string): Promise<Rating> {
     try {
-      const rating = await this.db
-        .collection(Collections.ratings)
-        .aggregate([
-          { $match: { 'ratings._id': ratingId } },
-          {
-            $project: {
-              ratings: {
-                $filter: {
-                  input: '$ratings',
-                  as: 'rating',
-                  cond: { $eq: ['$$rating._id', ratingId] }
-                }
-              },
-              _id: 0
-            }
-          }
-        ])
-        .toArray();
-      return rating[0].ratings[0];
+      return (await this.db.collection(Collections.ratings).find({ _id: new ObjectId(ratingId) }).toArray())[0];
     } catch (error) {
-      return Promise.reject('Problem retrieving rating! Error: ' + error);
-    }
-  }
-
-  async getUsersRatings(username: string): Promise<Rating[]> {
-    try {
-      // Get user id from username
-      const user = await this.db
-        .collection(Collections.users)
-        .findOne({ username: username });
-      const userId = user._id;
-
-      // Find all ratings that have this username id
-      const ratings = await this.db
-        .collection(Collections.ratings)
-        .find({ user: userId })
-        .toArray();
-      return ratings;
-    } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject("Problem retrieving rating! Error: " + error);
     }
   }
 
@@ -192,20 +90,33 @@ export class MongoDriver implements DataStore {
     learningObjectId: string
   ): Promise<LearningObjectContainer> {
     try {
-      // Find all ratings that contain the learningObjectId and populate the user
-      // field for each document
-      const rating = await this.db
-        .collection(Collections.ratings)
-        .aggregate([{ $match: { learningObjectId: learningObjectId } }])
-        .toArray();
+      const data = await this.db.collection(Collections.ratings).aggregate([
+        {
+          $match: { source: learningObjectId }
+        },
+        {
+          $sort: { date: 1 }
+        },
+        {
+          $group: {
+            _id: '$source',
+            avgValue: {
+              $avg: '$value'
+            },
+            ratings: {
+              $push: {
+                _id: '$_id',
+                value: '$value',
+                user: '$user',
+                comment: '$comment',
+                date: '$date'
+              }
+            }
+          }
+        }
+      ]).toArray();
 
-      if (!rating.length) {
-        return {
-          learningObjectId: learningObjectId,
-          avgRating: 0,
-          ratings: []
-        };
-      } else return rating[0];
+      return data[0];
     } catch (error) {
       return Promise.reject(error);
     }
@@ -219,51 +130,7 @@ export class MongoDriver implements DataStore {
     email: string,
     name: string
   ): Promise<void> {
-    try {
-      // Get learning object id from name
-      const learningObjectId = await this.getLearningObjectId(
-        learningObjectName,
-        learningObjectAuthor
-      );
-      // Append id to rating object
-      rating.user = { name: name, username: username, email: email };
-      rating._id = new ObjectId().toHexString();
-      rating.date = rating._id.toString().substring(0, 8);
-      // Is this learning object already in the ratings collection?
-      const learningObjectStored = await this.db
-        .collection(Collections.ratings)
-        .find({ learningObjectId: learningObjectId })
-        .limit(1)
-        .toArray();
-
-      // If learning object is found, append rating to it and calculate avg rating
-      if (learningObjectStored.length > 0) {
-        learningObjectStored[0].ratings.push(rating);
-        const average = this.findAvgRating(learningObjectStored[0].ratings);
-        learningObjectStored[0].avgRating = average;
-        await this.db.collection(Collections.ratings).update(
-          { learningObjectId: learningObjectId },
-          {
-            $set: learningObjectStored[0]
-          }
-        );
-      } else {
-        const learningObjectContainer: LearningObjectContainer = {
-          _id: new ObjectId().toHexString(),
-          learningObjectId: learningObjectId,
-          avgRating: rating.number, // No need to calculate average for first rating
-          ratings: [rating]
-        };
-
-        // Insert new learningObjectContainer as a document
-        await this.db
-          .collection(Collections.ratings)
-          .insert(learningObjectContainer);
-      }
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    // TODO implement this
   }
 
   async flagRating(ratingId: string, flag: Flag): Promise<void> {
@@ -317,10 +184,10 @@ export class MongoDriver implements DataStore {
         .collection(Collections.ratings)
         .aggregate([
           { $match: learningObjectId },
-          { $unwind: '$ratings' },
+          { $unwind: "$ratings" },
           {
             $project: {
-              id: '$ratings._id'
+              id: "$ratings._id"
             }
           }
         ])
@@ -391,18 +258,5 @@ export class MongoDriver implements DataStore {
     } catch (error) {
       return Promise.reject(error);
     }
-  }
-
-  /**
-   * Helper method for averaging all of the ratings for a specfied learning
-   * object and appending the value to a learning object
-   * @param learningObjectName name of learning object to find average score
-   * @param newRatingNumber number of incoming rating object
-   */
-  private findAvgRating(learningObjectRatings) {
-    const numbers = learningObjectRatings.map(x => x.number);
-    const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length;
-    const result = average(numbers);
-    return result;
   }
 }
