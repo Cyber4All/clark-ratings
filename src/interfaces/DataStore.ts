@@ -5,7 +5,6 @@ export interface DataStore {
     deleteRating(ratingId: string, learningObjectName: string, learningObjectAuthor: string): Promise<void>
 
     getRating(ratingId: string): Promise<Rating>;
-    getUsersRatings(userId: string): Promise<Rating[]>;
     getLearningObjectsRatings(learningObjectId: string): Promise<LearningObjectContainer>;
     createNewRating(rating: Rating, learningObjectName: string, learningObjectAuthor: string, username: string, email: string, name: string): Promise<void>;
     flagRating(ratingId: string, flag: Flag);

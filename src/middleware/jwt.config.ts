@@ -7,7 +7,7 @@ dotenv.config();
  *
  * @author Gustavus Shaw II
  */
-export const enforceTokenAccess = jwt({
+export const enforceAuthenticatedAccess = jwt({
   secret: process.env.KEY,
   issuer: process.env.ISSUER,
   getToken: req => {

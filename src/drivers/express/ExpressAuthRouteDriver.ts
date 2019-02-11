@@ -1,4 +1,3 @@
-import { ExpressResponder } from "./ExpressResponder";
 import { DataStore, Responder } from "../../interfaces/interfaces";
 import { Router } from "express";
 import { RatingsInteractor } from "../../interactors/RatingsInteractor";
@@ -23,10 +22,6 @@ export class ExpressAuthRouteDriver {
 
   private constructor(private dataStore: DataStore) {}
 
-  private getResponder(res): Responder {
-    return new ExpressResponder(res);
-  }
-
   /**
    * Defines the active routes for the API. Routes take an async callback function that contains a request and response object.
    * The callback awaits a particular interactor function that executes the connected business use case.
@@ -43,7 +38,6 @@ export class ExpressAuthRouteDriver {
       )
       .delete(async (req, res) => {
         // delete specified rating
-        const responder = this.getResponder(res);
         const ratingId = req.params.ratingId;
         const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
@@ -56,14 +50,13 @@ export class ExpressAuthRouteDriver {
             learningObjectAuthor,
             currentUsername
           );
-          responder.sendOperationSuccess();
+          res.sendStatus(200);
         } catch (error) {
-          responder.sendOperationError(error);
+          res.send(500).json({message: error.message});
         }
       })
       .patch(async (req, res) => {
         // update specified rating
-        const responder = this.getResponder(res);
         const editRating = req.body;
         const ratingId = req.params.ratingId;
         const learningObjectName = req.params.learningObjectName;
@@ -78,9 +71,9 @@ export class ExpressAuthRouteDriver {
             editRating,
             currentUsername
           );
-          responder.sendOperationSuccess();
+          res.sendStatus(200);
         } catch (error) {
-          responder.sendOperationError(error);
+          res.send(500).json({message: error.message});
         }
       });
 
@@ -90,7 +83,6 @@ export class ExpressAuthRouteDriver {
       )
       .post(async (req, res) => {
         // create a new rating for the associated learning object
-        const responder = this.getResponder(res);
         const rating = req.body;
         const learningObjectName = req.params.learningObjectName;
         const learningObjectAuthor = req.params.learningObjectAuthor;
@@ -107,9 +99,9 @@ export class ExpressAuthRouteDriver {
             email,
             name
           );
-          responder.sendOperationSuccess();
+          res.sendStatus(200);
         } catch (error) {
-          responder.sendOperationError(error);
+          res.send(500).json({message: error.message});
         }
       });
 
@@ -119,7 +111,6 @@ export class ExpressAuthRouteDriver {
       )
       .post(async (req, res) => {
         // flag a rating
-        const responder = this.getResponder(res);
         const learningObjectAuthor = req.params.learningObjectAuthor;
         const learningObjectName = req.params.learningObjectName;
         const ratingId = req.params.ratingId;
@@ -132,9 +123,9 @@ export class ExpressAuthRouteDriver {
             currentUsername,
             flag
           );
-          responder.sendOperationSuccess();
+          res.sendStatus(200);
         } catch (error) {
-          responder.sendOperationError(error);
+          res.send(500).json({message: error.message});
         }
       });
   }
