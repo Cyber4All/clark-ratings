@@ -1,6 +1,7 @@
 import { DataStore } from '../interfaces/DataStore';
 import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
 import { MongoClient, Db, ObjectId, ObjectID } from 'mongodb';
+import { reportError } from './SentryConnector';
 
 export class Collections {
   static ratings: string = 'ratings';
@@ -31,12 +32,13 @@ export class MongoDriver implements DataStore {
     try {
       this.mongoClient = await MongoClient.connect(dbURI);
       this.db = this.mongoClient.db();
-    } catch (e) {
+    } catch (error) {
       if (!retryAttempt) {
         this.connect(dbURI, 1);
       } else {
+        reportError(error);
         return Promise.reject(
-          'Problem connecting to database at ' + dbURI + ':\n\t' + e,
+          'Problem connecting to database at ' + dbURI + ':\n\t' + error,
         );
       }
     }
@@ -66,6 +68,7 @@ export class MongoDriver implements DataStore {
         });
       return Promise.resolve();
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -76,7 +79,8 @@ export class MongoDriver implements DataStore {
     try {
       await this.db.collection(Collections.ratings).findOneAndDelete({ _id: new ObjectID(ratingId) });
     } catch (error) {
-      // TODO handle this
+      reportError(error);
+      return Promise.reject(error);
     }
   }
 
@@ -84,6 +88,7 @@ export class MongoDriver implements DataStore {
     try {
       return (await this.db.collection(Collections.ratings).find({ _id: new ObjectId(ratingId) }).toArray())[0];
     } catch (error) {
+      reportError(error);
       return Promise.reject('Problem retrieving rating! Error: ' + error);
     }
   }
@@ -120,6 +125,7 @@ export class MongoDriver implements DataStore {
 
       return data[0];
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -143,6 +149,7 @@ export class MongoDriver implements DataStore {
       await this.db.collection(Collections.flags).insert(flag);
       return Promise.resolve();
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -155,6 +162,7 @@ export class MongoDriver implements DataStore {
         .toArray();
       return flags;
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -167,6 +175,7 @@ export class MongoDriver implements DataStore {
         .toArray();
       return flags;
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -200,6 +209,7 @@ export class MongoDriver implements DataStore {
         .toArray();
       return flags;
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -217,6 +227,7 @@ export class MongoDriver implements DataStore {
         .toArray();
       return flags;
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -232,6 +243,7 @@ export class MongoDriver implements DataStore {
       await this.db.collection(Collections.flags).deleteOne({ _id: flagId });
       return Promise.resolve();
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
@@ -258,6 +270,7 @@ export class MongoDriver implements DataStore {
       const learningObjectId = learningObject._id;
       return learningObjectId;
     } catch (error) {
+      reportError(error);
       return Promise.reject(error);
     }
   }
