@@ -1,5 +1,3 @@
-import { LearningObject } from '@cyber4all/clark-entity';
-
 export interface Rating {
     _id?:  string;
     user?: { name: string, username: string, email: string }; // either the user or the user's ID
