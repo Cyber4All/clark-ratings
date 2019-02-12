@@ -1,6 +1,8 @@
-import { DataStore } from '../interfaces/DataStore';
+import { DataStore } from '../interfaces/interfaces';
 import { Rating, LearningObjectContainer } from '../types/Rating';
 import { User } from '@cyber4all/clark-entity';
+import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
+import { reportError } from '../drivers/SentryConnector';
 
 /**
  * Retrieves a single rating by ID
@@ -19,7 +21,13 @@ export async function getRating(params: {
         let rating = await params.dataStore.getRating(params.ratingId);
         return rating;
     } catch (error) {
-        return Promise.reject(`Problem getting rating. Error: ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ResourceError(
+                'Could not fetch rating',
+                ResourceErrorReason.NOT_FOUND,
+            ),
+        );
     }
 }
 
@@ -52,11 +60,17 @@ export async function updateRating(params: {
             );
         } else {
             return Promise.reject(
-                'Error! Current user is not the author of this review!',
+                new ResourceError(
+                    'Error! Current user is not the author of this review!',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
             );
         }
     } catch (error) {
-        return Promise.reject(`Problem updating rating. Error: ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ServiceError(ServiceErrorType.INTERNAL),
+        );
     }
 }
 
@@ -83,11 +97,19 @@ export async function deleteRating(params: {
             );
         } else {
             return Promise.reject(
-                'Error! Current user is not the author of this review!',
+                new ResourceError(
+                    'Error! Current user is not the author of this review!',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
             );
         }
     } catch (error) {
-        return Promise.reject(`Problem deleting rating. Error: ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ServiceError(
+                ServiceErrorType.INTERNAL,
+            ),
+        );
     }
 }
 
@@ -106,8 +128,11 @@ export async function getLearningObjectRatings(params: {
         );
         return ratings;
     } catch (error) {
+        reportError(error);
         return Promise.reject(
-            `Problem getting learning object ratings. Error: ${error}`,
+            new ServiceError(
+                ServiceErrorType.INTERNAL,
+            ),
         );
     }
 }
@@ -136,7 +161,12 @@ export async function createRating(params: {
             name,
         );
     } catch (error) {
-        return Promise.reject(`Problem creating new rating. Error: ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ServiceError(
+                ServiceErrorType.INTERNAL,
+            ),
+        );
     }
 }
 
@@ -153,7 +183,12 @@ export async function getUsersRatings(params: {
         const ratings = await params.dataStore.getUsersRatings(params.username);
         return ratings;
     } catch (error) {
-        return Promise.reject(`Problem getting user ratings. Error ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ServiceError(
+                ServiceErrorType.INTERNAL,
+            ),
+        );
     }
 }
 
@@ -182,12 +217,17 @@ async function checkRatingAuthor(params: {
 
         // Compare current user and specified rating author
         if (ratingUsername === params.currentUsername) {
-        isAuthor = true;
+            isAuthor = true;
         }
 
         return isAuthor;
     } catch (error) {
-        return Promise.reject(`Probelm checking rating author.  Error: ${error}`);
+        reportError(error);
+        return Promise.reject(
+            new ServiceError(
+                ServiceErrorType.INTERNAL,
+            ),
+        );
     }
 }
 

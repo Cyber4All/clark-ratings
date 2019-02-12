@@ -1,4 +1,4 @@
-import { DataStore } from '../interfaces/DataStore';
+import { DataStore } from '../interfaces/interfaces';
 import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
 import { MongoClient, Db, ObjectId, ObjectID } from 'mongodb';
 import { reportError } from './SentryConnector';
@@ -132,8 +132,7 @@ export class MongoDriver implements DataStore {
 
   async createNewRating(
     rating: Rating,
-    learningObjectName: string,
-    learningObjectAuthor: string,
+    learningObjectId: string,
     username: string,
     email: string,
     name: string,
@@ -181,15 +180,9 @@ export class MongoDriver implements DataStore {
   }
 
   async getLearningObjectFlags(
-    learningObjectName: string,
-    learningObjectAuthor: string,
+    learningObjectId: string,
   ): Promise<Flag[]> {
     try {
-      // get learning object id
-      const learningObjectId = await this.getLearningObjectId(
-        learningObjectName,
-        learningObjectAuthor,
-      );
       // get all rating ids that are attached to the specified learning object
       const ratingIds = await this.db
         .collection(Collections.ratings)
@@ -215,8 +208,6 @@ export class MongoDriver implements DataStore {
   }
 
   async getRatingFlags(
-    learningObjectName: string,
-    learningObjectAuthor: string,
     ratingId: string,
   ): Promise<Flag[]> {
     try {
@@ -233,42 +224,12 @@ export class MongoDriver implements DataStore {
   }
 
   async deleteFlag(
-    learningObjectName: string,
-    learningObjectAuthor: string,
-    ratingId: string,
     flagId: string,
   ): Promise<void> {
     try {
       // get learning object id
       await this.db.collection(Collections.flags).deleteOne({ _id: flagId });
       return Promise.resolve();
-    } catch (error) {
-      reportError(error);
-      return Promise.reject(error);
-    }
-  }
-
-  private async getLearningObjectId(
-    learningObjectName: string,
-    learningObjectAuthor: string,
-  ) {
-    // This implementation involves an http request
-    // try {
-    //   this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(
-    //     learningObjectAuthor,
-    //     learningObjectName
-    //   );
-    //   this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
-    //   return request(this.options);
-    // } catch (e) {
-    //   return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
-    // }
-    try {
-      const learningObject = await this.db
-        .collection(Collections.objects)
-        .findOne({ name: learningObjectName });
-      const learningObjectId = learningObject._id;
-      return learningObjectId;
     } catch (error) {
       reportError(error);
       return Promise.reject(error);

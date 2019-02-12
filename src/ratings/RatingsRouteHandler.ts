@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { DataStore } from '../interfaces/DataStore';
+import { DataStore } from '../interfaces/interfaces';
 import * as interactor from './RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
 

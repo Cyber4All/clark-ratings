@@ -1,6 +1,6 @@
-import { DataStore } from '../../interfaces/interfaces';
 import { Router } from 'express';
 import * as RatingsRouteHandler from '../../ratings/RatingsRouteHandler';
+import { DataStore } from '../../interfaces/interfaces';
 
 /**
  * A factory for producing a router for the express app.

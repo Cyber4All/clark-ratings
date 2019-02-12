@@ -1,4 +1,4 @@
-import { DataStore } from '../interfaces/DataStore';
+import { DataStore } from '../interfaces/interfaces';
 import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
 import { MOCK_OBJECTS } from '../tests/mocks';
 

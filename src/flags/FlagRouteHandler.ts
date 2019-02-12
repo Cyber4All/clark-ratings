@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express';
-import { DataStore } from '../interfaces/DataStore';
+import { DataStore } from '../interfaces/interfaces';
+import * as interactor from '../flags/FlagInteractor';
+import { mapErrorToStatusCode } from '../errors';
 
 /**
  * Initializes an express router with endpoints for public Creating, Updating, and Deleting
@@ -30,53 +32,84 @@ export function initializePrivate({
             await interactor.getAllFlags(this.dataStore);
             res.sendStatus(200);
         } catch (error) {
-            res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
     const getUserFlags = async (req: Request, res: Response) => {
         try {
-            const username  = req.params.username;
-            await interactor.getUserFlags(this.dataStore, username);
+            const username = req.params.username;
+            await interactor.getUserFlags({
+                dataStore: this.dataStore,
+                username,
+            });
             res.sendStatus(200);
         } catch (error) {
-            res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
     const getLearningObjectFlags = async (req: Request, res: Response) => {
         try {
-            const learningObjectName   = req.params.learningObjectName;
-            const learningObjectAuthor = req.params.learningObjectAuthor;
-            await interactor.getLearningObjectFlags(this.dataStore, learningObjectName, learningObjectAuthor);
+            const learningObjectId = req.params.learningObjectId;
+            await interactor.getLearningObjectFlags({
+                dataStore: this.dataStore,
+                learningObjectId,
+            });
             res.sendStatus(200);
         } catch (error) {
-            res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
     const getRatingFlags = async (req: Request, res: Response) => {
         try {
-            const ratingId             = req.params.ratingId;
-            const learningObjectName   = req.params.learningObjectName;
-            const learningObjectAuthor = req.params.learningObjectAuthor;
-            await interactor.getRatingFlags(this.dataStore, learningObjectName, learningObjectAuthor, ratingId);
+            const ratingId = req.params.ratingId;
+            await interactor.getRatingFlags({
+                dataStore: this.dataStore,
+                ratingId,
+            });
             res.sendStatus(200);
         } catch (error) {
-            res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
     const deleteFlag = async (req: Request, res: Response) => {
         try {
-            const ratingId             = req.params.ratingId;
-            const learningObjectName   = req.params.learningObjectName;
-            const learningObjectAuthor = req.params.learningObjectAuthor;
-            const flagId               = req.params.flagId;
-            await interactor.deleteFlag(this.dataStore, ratingId, learningObjectName, learningObjectAuthor, flagId);
+            const flagId = req.params.flagId;
+            await interactor.deleteFlag({
+                dataStore: this.dataStore,
+                flagId,
+            });
             res.sendStatus(200);
         } catch (error) {
-            res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
@@ -86,15 +119,20 @@ export function initializePrivate({
         const flag = req.body;
         const currentUsername = req['user']['username'];
         try {
-          await flagRating(
-            this.dataStore,
+          await interactor.flagRating({
+            dataStore: this.dataStore,
             ratingId,
             currentUsername,
             flag,
-          );
+          });
           res.sendStatus(200);
         } catch (error) {
-          res.send(500).json({message: error.message});
+            const response = mapErrorToStatusCode(error);
+            if (response.code === 500) {
+                res.status(response.code).json(response.message);
+            } else {
+                res.sendStatus(response.code);
+            }
         }
     };
 
