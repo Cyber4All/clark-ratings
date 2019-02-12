@@ -13,8 +13,6 @@ export class MockDriver implements DataStore {
 
     deleteRating(
         ratingId: string,
-        learningObjectName: string,
-        learningObjectAuthor: string,
     ): Promise<void> {
        return Promise.resolve();
     }
@@ -35,8 +33,7 @@ export class MockDriver implements DataStore {
 
     createNewRating(
         rating: Rating,
-        learningObjectName: string,
-        learningObjectAuthor: string,
+        learningObjectId: string,
         username: string,
         email: string,
         name: string,
@@ -62,25 +59,19 @@ export class MockDriver implements DataStore {
     }
 
     getLearningObjectFlags(
-        learningObjectName: string,
-        learningObjectAuthor: string,
+        learningObjectId: string,
     ): Promise<Flag[]> {
        return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
 
     getRatingFlags(
-        learningObjectName: string,
-        learningObjectAuthor: string,
         ratingId: string,
     ): Promise<Flag[]> {
        return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
 
     deleteFlag(
-        learningObjectName: any,
-        learningObjectAuthor: any,
-        ratingId: any,
-        flagId: any,
+        flagId: string,
     ): Promise<void> {
       return Promise.resolve();
     }

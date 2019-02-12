@@ -49,7 +49,6 @@ describe('updateRating', () => {
     return interactor.updateRating({
       dataStore: driver,
       ratingId,
-      learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
       updates: MOCK_OBJECTS.EDIT_RATING,
       currentUsername: MOCK_OBJECTS.USERNAME_OTHER,
     }).then(val => {
@@ -65,7 +64,6 @@ describe('updateRating', () => {
     return interactor.updateRating({
       dataStore: driver,
       ratingId,
-      learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
       updates: MOCK_OBJECTS.EDIT_RATING,
       currentUsername: MOCK_OBJECTS.USERNAME,
     }).then(val => {
@@ -84,7 +82,6 @@ describe('deleteRating', () => {
     return interactor.deleteRating({
       dataStore: driver,
       ratingId,
-      learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
       currentUsername: MOCK_OBJECTS.USERNAME_OTHER,
     }).then(val => {
       console.log(val);
@@ -99,7 +96,6 @@ describe('deleteRating', () => {
     return interactor.deleteRating({
       dataStore: driver,
       ratingId,
-      learningObjetId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
       currentUsername: MOCK_OBJECTS.USERNAME,
     }).then(val => {
       expect(val).to.be.an('undefined');

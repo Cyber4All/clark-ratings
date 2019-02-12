@@ -59,7 +59,7 @@ describe('getUserFlags', () => {
   it('Should return all flags for a specified user - this is an admin operation', done => {
     return interactor.getUserFlags({
         dataStore: driver,
-        currentUsername: MOCK_OBJECTS.USERNAME,
+        username: MOCK_OBJECTS.USERNAME,
     }).then(val => {
       expect(val).to.be.an('array');
       done();
