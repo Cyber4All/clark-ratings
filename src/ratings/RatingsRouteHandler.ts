@@ -106,17 +106,13 @@ export function initializePrivate({
      * @param {Request} req
      * @param {Response} res
      */
-    const removeRating = async (req: Request, res: Response) => {
+    const deleteRating = async (req: Request, res: Response) => {
         try {
           const ratingId = req.params.ratingId;
-          const learningObjectName = req.params.learningObjectName;
-          const learningObjectAuthor = req.params.learningObjectAuthor;
           const currentUsername = req['user']['username'];
           await interactor.deleteRating({
             dataStore,
             ratingId,
-            learningObjectName,
-            learningObjectAuthor,
             currentUsername,
           });
           res.sendStatus(200);
@@ -135,18 +131,14 @@ export function initializePrivate({
      * @param {Request} req
      * @param {Response} res
      */
-    const editRating = async (req: Request, res: Response) => {
+    const updateRating = async (req: Request, res: Response) => {
         try {
           const updates = req.body;
           const ratingId = req.params.ratingId;
-          const learningObjectName = req.params.learningObjectName;
-          const learningObjectAuthor = req.params.learningObjectAuthor;
           const currentUsername = req['user']['username'];
           await interactor.updateRating({
             dataStore,
             ratingId,
-            learningObjectName,
-            learningObjectAuthor,
             updates,
             currentUsername,
           });
@@ -169,16 +161,14 @@ export function initializePrivate({
     const createRating = async (req: Request, res: Response) => {
         try {
           const rating = req.body;
-          const learningObjectName = req.params.learningObjectName;
-          const learningObjectAuthor = req.params.learningObjectAuthor;
+          const learningObjectId = req.params.learningObjectId;
           const username = req['user']['username'];
           const email = req['user']['email'];
           const name = req['user']['name'];
           await interactor.createRating({
             dataStore,
             rating,
-            learningObjectName,
-            learningObjectAuthor,
+            learningObjectId,
             username,
             email,
             name,
@@ -194,7 +184,7 @@ export function initializePrivate({
         }
     };
 
-    router.delete('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId', removeRating);
-    router.patch('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId', editRating);
-    router.post('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings', createRating);
+    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId', deleteRating);
+    router.patch('/learning-objects/:learningObjectId/ratings/:ratingId', updateRating);
+    router.post('/learning-objects/:learningObjectId/ratings', createRating);
 }

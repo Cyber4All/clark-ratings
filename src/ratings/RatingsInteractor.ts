@@ -1,11 +1,15 @@
 import { DataStore } from '../interfaces/DataStore';
-import { Rating, LearningObjectContainer, Flag } from '../types/Rating';
+import { Rating, LearningObjectContainer } from '../types/Rating';
 import { User } from '@cyber4all/clark-entity';
 
 /**
  * Retrieves a single rating by ID
- * @param dataStore instance of DataStore
- * @param ratingId of the rating to be retrieved
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   ratingId: string;
+ * }}
+ * @returns Promise<Rating>
  */
 export async function getRating(params: {
     dataStore: DataStore;
@@ -20,17 +24,18 @@ export async function getRating(params: {
 }
 
 /**
- * Updates a single rating
- * @param dataStore instance of DataStore
- * @param id of the rating to be retrieved
- * @param editRating object containing edits
- * @param currentUser object containing information of user that made request
+ * Update a rating specified by id
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   ratingId: string;
+ *
+ * }}
+ * @returns Promise<Rating>
  */
 export async function updateRating(params: {
     dataStore: DataStore;
     ratingId: string;
-    learningObjectName: string;
-    learningObjectAuthor: string;
     updates: Rating;
     currentUsername: string;
 }): Promise<void> {
@@ -64,8 +69,6 @@ export async function updateRating(params: {
 export async function deleteRating(params: {
     dataStore: DataStore;
     ratingId: string;
-    learningObjectName: string;
-    learningObjectAuthor: string;
     currentUsername: string;
 }): Promise<void> {
     try {
@@ -77,8 +80,6 @@ export async function deleteRating(params: {
         if (isRatingAuthor) {
             await params.dataStore.deleteRating(
                 params.ratingId,
-                params.learningObjectName,
-                params.learningObjectAuthor,
             );
         } else {
             return Promise.reject(
@@ -121,8 +122,7 @@ export async function getLearningObjectRatings(params: {
 export async function createRating(params: {
     dataStore: DataStore;
     rating: Rating;
-    learningObjectName: string;
-    learningObjectAuthor: string;
+    learningObjectId: string,
     username: string;
     email: string;
     name: string;
@@ -130,8 +130,7 @@ export async function createRating(params: {
     try {
         await params.dataStore.createNewRating(
             params.rating,
-            params.learningObjectName,
-            params.learningObjectAuthor,
+            params.learningObjectId,
             params.username,
             params.email,
             name,
