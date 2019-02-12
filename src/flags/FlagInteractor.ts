@@ -101,6 +101,15 @@ export async function getLearningObjectFlags (params: {
     }
 }
 
+/**
+ * Fetch all flags for a given ratings
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   ratingId: string;
+ * }}
+ * @returns Promise<Flag[]>
+ */
 export async function getRatingFlags (params: {
     dataStore: DataStore,
     ratingId: string,
@@ -113,6 +122,15 @@ export async function getRatingFlags (params: {
     }
 }
 
+/**
+ * Delete a flag
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   flagId: string;
+ * }}
+ * @returns Promise<void>
+ */
 export async function deleteFlag (params: {
     dataStore: DataStore,
     flagId: string,

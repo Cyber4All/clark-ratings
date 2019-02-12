@@ -221,7 +221,7 @@ export async function getUsersRatings(params: {
  *   currentUSername: string;
  *   ratingId: string;
  * }}
- * @returns Promise<vLearningObjectContainer>
+ * @returns Promise<boolean>
  */
 async function checkRatingAuthor(params: {
     dataStore: DataStore;
@@ -260,7 +260,7 @@ async function checkRatingAuthor(params: {
  *   currentUser: User;
  *   learningObjectAuthor: string;
  * }}
- * @returns Promise<vLearningObjectContainer>
+ * @returns boolean
  */
 function checkLearningObjectAuthor(params: {
     currentUser: User;
