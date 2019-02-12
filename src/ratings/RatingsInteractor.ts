@@ -37,9 +37,10 @@ export async function getRating(params: {
  * @param {{
  *   dataStore: DataStore;
  *   ratingId: string;
- *
+ *   updates: Rating;
+ *   currentUsername: string;
  * }}
- * @returns Promise<Rating>
+ * @returns Promise<void>
  */
 export async function updateRating(params: {
     dataStore: DataStore;
@@ -75,10 +76,14 @@ export async function updateRating(params: {
 }
 
 /**
- * Deletes a single rating
- * @param dataStore instance of DataStore
- * @param ratingId of the rating to be retrieved
- * @param currentUser object containing information of user that made request
+ * Delete a specified rating
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   ratingId: string;
+ *   currentUsername: string;
+ * }}
+ * @returns Promise<void>
  */
 export async function deleteRating(params: {
     dataStore: DataStore;
@@ -114,9 +119,13 @@ export async function deleteRating(params: {
 }
 
 /**
- * Get all ratings for a specified learning object
- * @param dataStore instance of DataStore
- * @param learningObjectName name of learning object
+ * Fetch all ratings for a given learning object
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   learningObjectId: string;
+ * }}
+ * @returns Promise<vLearningObjectContainer>
  */
 export async function getLearningObjectRatings(params: {
     dataStore: DataStore;
@@ -139,10 +148,16 @@ export async function getLearningObjectRatings(params: {
 
 /**
  * Create a new rating
- * @param dataStore instance of DataStore
- * @param rating object containing new rating information
- * @param learningObjectName name of learning object
- * @param username username to be appended to new rating document
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   rating: Rating;
+ *   learningObjectId: string;
+ *   username: string;
+ *   email: string;
+ *   name: string;
+ * }}
+ * @returns Promise<void>
  */
 export async function createRating(params: {
     dataStore: DataStore;
@@ -171,9 +186,13 @@ export async function createRating(params: {
 }
 
 /**
- * Get all ratings for a specified user
- * @param dataStore instance of DataStore
- * @param username username to search with
+ * Fetch all ratings for a given user
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   username: string;
+ * }}
+ * @returns Promise<Rating[]>
  */
 export async function getUsersRatings(params: {
     dataStore: DataStore;
@@ -195,16 +214,19 @@ export async function getUsersRatings(params: {
 
 
 /**
- * Helper method used to determine if the current user is the author
- * of a specified review
- * @param currentUser user object of current user
- * @param ratingId id of a rating object
- * @param dataStore instance of DataStore
+ * Checks if user is author of specified rating
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   currentUSername: string;
+ *   ratingId: string;
+ * }}
+ * @returns Promise<vLearningObjectContainer>
  */
 async function checkRatingAuthor(params: {
+    dataStore: DataStore;
     currentUsername: string;
     ratingId: string;
-    dataStore: DataStore;
 }): Promise<boolean> {
 
     try {
@@ -231,6 +253,15 @@ async function checkRatingAuthor(params: {
     }
 }
 
+/**
+ * Checks if user is author of specified learning object
+ * @export
+ * @param {{
+ *   currentUser: User;
+ *   learningObjectAuthor: string;
+ * }}
+ * @returns Promise<vLearningObjectContainer>
+ */
 function checkLearningObjectAuthor(params: {
     currentUser: User;
     learningObjectAuthor: string;
