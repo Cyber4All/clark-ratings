@@ -118,7 +118,7 @@ export async function getLearningObjectRatings(params: {
  * @param learningObjectName name of learning object
  * @param username username to be appended to new rating document
  */
-export async function createNewRating(params: {
+export async function createRating(params: {
     dataStore: DataStore;
     rating: Rating;
     learningObjectName: string;

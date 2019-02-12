@@ -1,10 +1,23 @@
 import { Request, Response, Router } from 'express';
 import { DataStore } from '../interfaces/DataStore';
-import { getLearningObjectRatings, getRating, deleteRating, createNewRating, updateRating } from './RatingsInteractor';
+import * as interactor from './RatingsInteractor';
+import { mapErrorToStatusCode } from '../errors';
 
 /**
- * Initializes an express router with endpoints for public retrieving
- * of Ratings.
+ * Initializes an express router with endpoints for public
+ * rating functions
+ *
+ * @export
+ * @param {{
+ *   dataStore: DataStore;
+ *   fileManager: FileManager;
+ *   library: LibraryCommunicator;
+ * }} {
+ *   dataStore,
+ *   fileManager,
+ *   library,
+ * }
+ * @returns
  */
 export function initializePublic({
     router,
@@ -13,44 +26,60 @@ export function initializePublic({
     router: Router;
     dataStore: DataStore;
   }) {
+
     /**
-     * Retrieve a learning object by a specified ID
+     * Retrieve a rating by a specified ID
      * @param {Request} req
      * @param {Response} res
      */
-    const getSingleRating = async (req: Request, res: Response) => {
+    const getRating = async (req: Request, res: Response) => {
         try {
-          const rating = await getRating({
-            dataStore: this.dataStore,
+          const rating = await interactor.getRating({
+            dataStore,
             ratingId: req.params.ratingId,
           });
           res.send(200).json(rating);
         } catch (error) {
-          res.sendStatus(500);
+          const response = mapErrorToStatusCode(error);
+          if (response.code === 500) {
+            res.status(response.code).json(response.message);
+          } else {
+            res.sendStatus(response.code);
+          }
         }
     };
 
-    const getObjectRatings = async (req: Request, res: Response) => {
+    /**
+     * Retrieve all ratings associated with a specified learning object
+     * @param {Request} req
+     * @param {Response} res
+     */
+    const getLearningObjectRatings = async (req: Request, res: Response) => {
         try {
-            const ratings = await getLearningObjectRatings({
-              dataStore: this.dataStore,
-              learningObjectId: req.params.learningObjectId,
-            });
-            res.send(200).json(ratings);
-          } catch (error) {
-            res.sendStatus(500);
+          const ratings = await interactor.getLearningObjectRatings({
+            dataStore,
+            learningObjectId: req.params.learningObjectId,
+          });
+          res.send(200).json(ratings);
+        } catch (error) {
+          const response = mapErrorToStatusCode(error);
+          if (response.code === 500) {
+            res.status(response.code).json(response.message);
+          } else {
+            res.sendStatus(response.code);
           }
+        }
     };
 
     router.get('/ratings/:ratingId', getRating);
-    router.get('/learning-objects/:learningObjectId/ratings', getObjectRatings);
+    router.get('/learning-objects/:learningObjectId/ratings', getLearningObjectRatings);
 
     return router;
   }
 
 /**
- * Initializes an express router with endpoints for public Creating, Updating, and Deleting
- * a Learning Object.
+ * Initializes an express router with endpoints for private
+ * rating functions
  *
  * @export
  * @param {{
@@ -72,15 +101,19 @@ export function initializePrivate({
     dataStore: DataStore;
 }) {
 
+    /**
+     * Delete a specifed rating
+     * @param {Request} req
+     * @param {Response} res
+     */
     const removeRating = async (req: Request, res: Response) => {
-        // delete specified rating
-        const ratingId = req.params.ratingId;
-        const learningObjectName = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUsername = req['user']['username'];
         try {
-          await deleteRating({
-            dataStore: this.dataStore,
+          const ratingId = req.params.ratingId;
+          const learningObjectName = req.params.learningObjectName;
+          const learningObjectAuthor = req.params.learningObjectAuthor;
+          const currentUsername = req['user']['username'];
+          await interactor.deleteRating({
+            dataStore,
             ratingId,
             learningObjectName,
             learningObjectAuthor,
@@ -88,20 +121,29 @@ export function initializePrivate({
           });
           res.sendStatus(200);
         } catch (error) {
-          res.send(500).json({message: error.message});
+          const response = mapErrorToStatusCode(error);
+          if (response.code === 500) {
+            res.status(response.code).json(response.message);
+          } else {
+            res.sendStatus(response.code);
+          }
         }
     };
 
+    /**
+     * Edit a specified rating
+     * @param {Request} req
+     * @param {Response} res
+     */
     const editRating = async (req: Request, res: Response) => {
-        // update specified rating
-        const updates = req.body;
-        const ratingId = req.params.ratingId;
-        const learningObjectName = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor;
-        const currentUsername = req['user']['username'];
         try {
-          await updateRating({
-            dataStore: this.dataStore,
+          const updates = req.body;
+          const ratingId = req.params.ratingId;
+          const learningObjectName = req.params.learningObjectName;
+          const learningObjectAuthor = req.params.learningObjectAuthor;
+          const currentUsername = req['user']['username'];
+          await interactor.updateRating({
+            dataStore,
             ratingId,
             learningObjectName,
             learningObjectAuthor,
@@ -110,21 +152,30 @@ export function initializePrivate({
           });
           res.sendStatus(200);
         } catch (error) {
-          res.send(500).json({message: error.message});
+          const response = mapErrorToStatusCode(error);
+          if (response.code === 500) {
+            res.status(response.code).json(response.message);
+          } else {
+            res.sendStatus(response.code);
+          }
         }
     };
 
+    /**
+     * Create a new rating
+     * @param {Request} req
+     * @param {Response} res
+     */
     const createRating = async (req: Request, res: Response) => {
-        // create a new rating for the associated learning object
-        const rating = req.body;
-        const learningObjectName = req.params.learningObjectName;
-        const learningObjectAuthor = req.params.learningObjectAuthor;
-        const username = req['user']['username'];
-        const email = req['user']['email'];
-        const name = req['user']['name'];
         try {
-          await createNewRating({
-            dataStore: this.dataStore,
+          const rating = req.body;
+          const learningObjectName = req.params.learningObjectName;
+          const learningObjectAuthor = req.params.learningObjectAuthor;
+          const username = req['user']['username'];
+          const email = req['user']['email'];
+          const name = req['user']['name'];
+          await interactor.createRating({
+            dataStore,
             rating,
             learningObjectName,
             learningObjectAuthor,
@@ -134,7 +185,12 @@ export function initializePrivate({
           });
           res.sendStatus(200);
         } catch (error) {
-          res.send(500).json({message: error.message});
+          const response = mapErrorToStatusCode(error);
+          if (response.code === 500) {
+            res.status(response.code).json(response.message);
+          } else {
+            res.sendStatus(response.code);
+          }
         }
     };
 
