@@ -10,11 +10,18 @@ enum Collections {
 }
 
 export class FlagStore implements FlagDataStore {
-
+    private static instance: FlagDataStore;
     private db: Db;
 
-    constructor() {
+    private constructor() {
         this.db = MongoDriver.getConnection();
+    }
+
+    static getInstance(): FlagDataStore {
+        if (!FlagStore.instance) {
+            FlagStore.instance = new FlagStore();
+        }
+        return FlagStore.instance;
     }
 
     async flagRating(
