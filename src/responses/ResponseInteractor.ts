@@ -1,5 +1,5 @@
 import { DataStore } from '../interfaces/interfaces';
-import { Rating, LearningObjectContainer } from '../types/Rating';
+import { Rating, } from '../types/Rating';
 import { User } from '@cyber4all/clark-entity';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
@@ -17,10 +17,9 @@ export async function deleteResponse(params: {
     dataStore: DataStore;
     ratingId: string;
     username: string;
-}): Promise<Rating> {
+}): Promise<void> {
     try {
-        let rating = await params.dataStore.getRating(params.ratingId);
-        return rating;
+        await params.dataStore.getRating(params.ratingId);
     } catch (error) {
         reportError(error);
         return Promise.reject(

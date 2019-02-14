@@ -20,5 +20,17 @@ export async function hasWriteAccess(params: {
     dataStore: DataStore;
     objectId: string;
 }): Promise<boolean> {
-    return hasPrivilegedAccess()
+    return hasPrivilegedAccess({
+        user,
+        dataStore,
+        objectId,
+    });
+}
+
+function hasPrivilegedAccess(params: {
+    user: UserToken;
+    dataStore: DataStore;
+    objectId: string;
+}) {
+
 }
