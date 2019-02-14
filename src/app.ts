@@ -26,7 +26,7 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
-MongoDriver.build(dburi).then(dataStore => {
-  ExpressDriver.start(dataStore);
+MongoDriver.build(dburi).then(() => {
+  ExpressDriver.start();
 });
 

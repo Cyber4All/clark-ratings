@@ -8,12 +8,10 @@ import * as http from 'http';
 import { ExpressRouteDriver, ExpressAuthRouteDriver } from '../drivers';
 import { enforceAuthenticatedAccess } from '../../middleware/jwt.config';
 import { enforceEmailVerification } from '../../middleware/email-verification';
-import { DataStore } from '../../interfaces/interfaces';
 
 export class ExpressDriver {
     static app = express();
     static start(
-      dataStore: DataStore,
     ) {
       raven.config(process.env.SENTRY_DSN).install();
       this.app.use(raven.requestHandler());
@@ -41,7 +39,7 @@ export class ExpressDriver {
       // Set our public api routes
       this.app.use(
         '/',
-        ExpressRouteDriver.buildRouter(dataStore),
+        ExpressRouteDriver.buildRouter(),
       );
 
       // Set Validation Middleware
@@ -58,7 +56,7 @@ export class ExpressDriver {
       // Set our authenticated api routes
       this.app.use(
         '/',
-        ExpressAuthRouteDriver.buildRouter(dataStore),
+        ExpressAuthRouteDriver.buildRouter(),
       );
 
       /**

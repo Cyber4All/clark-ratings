@@ -1,18 +1,31 @@
-import { reportError } from "../drivers/SentryConnector";
+import { reportError } from '../drivers/SentryConnector';
+import { Db } from 'mongodb';
+import { MongoDriver } from '../drivers/MongoDriver';
+import { FlagDataStore } from './interfaces/FlagDataStore';
+import { Flag } from '../types/Rating';
 
+enum Collections {
+    FLAGS = 'flags',
+    RATINGS = 'ratings',
+}
 
-export class MongoDriver implements FlagDataStore {
+export class FlagStore implements FlagDataStore {
+
+    private db: Db;
 
     constructor() {
-        
+        this.db = MongoDriver.getConnection();
     }
 
-    async flagRating(ratingId: string, flag: Flag): Promise<void> {
+    async flagRating(
+        ratingId: string,
+        flag: Flag,
+    ): Promise<void> {
         try {
             flag.ratingId = ratingId;
-            flag._id = new ObjectId().toHexString();
-            flag.date = flag._id.toString().substring(0, 8);
-            await this.db.collection(Collections.flags).insert(flag);
+            flag.date = Date.now();
+            await this.db.collection(Collections.FLAGS)
+                .insert(flag);
             return Promise.resolve();
         } catch (error) {
             reportError(error);
@@ -23,9 +36,9 @@ export class MongoDriver implements FlagDataStore {
     async getAllFlags(): Promise<Flag[]> {
         try {
             const flags = await this.db
-            .collection(Collections.flags)
-            .find({})
-            .toArray();
+                .collection(Collections.FLAGS)
+                .find({})
+                .toArray();
             return flags;
         } catch (error) {
             reportError(error);
@@ -34,12 +47,14 @@ export class MongoDriver implements FlagDataStore {
     }
 
 
-    async getUserFlags(username: string): Promise<Flag[]> {
+    async getUserFlags(
+        username: string,
+    ): Promise<Flag[]> {
         try {
             const flags = await this.db
-            .collection(Collections.flags)
-            .find({ username: username })
-            .toArray();
+                .collection(Collections.FLAGS)
+                .find({ username: username })
+                .toArray();
             return flags;
         } catch (error) {
             reportError(error);
@@ -48,26 +63,26 @@ export class MongoDriver implements FlagDataStore {
     }
 
     async getLearningObjectFlags(
-    learningObjectId: string,
+        learningObjectId: string,
     ): Promise<Flag[]> {
         try {
             // get all rating ids that are attached to the specified learning object
             const ratingIds = await this.db
-            .collection(Collections.ratings)
+            .collection(Collections.RATINGS)
             .aggregate([
                 { $match: learningObjectId },
                 { $unwind: '$ratings' },
                 {
-                $project: {
-                    id: '$ratings._id',
-                },
+                    $project: {
+                        id: '$ratings._id',
+                    },
                 },
             ])
             .toArray();
             const flags = await this.db
-            .collection(Collections.flags)
-            .find({ ratingId: ratingIds })
-            .toArray();
+                .collection(Collections.FLAGS)
+                .find({ ratingId: ratingIds })
+                .toArray();
             return flags;
         } catch (error) {
             reportError(error);
@@ -77,14 +92,14 @@ export class MongoDriver implements FlagDataStore {
 
 
     async getRatingFlags(
-    ratingId: string,
+        ratingId: string,
     ): Promise<Flag[]> {
         try {
             // get learning object id
             const flags = await this.db
-            .collection(Collections.flags)
-            .find({ ratingId: ratingId })
-            .toArray();
+                .collection(Collections.FLAGS)
+                .find({ ratingId: ratingId })
+                .toArray();
             return flags;
         } catch (error) {
             reportError(error);
@@ -93,11 +108,11 @@ export class MongoDriver implements FlagDataStore {
     }
 
     async deleteFlag(
-    flagId: string,
+        flagId: string,
     ): Promise<void> {
         try {
-            // get learning object id
-            await this.db.collection(Collections.flags).deleteOne({ _id: flagId });
+            await this.db.collection(Collections.FLAGS)
+                .deleteOne({ _id: flagId });
             return Promise.resolve();
         } catch (error) {
             reportError(error);

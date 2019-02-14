@@ -11,8 +11,8 @@ export class Collections {
   static flags: string = 'flags';
 }
 
-export class MongoDriver implements DataStore {
-  private db: Db;
+export class MongoDriver {
+  private static db: Db;
   private static mongoClient: MongoClient;
 
   private constructor() {}
@@ -34,7 +34,7 @@ export class MongoDriver implements DataStore {
   private async connect(dbURI: string, retryAttempt?: number): Promise<void> {
     try {
       MongoDriver.mongoClient = await MongoClient.connect(dbURI);
-      this.db = MongoDriver.mongoClient.db();
+      MongoDriver.db = MongoDriver.mongoClient.db();
     } catch (error) {
       if (!retryAttempt) {
         this.connect(dbURI, 1);
@@ -69,7 +69,7 @@ export class MongoDriver implements DataStore {
 
   }
 
-  getConnection() {
+  static getConnection() {
     return this.db;
   }
 }

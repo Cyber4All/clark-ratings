@@ -13,14 +13,14 @@ export class ExpressRouteDriver {
    *
    * @param dataStore the data store that the routes should utilize
    */
-  public static buildRouter(dataStore: DataStore) {
-    let e = new ExpressRouteDriver(dataStore);
+  public static buildRouter() {
+    let e = new ExpressRouteDriver();
     let router: Router = Router();
     e.setRoutes(router);
     return router;
   }
 
-  private constructor(private dataStore: DataStore) {}
+  private constructor() {}
 
   /**
    * Defines the active routes for the API. Routes take an async callback function that contains a request and response object.
@@ -36,7 +36,6 @@ export class ExpressRouteDriver {
     });
 
     RatingsRouteHandler.initializePublic({
-      dataStore: this.dataStore,
       router,
     });
   }

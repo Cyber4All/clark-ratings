@@ -1,7 +1,7 @@
 export interface Rating {
     _id?:  string;
     user?: { name: string, username: string, email: string }; // either the user or the user's ID
-    date?: string;
+    date?: number;
     value:  number;
     comment: string;
     source: string;
@@ -17,7 +17,7 @@ export interface Flag {
     _id?: string;
     comment?: string;
     ratingId?: string;
-    date?: string;
+    date?: number;
     username: string;
     concern: string;
 }
