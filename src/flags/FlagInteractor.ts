@@ -1,4 +1,4 @@
-import { Flag } from '../types/Rating';
+import { Flag } from '../types/Flag';
 import { FlagDataStore } from './interfaces/FlagDataStore';
 
 /**

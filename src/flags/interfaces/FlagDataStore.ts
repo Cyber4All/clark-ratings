@@ -1,4 +1,4 @@
-import { Flag } from '../../types/Rating';
+import { Flag } from '../../types/Flag';
 
 export interface FlagDataStore {
     flagRating(ratingId: string, flag: Flag): Promise<void>;

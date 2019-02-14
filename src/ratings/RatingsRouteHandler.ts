@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express';
-import { DataStore } from '../interfaces/interfaces';
 import * as interactor from './RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
 import { RatingStore } from './RatingStore';
@@ -10,13 +9,9 @@ import { RatingStore } from './RatingStore';
  *
  * @export
  * @param {{
- *   dataStore: DataStore;
- *   fileManager: FileManager;
- *   library: LibraryCommunicator;
+ *   router: Router
  * }} {
- *   dataStore,
- *   fileManager,
- *   library,
+ *   router
  * }
  * @returns
  */
@@ -82,22 +77,16 @@ export function initializePublic({
  *
  * @export
  * @param {{
- *   dataStore: DataStore;
- *   fileManager: FileManager;
- *   library: LibraryCommunicator;
+ *   router: Router
  * }} {
- *   dataStore,
- *   fileManager,
- *   library,
+ *   router
  * }
  * @returns
  */
 export function initializePrivate({
     router,
-    dataStore,
 }: {
     router: Router;
-    dataStore: DataStore;
 }) {
 
     /**

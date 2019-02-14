@@ -15,7 +15,6 @@ export enum ResourceErrorReason {
   INVALID_ACCESS = 'InvalidAccess',
   NOT_FOUND = 'NotFound',
   BAD_REQUEST = 'BadRequest',
-  
 }
 
 export class ResourceError extends Error {

@@ -1,4 +1,3 @@
-import { DataStore } from '../../interfaces/interfaces';
 import { Router } from 'express';
 import * as RatingsRouteHandler from '../../ratings/RatingsRouteHandler';
 import * as FlagRouteHandler from '../../flags/FlagRouteHandler';

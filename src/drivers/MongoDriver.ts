@@ -1,15 +1,6 @@
-import { DataStore } from '../interfaces/interfaces';
-import { Rating, Flag, LearningObjectContainer } from '../types/Rating';
-import { MongoClient, Db, ObjectId, ObjectID } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 import { reportError } from './SentryConnector';
 import { ServiceError, ServiceErrorType, ResourceError, ResourceErrorReason } from '../errors';
-
-export class Collections {
-  static ratings: string = 'ratings';
-  static objects: string = 'objects';
-  static users: string = 'users';
-  static flags: string = 'flags';
-}
 
 export class MongoDriver {
   private static db: Db;

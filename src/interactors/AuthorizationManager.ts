@@ -1,7 +1,4 @@
-import { DataStore } from '../interfaces/interfaces';
 import { ResourceError, ResourceErrorReason } from '../errors';
-import { userInfo } from 'os';
-import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
 import { Rating } from '../types/Rating';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { UserToken, UserRole } from '../types/UserToken';

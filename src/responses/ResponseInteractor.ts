@@ -1,5 +1,4 @@
-import { DataStore } from '../interfaces/interfaces';
-import { Rating, } from '../types/Rating';
+import { Rating } from '../types/Rating';
 import { User } from '@cyber4all/clark-entity';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';

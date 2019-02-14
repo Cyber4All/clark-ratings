@@ -1,23 +1,14 @@
-export interface Rating {
+export type Rating = {
     _id?:  string;
     user?: { name: string, username: string, email: string }; // either the user or the user's ID
     date?: number;
     value:  number;
     comment: string;
     source: string;
-}
+};
 
-export interface LearningObjectContainer {
+export type LearningObjectContainer = {
     _id?: string;
     avgRating: number;
     ratings: Rating[];
-}
-
-export interface Flag {
-    _id?: string;
-    comment?: string;
-    ratingId?: string;
-    date?: number;
-    username: string;
-    concern: string;
-}
+};
