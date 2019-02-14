@@ -5,7 +5,7 @@ import { MongoClient, Db, ObjectId, Timestamp } from 'mongodb';
 import * as request from 'request-promise';
 import * as dotenv from 'dotenv';
 import { generateServiceToken } from './TokenManager';
-import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
+import { USER_SERVICE_ROUTES } from '../routes';
 dotenv.config();
 
 export class Collections {
@@ -327,7 +327,6 @@ export class MongoDriver implements DataStore {
     }
 
     private async getLearningObjectId(learningObjectName: string, learningObjectAuthor: string) {
-            // This implementation involves an http request
             // try {
             //   this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_ID(
             //     learningObjectAuthor,
@@ -339,12 +338,31 @@ export class MongoDriver implements DataStore {
             //   return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
             // }
             try {
-                const learningObject = await this.db.collection(Collections.objects).findOne({'name': learningObjectName});
+                const user = await this.getUserId(learningObjectAuthor);
+                const learningObject = await this.db.collection(Collections.objects)
+                    .findOne(
+                        {
+                            'name': learningObjectName,
+                            'authorID': user.id,
+                        },
+                    );
                 const learningObjectId = learningObject._id;
                 return learningObjectId;
             } catch (error) {
                 return Promise.reject(error);
             }
+    }
+
+    private async getUserId(learningObjectAuthor: string) {
+        try {
+            this.options.uri = USER_SERVICE_ROUTES.GET_ID(
+                learningObjectAuthor,
+            );
+            this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
+            return request(this.options);
+        } catch (e) {
+            return Promise.reject(`Problem reading Learning Object. Error: ${e}`);
+        }
     }
 
     /**
