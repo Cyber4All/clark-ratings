@@ -13,9 +13,10 @@ import { reportError } from '../drivers/SentryConnector';
  * }}
  * @returns Promise<Rating>
  */
-export async function getRating(params: {
+export async function deleteResponse(params: {
     dataStore: DataStore;
     ratingId: string;
+    username: string;
 }): Promise<Rating> {
     try {
         let rating = await params.dataStore.getRating(params.ratingId);
@@ -42,19 +43,19 @@ export async function getRating(params: {
  * }}
  * @returns Promise<void>
  */
-export async function updateRating(params: {
+export async function updateResponse(params: {
     dataStore: DataStore;
     ratingId: string;
     updates: Rating;
-    currentUsername: string;
+    username: string;
 }): Promise<void> {
     try {
-        const isRatingAuthor = await this.checkRatingAuthor(
-            params.currentUsername,
+        const isResponseAuthor = await this.checkResponseAuthor(
+            params.username,
             params.ratingId,
             params.dataStore,
         );
-        if (isRatingAuthor) {
+        if (isResponseAuthor) {
             await params.dataStore.updateRating(
                 params.ratingId,
                 params.updates,
@@ -85,7 +86,7 @@ export async function updateRating(params: {
  * }}
  * @returns Promise<void>
  */
-export async function deleteRating(params: {
+export async function createResponse(params: {
     dataStore: DataStore;
     ratingId: string;
     currentUsername: string;
@@ -119,99 +120,6 @@ export async function deleteRating(params: {
 }
 
 /**
- * Fetch all ratings for a given learning object
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   learningObjectId: string;
- * }}
- * @returns Promise<vLearningObjectContainer>
- */
-export async function getLearningObjectRatings(params: {
-    dataStore: DataStore;
-    learningObjectId: string;
-}): Promise<LearningObjectContainer> {
-    try {
-        const ratings = await params.dataStore.getLearningObjectsRatings(
-            params.learningObjectId,
-        );
-        return ratings;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-/**
- * Create a new rating
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   rating: Rating;
- *   learningObjectId: string;
- *   username: string;
- *   email: string;
- *   name: string;
- * }}
- * @returns Promise<void>
- */
-export async function createRating(params: {
-    dataStore: DataStore;
-    rating: Rating;
-    learningObjectId: string,
-    username: string;
-    email: string;
-    name: string;
-}): Promise<void> {
-    try {
-        await params.dataStore.createNewRating(
-            params.rating,
-            params.learningObjectId,
-            params.username,
-            params.email,
-            name,
-        );
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-/**
- * Fetch all ratings for a given user
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   username: string;
- * }}
- * @returns Promise<Rating[]>
- */
-export async function getUsersRatings(params: {
-    dataStore: DataStore;
-    username: string;
-}): Promise<Rating[]> {
-    try {
-        const ratings = await params.dataStore.getUsersRatings(params.username);
-        return ratings;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-/**
  * Checks if user is author of specified rating
  * @export
  * @param {{
@@ -221,7 +129,7 @@ export async function getUsersRatings(params: {
  * }}
  * @returns Promise<boolean>
  */
-async function checkRatingAuthor(params: {
+async function checkResponseAuthor(params: {
     dataStore: DataStore;
     currentUsername: string;
     ratingId: string;
