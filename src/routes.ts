@@ -7,3 +7,13 @@ export const LEARNING_OBJECT_SERVICE_ROUTES = {
       )}/id`;
     }
 };
+
+export const USER_SERVICE_ROUTES = {
+  GET_ID(author: string) {
+    return `${
+      process.env.USER_SERVICE_URI
+    }/users/update?username=${encodeURIComponent(
+      author
+    )}`;
+  }
+};
