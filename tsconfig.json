@@ -1,16 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "./src/",
-    "allowJs": false,
-    "removeComments": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es7",
+      "dom"
+    ],
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "downlevelIteration": true,
+    "allowUnusedLabels": false,
+    "types": ["jest"]
+  }
+
 }
