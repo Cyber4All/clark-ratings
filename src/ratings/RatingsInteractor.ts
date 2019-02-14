@@ -1,8 +1,8 @@
-import { DataStore } from '../interfaces/interfaces';
 import { Rating, LearningObjectContainer } from '../types/Rating';
 import { User } from '@cyber4all/clark-entity';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
+import { RatingDataStore } from './interfaces/RatingDataStore';
 
 /**
  * Retrieves a single rating by ID
@@ -14,7 +14,7 @@ import { reportError } from '../drivers/SentryConnector';
  * @returns Promise<Rating>
  */
 export async function getRating(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     ratingId: string;
 }): Promise<Rating> {
     try {
@@ -43,7 +43,7 @@ export async function getRating(params: {
  * @returns Promise<void>
  */
 export async function updateRating(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     ratingId: string;
     updates: Rating;
     currentUsername: string;
@@ -86,7 +86,7 @@ export async function updateRating(params: {
  * @returns Promise<void>
  */
 export async function deleteRating(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     ratingId: string;
     currentUsername: string;
 }): Promise<void> {
@@ -128,7 +128,7 @@ export async function deleteRating(params: {
  * @returns Promise<vLearningObjectContainer>
  */
 export async function getLearningObjectRatings(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     learningObjectId: string;
 }): Promise<LearningObjectContainer> {
     try {
@@ -160,7 +160,7 @@ export async function getLearningObjectRatings(params: {
  * @returns Promise<void>
  */
 export async function createRating(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     rating: Rating;
     learningObjectId: string,
     username: string;
@@ -195,7 +195,7 @@ export async function createRating(params: {
  * @returns Promise<Rating[]>
  */
 export async function getUsersRatings(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     username: string;
 }): Promise<Rating[]> {
     try {
@@ -222,7 +222,7 @@ export async function getUsersRatings(params: {
  * @returns Promise<boolean>
  */
 async function checkRatingAuthor(params: {
-    dataStore: DataStore;
+    dataStore: RatingDataStore;
     currentUsername: string;
     ratingId: string;
 }): Promise<boolean> {

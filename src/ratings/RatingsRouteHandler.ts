@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { DataStore } from '../interfaces/interfaces';
 import * as interactor from './RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
+import { RatingStore } from './RatingStore';
 
 /**
  * Initializes an express router with endpoints for public
@@ -21,10 +22,8 @@ import { mapErrorToStatusCode } from '../errors';
  */
 export function initializePublic({
     router,
-    dataStore,
   }: {
     router: Router;
-    dataStore: DataStore;
   }) {
 
     /**
@@ -35,7 +34,7 @@ export function initializePublic({
     const getRating = async (req: Request, res: Response) => {
         try {
           const rating = await interactor.getRating({
-            dataStore,
+            dataStore: getDataStore(),
             ratingId: req.params.ratingId,
           });
           res.send(200).json(rating);
@@ -57,7 +56,7 @@ export function initializePublic({
     const getLearningObjectRatings = async (req: Request, res: Response) => {
         try {
           const ratings = await interactor.getLearningObjectRatings({
-            dataStore,
+            dataStore: getDataStore(),
             learningObjectId: req.params.learningObjectId,
           });
           res.send(200).json(ratings);
@@ -111,7 +110,7 @@ export function initializePrivate({
           const ratingId = req.params.ratingId;
           const currentUsername = req['user']['username'];
           await interactor.deleteRating({
-            dataStore,
+            dataStore: getDataStore(),
             ratingId,
             currentUsername,
           });
@@ -137,7 +136,7 @@ export function initializePrivate({
           const ratingId = req.params.ratingId;
           const currentUsername = req['user']['username'];
           await interactor.updateRating({
-            dataStore,
+            dataStore: getDataStore(),
             ratingId,
             updates,
             currentUsername,
@@ -166,7 +165,7 @@ export function initializePrivate({
           const email = req['user']['email'];
           const name = req['user']['name'];
           await interactor.createRating({
-            dataStore,
+            dataStore: getDataStore(),
             rating,
             learningObjectId,
             username,
@@ -187,4 +186,8 @@ export function initializePrivate({
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId', deleteRating);
     router.patch('/learning-objects/:learningObjectId/ratings/:ratingId', updateRating);
     router.post('/learning-objects/:learningObjectId/ratings', createRating);
+}
+
+function getDataStore() {
+  return RatingStore.getInstance();
 }
