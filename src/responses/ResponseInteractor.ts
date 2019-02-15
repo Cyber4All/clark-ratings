@@ -13,7 +13,7 @@ import { reportError } from '../drivers/SentryConnector';
  * @returns Promise<Rating>
  */
 export async function deleteResponse(params: {
-    dataStore: DataStore;
+    dataStore: ResponseDataStore;
     ratingId: string;
     username: string;
 }): Promise<void> {
