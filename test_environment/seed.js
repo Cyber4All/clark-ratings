@@ -6,9 +6,9 @@ let db;
 const RATING_MOCK = { 
     _id:  'rating_id',
     user: { 
-        name: string,
-        username: string,
-        email: string 
+        name: 'name',
+        username: 'username',
+        email: 'email@email',
     },
     date: 123,
     value:  2,
@@ -28,9 +28,9 @@ const FLAG_MOCK = {
 const RESPONSE_MOCK = { 
     _id: 'response_id',
     user: {
-        username: string,
-        email: string,
-        name: string,
+        username: 'username',
+        email: 'email@email',
+        name: 'name',
     },
     date: 123,
     comment: 'This is a mock response',

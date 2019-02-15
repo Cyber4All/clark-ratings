@@ -104,11 +104,11 @@ export class RatingStore implements RatingDataStore {
      * @export
      * @param params
      * @property { string } learningObjectId the id of the learning object
-     * @returns { Promise<LearningObjectContainer> }
+     * @returns { Promise<Rating[]> }
      */
     async getLearningObjectsRatings(params: {
       learningObjectId: string;
-    }): Promise<LearningObjectContainer> {
+    }): Promise<Rating[]> {
       try {
         const data = await this.db.collection(Collections.RATINGS)
           .aggregate(

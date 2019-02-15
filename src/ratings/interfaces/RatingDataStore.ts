@@ -1,4 +1,4 @@
-import { Rating, LearningObjectContainer } from '../../types/Rating';
+import { Rating } from '../../types/Rating';
 
 export interface RatingDataStore {
     updateRating(params: {
@@ -13,7 +13,7 @@ export interface RatingDataStore {
     }): Promise<Rating>;
     getLearningObjectsRatings(params: {
         learningObjectId: string;
-    }): Promise<LearningObjectContainer>;
+    }): Promise<Rating[]>;
     createNewRating(params: {
         rating: Rating;
         learningObjectId: string;
