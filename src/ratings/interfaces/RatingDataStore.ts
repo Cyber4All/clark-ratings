@@ -21,4 +21,7 @@ export interface RatingDataStore {
         email: string;
         name: string;
     }): Promise<void>;
+    getUsersRatings(params: {
+        username: string;
+    }): Promise<Rating[]>;
 }

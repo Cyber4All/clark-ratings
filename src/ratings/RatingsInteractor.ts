@@ -1,24 +1,24 @@
 import { Rating, LearningObjectContainer } from '../types/Rating';
-import { User } from '@cyber4all/clark-entity';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 
 /**
- * Retrieves a single rating by ID
+ * get a rating object
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- * }}
- * @returns Promise<Rating>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { string } ratingId the id of the parent rating document
+ * @returns { Promise<Rating> }
  */
 export async function getRating(params: {
     dataStore: RatingDataStore;
     ratingId: string;
 }): Promise<Rating> {
     try {
-        let rating = await params.dataStore.getRating(params.ratingId);
+        let rating = await params.dataStore.getRating({
+            ratingId: params.ratingId,
+        });
         return rating;
     } catch (error) {
         reportError(error);
@@ -31,16 +31,16 @@ export async function getRating(params: {
     }
 }
 
+
 /**
- * Update a rating specified by id
+ * update a rating object
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- *   updates: Rating;
- *   currentUsername: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { string } ratingId the id of the parent rating document
+ * @property { Rating } updates updated rating object
+ * @property { stringg } currentUsername username of user trying to update
+ * @returns { Promise<void> }
  */
 export async function updateRating(params: {
     dataStore: RatingDataStore;
@@ -55,10 +55,10 @@ export async function updateRating(params: {
             params.dataStore,
         );
         if (isRatingAuthor) {
-            await params.dataStore.updateRating(
-                params.ratingId,
-                params.updates,
-            );
+            await params.dataStore.updateRating({
+                ratingId: params.ratingId,
+                updates: params.updates,
+            });
         } else {
             return Promise.reject(
                 new ResourceError(
@@ -76,14 +76,13 @@ export async function updateRating(params: {
 }
 
 /**
- * Delete a specified rating
+ * delete a rating object
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- *   currentUsername: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { string } ratingId the id of the parent rating document
+ * @property { stringg } currentUsername username of user trying to update
+ * @returns { Promise<void> }
  */
 export async function deleteRating(params: {
     dataStore: RatingDataStore;
@@ -97,9 +96,9 @@ export async function deleteRating(params: {
             params.dataStore,
         );
         if (isRatingAuthor) {
-            await params.dataStore.deleteRating(
-                params.ratingId,
-            );
+            await params.dataStore.deleteRating({
+                ratingId: params.ratingId,
+            });
         } else {
             return Promise.reject(
                 new ResourceError(
@@ -119,22 +118,21 @@ export async function deleteRating(params: {
 }
 
 /**
- * Fetch all ratings for a given learning object
+ * Fetch all ratings for a learning object
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   learningObjectId: string;
- * }}
- * @returns Promise<vLearningObjectContainer>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { string } learningObjectId the id of the learning object
+ * @returns { Promise<void> }
  */
 export async function getLearningObjectRatings(params: {
     dataStore: RatingDataStore;
     learningObjectId: string;
 }): Promise<LearningObjectContainer> {
     try {
-        const ratings = await params.dataStore.getLearningObjectsRatings(
-            params.learningObjectId,
-        );
+        const ratings = await params.dataStore.getLearningObjectsRatings({
+            learningObjectId: params.learningObjectId,
+        });
         return ratings;
     } catch (error) {
         reportError(error);
@@ -147,17 +145,16 @@ export async function getLearningObjectRatings(params: {
 }
 
 /**
- * Create a new rating
+ * Create a rating object
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   rating: Rating;
- *   learningObjectId: string;
- *   username: string;
- *   email: string;
- *   name: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { Rating } rating the rating being created
+ * @property { string } learningObjectId the id of the learning object
+ * @property { string } username username of rating author
+ * @property { string } email email of rating author
+ * @property { string } name name of rating author
+ * @returns  { Promise<void> }
  */
 export async function createRating(params: {
     dataStore: RatingDataStore;
@@ -168,13 +165,13 @@ export async function createRating(params: {
     name: string;
 }): Promise<void> {
     try {
-        await params.dataStore.createNewRating(
-            params.rating,
-            params.learningObjectId,
-            params.username,
-            params.email,
+        await params.dataStore.createNewRating({
+            rating: params.rating,
+            learningObjectId: params.learningObjectId,
+            username: params.username,
+            email: params.email,
             name,
-        );
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -186,20 +183,21 @@ export async function createRating(params: {
 }
 
 /**
- * Fetch all ratings for a given user
+ * fetch all ratings for a given user
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   username: string;
- * }}
- * @returns Promise<Rating[]>
+ * @param params
+ * @property { RatingDataStore } dataStore instance of RatingDataStore
+ * @property { string } username username of rating author
+ * @returns { Promise<Rating[]> }
  */
 export async function getUsersRatings(params: {
     dataStore: RatingDataStore;
     username: string;
 }): Promise<Rating[]> {
     try {
-        const ratings = await params.dataStore.getUsersRatings(params.username);
+        const ratings = await params.dataStore.getUsersRatings({
+            username: params.username,
+        });
         return ratings;
     } catch (error) {
         reportError(error);
@@ -209,64 +207,4 @@ export async function getUsersRatings(params: {
             ),
         );
     }
-}
-
-/**
- * Checks if user is author of specified rating
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   currentUSername: string;
- *   ratingId: string;
- * }}
- * @returns Promise<boolean>
- */
-async function checkRatingAuthor(params: {
-    dataStore: RatingDataStore;
-    currentUsername: string;
-    ratingId: string;
-}): Promise<boolean> {
-
-    try {
-        // Get rating object
-        let isAuthor: boolean = false;
-        const rating: Rating = await params.dataStore.getRating(params.ratingId);
-
-        // Get populated user object
-        const ratingUsername = rating.user.username;
-
-        // Compare current user and specified rating author
-        if (ratingUsername === params.currentUsername) {
-            isAuthor = true;
-        }
-
-        return isAuthor;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-/**
- * Checks if user is author of specified learning object
- * @export
- * @param {{
- *   currentUser: User;
- *   learningObjectAuthor: string;
- * }}
- * @returns boolean
- */
-function checkLearningObjectAuthor(params: {
-    currentUser: User;
-    learningObjectAuthor: string;
-}) {
-    let isAuthor = false;
-    if (params.currentUser.username === params.learningObjectAuthor) {
-        isAuthor = true;
-    }
-    return isAuthor;
 }

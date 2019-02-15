@@ -1,29 +1,19 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from './ResponseInteractor';
 import { mapErrorToStatusCode } from '../errors';
+import { ResponseStore } from './ResponseStore';
 
 /**
  * Initializes an express router with endpoints for private
  * rating functions
  *
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   fileManager: FileManager;
- *   library: LibraryCommunicator;
- * }} {
- *   dataStore,
- *   fileManager,
- *   library,
- * }
- * @returns
+ * @property { Router } router instance of Express Router
  */
 export function initializePrivate({
     router,
-    dataStore,
 }: {
     router: Router;
-    dataStore: DataStore;
 }) {
 
     /**
@@ -33,12 +23,10 @@ export function initializePrivate({
      */
     const deleteResponse = async (req: Request, res: Response) => {
         try {
-          const ratingId = req.params.ratingId;
-          const username = req['user']['username'];
+          const responseId = req.params.responseId;
           await interactor.deleteResponse({
-            dataStore,
-            ratingId,
-            username,
+            dataStore: getDataStore(),
+            responseId,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -59,13 +47,11 @@ export function initializePrivate({
     const updateResponse = async (req: Request, res: Response) => {
         try {
           const updates = req.body;
-          const ratingId = req.params.ratingId;
-          const username = req['user']['username'];
+          const responseId = req.params.responseId;
           await interactor.updateResponse({
-            dataStore,
-            ratingId,
+            dataStore: getDataStore(),
+            responseId,
             updates,
-            username,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -87,16 +73,10 @@ export function initializePrivate({
         try {
           const response = req.body;
           const ratingId = req.params.ratingId;
-          const username = req['user']['username'];
-          const email = req['user']['email'];
-          const name = req['user']['name'];
           await interactor.createResponse({
-            dataStore,
-            response,
+            dataStore: getDataStore(),
             ratingId,
-            username,
-            email,
-            name,
+            response,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -112,4 +92,8 @@ export function initializePrivate({
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', deleteResponse);
     router.patch('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', updateResponse);
     router.post('/learning-objects/:learningObjectId/ratings/:ratingId/responses', createResponse);
+}
+
+function getDataStore() {
+  return ResponseStore.getInstance();
 }

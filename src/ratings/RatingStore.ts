@@ -3,6 +3,7 @@ import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { Db, ObjectID } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
+import { ServiceError, ServiceErrorType } from '../errors';
 
 
 enum Collections {
@@ -30,7 +31,7 @@ export class RatingStore implements RatingDataStore {
    * @param params
    * @property { string } ratingId the id of the parent rating document
    * @property { Rating } updates Rating object that contains updates
-   * @returns Promise<void>
+   * @returns { Promise<void> }
    */
   async updateRating(params: {
     ratingId: string;
@@ -47,7 +48,10 @@ export class RatingStore implements RatingDataStore {
         return Promise.resolve();
       } catch (error) {
         reportError(error);
-        return Promise.reject(error);
+        return Promise.reject(new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
       }
     }
 
@@ -56,7 +60,7 @@ export class RatingStore implements RatingDataStore {
      * @export
      * @param params
      * @property { string } ratingId the id of the parent rating document
-     * @returns Promise<void>
+     * @returns { Promise<void> }
      */
     async deleteRating(params: {
       ratingId: string;
@@ -66,7 +70,10 @@ export class RatingStore implements RatingDataStore {
           .findOneAndDelete({ _id: new ObjectID(params.ratingId) });
       } catch (error) {
         reportError(error);
-        return Promise.reject(error);
+        return Promise.reject(new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
       }
     }
 
@@ -75,7 +82,7 @@ export class RatingStore implements RatingDataStore {
      * @export
      * @param params
      * @property { string } ratingId the id of the parent rating document
-     * @returns Promise<Rating>
+     * @returns { Promise<Rating> }
      */
     async getRating(params: {
       ratingId: string;
@@ -85,7 +92,10 @@ export class RatingStore implements RatingDataStore {
           .find({ _id: new ObjectID(params.ratingId) }).toArray())[0];
       } catch (error) {
         reportError(error);
-        return Promise.reject('Problem retrieving rating! Error: ' + error);
+        return Promise.reject(new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
       }
     }
 
@@ -94,7 +104,7 @@ export class RatingStore implements RatingDataStore {
      * @export
      * @param params
      * @property { string } learningObjectId the id of the learning object
-     * @returns Promise<LearningObjectContainer>
+     * @returns { Promise<LearningObjectContainer> }
      */
     async getLearningObjectsRatings(params: {
       learningObjectId: string;
@@ -132,7 +142,10 @@ export class RatingStore implements RatingDataStore {
         return data[0];
       } catch (error) {
         reportError(error);
-        return Promise.reject(error);
+        return Promise.reject(new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
       }
     }
 
@@ -145,8 +158,8 @@ export class RatingStore implements RatingDataStore {
      * @property { string } username: username of the rating author
      * @property { string } email: email of the rating author
      * @property { string } name: name of the rating author
-     * 
-     * @returns Promise<Rating>
+     *
+     * @returns { Promise<Rating> }
      */
     async createNewRating(params: {
       rating: Rating;
@@ -156,6 +169,33 @@ export class RatingStore implements RatingDataStore {
       name: string;
     }): Promise<void> {
       // TODO implement this
+    }
+
+    /**
+     * Find all ratings that belong to a given user
+     * @export
+     * @param params
+     * @property { string } username: username of the rating author
+     *
+     * @returns { Promise<Rating> }
+     */
+    async getUsersRatings(params: {
+      username: string;
+    }): Promise<Rating[]> {
+      try {
+        const ratings = await this.db.collection(Collections.RATINGS)
+          .find({
+            'user.username': params.username,
+          })
+          .toArray();
+        return ratings;
+      } catch (error) {
+        reportError(error);
+        return Promise.reject(new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
+      }
     }
 }
 

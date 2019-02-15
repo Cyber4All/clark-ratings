@@ -1,24 +1,26 @@
-import { Rating } from '../types/Rating';
-import { User } from '@cyber4all/clark-entity';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
+import { ResponseDataStore } from './interfaces/ResponseDataStore';
+import { Response } from '../types/Response';
+
 
 /**
- * Retrieves a single rating by ID
+ * Delete a response
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- * }}
- * @returns Promise<Rating>
+ * @param params
+ * @property { ResponseDataStore } dataStore instance of ResponseDataStore
+ * @property { string } responseId id of response being deleted
+ *
+ * @returns { Promise<void> }
  */
 export async function deleteResponse(params: {
     dataStore: ResponseDataStore;
-    ratingId: string;
-    username: string;
+    responseId: string;
 }): Promise<void> {
     try {
-        await params.dataStore.getRating(params.ratingId);
+        await params.dataStore.deleteResponse({
+            responseId: params.responseId,
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -31,41 +33,24 @@ export async function deleteResponse(params: {
 }
 
 /**
- * Update a rating specified by id
+ * Delete a response
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- *   updates: Rating;
- *   currentUsername: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { ResponseDataStore } dataStore instance of ResponseDataStore
+ * @property { string } responseId id of response being deleted
+ *
+ * @returns { Promise<void> }
  */
 export async function updateResponse(params: {
-    dataStore: DataStore;
-    ratingId: string;
-    updates: Rating;
-    username: string;
+    dataStore: ResponseDataStore;
+    responseId: string;
+    updates: Response;
 }): Promise<void> {
     try {
-        const isResponseAuthor = await this.checkResponseAuthor(
-            params.username,
-            params.ratingId,
-            params.dataStore,
-        );
-        if (isResponseAuthor) {
-            await params.dataStore.updateRating(
-                params.ratingId,
-                params.updates,
-            );
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Error! Current user is not the author of this review!',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
+        await params.dataStore.updateResponse({
+            responseId: params.responseId,
+            updates: params.updates,
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -75,38 +60,24 @@ export async function updateResponse(params: {
 }
 
 /**
- * Delete a specified rating
+ * Create a response
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- *   currentUsername: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { ResponseDataStore } dataStore instance of ResponseDataStore
+ * @property { string } responseId id of response being deleted
+ *
+ * @returns { Promise<void> }
  */
 export async function createResponse(params: {
-    dataStore: DataStore;
+    dataStore: ResponseDataStore;
     ratingId: string;
-    currentUsername: string;
+    response: Response;
 }): Promise<void> {
     try {
-        const isRatingAuthor = await this.checkRatingAuthor(
-            params.currentUsername,
-            params.ratingId,
-            params.dataStore,
-        );
-        if (isRatingAuthor) {
-            await params.dataStore.deleteRating(
-                params.ratingId,
-            );
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Error! Current user is not the author of this review!',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
+        await params.dataStore.createResponse({
+            ratingId: params.ratingId,
+            response: params.response,
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -115,64 +86,4 @@ export async function createResponse(params: {
             ),
         );
     }
-}
-
-/**
- * Checks if user is author of specified rating
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   currentUSername: string;
- *   ratingId: string;
- * }}
- * @returns Promise<boolean>
- */
-async function checkResponseAuthor(params: {
-    dataStore: DataStore;
-    currentUsername: string;
-    ratingId: string;
-}): Promise<boolean> {
-
-    try {
-        // Get rating object
-        let isAuthor: boolean = false;
-        const rating: Rating = await params.dataStore.getRating(params.ratingId);
-
-        // Get populated user object
-        const ratingUsername = rating.user.username;
-
-        // Compare current user and specified rating author
-        if (ratingUsername === params.currentUsername) {
-            isAuthor = true;
-        }
-
-        return isAuthor;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-/**
- * Checks if user is author of specified learning object
- * @export
- * @param {{
- *   currentUser: User;
- *   learningObjectAuthor: string;
- * }}
- * @returns boolean
- */
-function checkLearningObjectAuthor(params: {
-    currentUser: User;
-    learningObjectAuthor: string;
-}) {
-    let isAuthor = false;
-    if (params.currentUser.username === params.learningObjectAuthor) {
-        isAuthor = true;
-    }
-    return isAuthor;
 }
