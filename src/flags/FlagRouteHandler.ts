@@ -135,10 +135,10 @@ export function initializePrivate({
 
     router.get('/flags', getAllFlags);
     router.get('/users/:username/flags', getUserFlags);
-    router.get('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/flags', getLearningObjectFlags);
-    router.get('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags', getRatingFlags);
-    router.delete('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags/:flagId', deleteFlag);
-    router.post('/learning-objects/:learningObjectAuthor/:learningObjectName/ratings/:ratingId/flags', createFlag);
+    router.get('/learning-objects/:learningObjectId/ratings/flags', getLearningObjectFlags);
+    router.get('/learning-objects/:learningObjectId/ratings/:ratingId/flags', getRatingFlags);
+    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/flags/:flagId', deleteFlag);
+    router.post('/learning-objects/:learningObjectId/ratings/:ratingId/flags', createFlag);
 }
 
 function getDataStore() {
