@@ -1,5 +1,6 @@
 export const MOCK_OBJECTS = {
     RATING: {
+        _id: 'rating_id',
         value:  4,
         comment: 'unit test',
         user: {

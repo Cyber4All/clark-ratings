@@ -1,18 +1,15 @@
-
 import { MOCK_OBJECTS } from './mocks/MockObjects';
 import * as interactor from './FlagInteractor';
 import { MockFlagStore } from './mocks/MockFlagStore';
 
 const driver = new MockFlagStore();
 
-let ratingId: string;
-
 describe('flagRating', () => {
   it('Should return error - author of rating cannot perform this action!', () => {
       expect.assertions(1);
       return expect (interactor.flagRating({
         dataStore: driver,
-        ratingId,
+        ratingId: MOCK_OBJECTS.FLAG._id,
         currentUsername: MOCK_OBJECTS.USERNAME,
         flag: MOCK_OBJECTS.FLAG,
       }))
@@ -23,7 +20,7 @@ describe('flagRating', () => {
     expect.assertions(1);
     return expect (interactor.flagRating({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.FLAG._id,
       currentUsername: MOCK_OBJECTS.USERNAME,
       flag: MOCK_OBJECTS.FLAG,
     }))
@@ -61,7 +58,7 @@ describe('getRatingFlags', () => {
     expect.assertions(1);
     return expect (interactor.getRatingFlags({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.FLAG._id,
     }))
     .resolves
     .toEqual([MOCK_OBJECTS.FLAG]);

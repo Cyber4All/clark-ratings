@@ -1,16 +1,21 @@
 import { Flag } from '../../types/Flag';
 
 export interface FlagDataStore {
-    flagRating(ratingId: string, flag: Flag): Promise<void>;
+    flagRating(params: {
+        ratingId: string;
+        flag: Flag;
+    }): Promise<void>;
     getAllFlags(): Promise<Flag[]>;
-    getUserFlags(username: string): Promise<Flag[]>;
-    getLearningObjectFlags(
-        learningObjectId: string,
-    ): Promise<Flag[]>;
-    getRatingFlags(
-        ratingId: string,
-    ): Promise<Flag[]>;
-    deleteFlag(
-        flagId: string,
-    ): Promise<void>;
+    getUserFlags(params: {
+        username: string;
+    }): Promise<Flag[]>;
+    getLearningObjectFlags(params: {
+        learningObjectId: string;
+    }): Promise<Flag[]>;
+    getRatingFlags(params: {
+        ratingId: string;
+    }): Promise<Flag[]>;
+    deleteFlag(params: {
+        flagId: string;
+    }): Promise<void>;
 }

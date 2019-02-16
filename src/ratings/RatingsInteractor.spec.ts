@@ -4,8 +4,6 @@ import { MockRatingStore } from './mocks/MockRatingStore';
 
 const driver = new MockRatingStore();
 
-let ratingId: string;
-
 describe('createNewRating', () => {
   it('Should create a new rating object', () => {
     expect.assertions(1);
@@ -38,7 +36,7 @@ describe('updateRating', () => {
     expect.assertions(1);
     return expect(interactor.updateRating({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.RATING._id,
       updates: MOCK_OBJECTS.RATING,
       currentUsername: MOCK_OBJECTS.USER.username,
     }))
@@ -49,7 +47,7 @@ describe('updateRating', () => {
     expect.assertions(1);
     return expect(interactor.updateRating({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.RATING._id,
       updates: MOCK_OBJECTS.RATING,
       currentUsername: MOCK_OBJECTS.USER.username,
     }))
@@ -63,7 +61,7 @@ describe('deleteRating', () => {
     expect.assertions(1);
     return expect(interactor.deleteRating({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.RATING._id,
       currentUsername: MOCK_OBJECTS.USER.username,
     }))
     .resolves
@@ -73,7 +71,7 @@ describe('deleteRating', () => {
     expect.assertions(1);
     return expect(interactor.deleteRating({
       dataStore: driver,
-      ratingId,
+      ratingId: MOCK_OBJECTS.RATING._id,
       currentUsername: MOCK_OBJECTS.USER.username,
     }))
     .resolves

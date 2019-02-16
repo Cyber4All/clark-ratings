@@ -3,22 +3,33 @@ import { Flag } from '../../types/Flag';
 import { MOCK_OBJECTS } from './MockObjects';
 
 export class MockFlagStore implements FlagDataStore {
-    flagRating(ratingId: string, flag: Flag): Promise<void> {
+    flagRating(params: {
+        ratingId: string;
+        flag: Flag;
+    }): Promise<void> {
         return Promise.resolve();
     }
     getAllFlags(): Promise<Flag[]> {
         return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
-    getUserFlags(username: string): Promise<Flag[]> {
+    getUserFlags(params: {
+        username: string,
+    }): Promise<Flag[]> {
        return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
-    getLearningObjectFlags(learningObjectId: string): Promise<Flag[]> {
+    getLearningObjectFlags(params: {
+        learningObjectId: string;
+    }): Promise<Flag[]> {
         return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
-    getRatingFlags(ratingId: string): Promise<Flag[]> {
+    getRatingFlags(params: {
+        ratingId: string;
+    }): Promise<Flag[]> {
         return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
-    deleteFlag(flagId: string): Promise<void> {
+    deleteFlag(params: {
+        flagId: string;
+    }): Promise<void> {
         return Promise.resolve();
     }
 }

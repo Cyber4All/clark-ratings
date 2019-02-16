@@ -1,5 +1,4 @@
 export type Response = {
-    value: number,
     comment: string,
     user: {
         username: string,

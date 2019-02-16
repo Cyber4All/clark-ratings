@@ -38,6 +38,16 @@ export class MongoDriver {
     }
   }
 
+  /**
+   * Close the database. Note that this will affect all services
+   * and scripts using the database, so only do this if it's very
+   * important or if you are sure that *everything* is finished.
+   */
+  static disconnect(): void {
+    MongoDriver.mongoClient.close();
+  }
+
+
   static async build(dburi: string): Promise<void> {
     try {
       if (!MongoDriver.mongoClient) {

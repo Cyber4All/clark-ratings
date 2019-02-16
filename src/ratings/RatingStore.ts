@@ -1,4 +1,4 @@
-import { Rating, LearningObjectContainer } from '../types/Rating';
+import { Rating } from '../types/Rating';
 import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { Db, ObjectID } from 'mongodb';
@@ -168,7 +168,16 @@ export class RatingStore implements RatingDataStore {
       email: string;
       name: string;
     }): Promise<void> {
-      // TODO implement this
+      try {
+        await this.db.collection(Collections.RATINGS)
+          .insert();
+      } catch (error) {
+        return Promise.reject(
+          new ServiceError(
+            ServiceErrorType.INTERNAL,
+          ),
+        );
+      }
     }
 
     /**
