@@ -17,8 +17,8 @@ const RATING_MOCK = {
 }
 
 const FLAG_MOCK = { 
-    _id: 'flag_id',
-    comment: 'This is a mock flaf',
+    _id: new ObjectId('5ac520bdf5b97e186468964c'),
+    comment: 'This is a mock flag',
     ratingId: '5ac520bdf5b97e186468964b',
     date: 123,
     username: 'author',

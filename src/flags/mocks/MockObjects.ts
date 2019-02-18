@@ -1,10 +1,12 @@
 export const MOCK_OBJECTS = {
     FLAG: {
-        _id: 'flag_id',
-        comment: 'unit test flag',
-        username: 'nvisal1',
-        concern: 'unit test concern label',
+        _id: '5ac520bdf5b97e186468964c',
+        comment: 'This is a mock flag',
+        ratingId: '5ac520bdf5b97e186468964b',
+        date: 123,
+        username: 'author',
+        concern: 'Other',
     },
     USERNAME: 'test',
-    LEARNING_OBJECT_ID: 'learning-objecct-id',
+    LEARNING_OBJECT_ID: 'learning-object-id',
 };

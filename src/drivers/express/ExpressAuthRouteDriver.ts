@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as RatingsRouteHandler from '../../ratings/RatingsRouteHandler';
 import * as FlagRouteHandler from '../../flags/FlagRouteHandler';
-
+import * as ResponseRouteHandler from '../../responses/ResponseRouteHandler';
 /**
  * A factory for producing a router for the express app.
  *
@@ -35,6 +35,10 @@ export class ExpressAuthRouteDriver {
     });
 
     FlagRouteHandler.initializePrivate({
+      router,
+    });
+
+    ResponseRouteHandler.initializePrivate({
       router,
     });
   }

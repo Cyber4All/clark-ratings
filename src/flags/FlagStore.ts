@@ -40,13 +40,13 @@ export class FlagStore implements FlagDataStore {
         }
     }
 
-    async getAllFlags(): Promise<Flag[]> {
+    async getAllFlags(): Promise<any> {
         try {
             const flags = await this.db
                 .collection(Collections.FLAGS)
                 .find({})
                 .toArray();
-            return flags;
+            return flags.map(flag => this.convertMongoId(flag));
         } catch (error) {
             reportError(error);
             return Promise.reject(error);
@@ -125,5 +125,9 @@ export class FlagStore implements FlagDataStore {
             reportError(error);
             return Promise.reject(error);
         }
+    }
+
+    convertMongoId(flag: object) {
+        return {...flag, _id: flag['_id'].toString()};
     }
 }

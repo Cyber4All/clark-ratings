@@ -11,6 +11,15 @@ describe('FlagStore', () => {
     driver = FlagStore.getInstance();
   });
 
+  describe('getAllFlags', () => {
+    it('Should return array of all documents in flags collection', () => {
+      expect.assertions(1);
+      return expect(
+        driver.getAllFlags(),
+      ).resolves.toEqual([MOCK_OBJECTS.FLAG]);
+    });
+  });
+
   describe('flagRating', () => {
     it('Should insert a document into the flags collection', () => {
       expect.assertions(1);
@@ -20,15 +29,6 @@ describe('FlagStore', () => {
       }))
       .resolves
       .toBeUndefined();
-    });
-  });
-
-  describe('getAllFlags', () => {
-    it('Should return array of all documents in flags collection', () => {
-      expect.assertions(1);
-      return expect(
-        driver.getAllFlags(),
-      ).resolves.toEqual([MOCK_OBJECTS.FLAG]);
     });
   });
 

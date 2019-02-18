@@ -76,8 +76,8 @@ export class ExpressDriver {
       /**
        * Listen on provided port, on all network interfaces.
        */
-      server.listen(port, () =>
-        console.log(`Learning Object Service running on localhost:${port}`),
+      server.listen(3004, () =>
+        console.log(`Ratings Service running on localhost: 3004`),
       );
 
       return this.app;
