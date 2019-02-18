@@ -1,10 +1,10 @@
-const {MongoClient, ObjectID} = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 let connection;
 let db;
 
 const RATING_MOCK = { 
-    _id:  'rating_id',
+    _id: new ObjectId('5ac520bdf5b97e186468964b'),
     user: { 
         name: 'name',
         username: 'username',
@@ -13,13 +13,13 @@ const RATING_MOCK = {
     date: 123,
     value:  2,
     comment: 'This is a mock rating',
-    source: 'learning_object_id',
+    source: 'learning-object-id',
 }
 
 const FLAG_MOCK = { 
     _id: 'flag_id',
     comment: 'This is a mock flaf',
-    ratingId: 'rating_id',
+    ratingId: '5ac520bdf5b97e186468964b',
     date: 123,
     username: 'author',
     concern: 'Other',
@@ -34,7 +34,7 @@ const RESPONSE_MOCK = {
     },
     date: 123,
     comment: 'This is a mock response',
-    source: 'rating_id',
+    source: '5ac520bdf5b97e186468964b',
 }
 
 async function seedDatabase(uri){ 

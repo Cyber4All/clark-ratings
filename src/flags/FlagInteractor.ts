@@ -25,10 +25,10 @@ export async function flagRating(params: {
             params.dataStore,
         );
         if (!isRatingAuthor) {
-            await params.dataStore.flagRating(
-                params.ratingId,
-                params.flag,
-            );
+            await params.dataStore.flagRating({
+                ratingId: params.ratingId,
+                flag: params.flag,
+            });
             return Promise.resolve();
         } else {
             return Promise.reject(
@@ -73,7 +73,9 @@ export async function getUserFlags (params: {
     username:  string,
 }): Promise<Flag[]> {
     try {
-        const flags = await params.dataStore.getUserFlags(params.username);
+        const flags = await params.dataStore.getUserFlags({
+            username: params.username,
+        });
         return flags;
     } catch (error) {
         return Promise.reject(`Problem getting user flags (ADMIN). Error: ${error}`);
@@ -94,7 +96,9 @@ export async function getLearningObjectFlags (params: {
     learningObjectId: string,
 }): Promise<Flag[]> {
     try {
-        const flags = await params.dataStore.getLearningObjectFlags(params.learningObjectId);
+        const flags = await params.dataStore.getLearningObjectFlags({
+            learningObjectId: params.learningObjectId,
+        });
         return flags;
     } catch (error) {
         return Promise.reject(`Problem getting learning object flags (ADMIN). Error: ${error}`);
@@ -115,7 +119,9 @@ export async function getRatingFlags (params: {
     ratingId: string,
 }): Promise<Flag[]> {
     try {
-        const flags = await params.dataStore.getRatingFlags(params.ratingId);
+        const flags = await params.dataStore.getRatingFlags({
+            ratingId: params.ratingId,
+        });
         return flags;
     } catch (error) {
         return Promise.reject(`Problem getting rating flags (ADMIN). Error: ${error}`);
@@ -136,7 +142,9 @@ export async function deleteFlag (params: {
     flagId: string,
 }): Promise<void> {
     try {
-        await params.dataStore.deleteFlag(params.flagId);
+        await params.dataStore.deleteFlag({
+            flagId: params.flagId,
+        });
         return Promise.resolve();
     } catch (error) {
         return Promise.reject(`Problem deleting flag (ADMIN). Error: ${error}`);

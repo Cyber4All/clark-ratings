@@ -13,29 +13,6 @@ describe('RatingStore', () => {
       driver = RatingStore.getInstance();
     });
 
-    describe('updateRating', () => {
-        it('Should update a document in the ratings collection', () => {
-          expect.assertions(1);
-          return expect(driver.updateRating({
-            ratingId: MOCK_OBJECTS.RATING._id,
-            updates: MOCK_OBJECTS.RATING,
-          }))
-          .resolves
-          .toBeUndefined();
-        });
-    });
-
-    describe('deleteRating', () => {
-        it('Should delete a document in the ratings collection', () => {
-          expect.assertions(1);
-          return expect(driver.deleteRating({
-            ratingId: MOCK_OBJECTS.RATING._id,
-          }))
-          .resolves
-          .toBeUndefined();
-        });
-    });
-
     describe('getRating', () => {
         it('Should fetch a document in the ratings collection', () => {
           expect.assertions(1);
@@ -54,22 +31,7 @@ describe('RatingStore', () => {
             learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
           }))
           .resolves
-          .toEqual([MOCK_OBJECTS.RATING]);
-        });
-    });
-
-    describe('createNewRating', () => {
-        it('Should fetch all ratings that belong to a learning object', () => {
-          expect.assertions(1);
-          return expect(driver.createNewRating({
-            rating: MOCK_OBJECTS.RATING,
-            learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
-            username: MOCK_OBJECTS.USER.username,
-            email: MOCK_OBJECTS.USER.email,
-            name: MOCK_OBJECTS.USER.name,
-          }))
-          .resolves
-          .toEqual([MOCK_OBJECTS.RATING]);
+          .toEqual(MOCK_OBJECTS.LEARNING_OBJECT_GROUPING);
         });
     });
 
@@ -80,7 +42,45 @@ describe('RatingStore', () => {
             username: MOCK_OBJECTS.USER.username,
           }))
           .resolves
-          .toEqual([MOCK_OBJECTS.RATING]);
+          .toEqual(MOCK_OBJECTS.USER_GROUPING);
         });
     });
+
+    describe('createNewRating', () => {
+      it('Should fetch all ratings that belong to a learning object', () => {
+        expect.assertions(1);
+        return expect(driver.createNewRating({
+          rating: MOCK_OBJECTS.RATING,
+          learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
+          username: MOCK_OBJECTS.USER.username,
+          email: MOCK_OBJECTS.USER.email,
+          name: MOCK_OBJECTS.USER.name,
+        }))
+        .resolves
+        .toBeUndefined();
+      });
+  });
+
+    describe('updateRating', () => {
+      it('Should update a document in the ratings collection', () => {
+        expect.assertions(1);
+        return expect(driver.updateRating({
+          ratingId: MOCK_OBJECTS.RATING._id,
+          updates: MOCK_OBJECTS.RATING,
+        }))
+        .resolves
+        .toBeUndefined();
+      });
+    });
+
+    describe('deleteRating', () => {
+      it('Should delete a document in the ratings collection', () => {
+        expect.assertions(1);
+        return expect(driver.deleteRating({
+          ratingId: MOCK_OBJECTS.RATING._id,
+        }))
+        .resolves
+        .toBeUndefined();
+      });
+  });
 });

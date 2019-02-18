@@ -1,7 +1,7 @@
 import { Rating } from '../types/Rating';
 import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
-import { Db, ObjectID } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { ServiceError, ServiceErrorType } from '../errors';
 
@@ -40,13 +40,14 @@ export class RatingStore implements RatingDataStore {
       try {
         await this.db.collection(Collections.RATINGS)
           .findOneAndUpdate(
-            { _id: new ObjectID(params.ratingId) },
+            { _id: new ObjectId(params.ratingId) },
             { $set: {
               value: params.updates.value,
               comment: params.updates.comment, date: Date.now() },
           });
         return Promise.resolve();
       } catch (error) {
+        console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
             ServiceErrorType.INTERNAL,
@@ -67,7 +68,7 @@ export class RatingStore implements RatingDataStore {
     }): Promise<void> {
       try {
         await this.db.collection(Collections.RATINGS)
-          .findOneAndDelete({ _id: new ObjectID(params.ratingId) });
+          .findOneAndDelete({ _id: new ObjectId(params.ratingId) });
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -88,8 +89,9 @@ export class RatingStore implements RatingDataStore {
       ratingId: string;
     }): Promise<Rating> {
       try {
-        return (await this.db.collection(Collections.RATINGS)
-          .find({ _id: new ObjectID(params.ratingId) }).toArray())[0];
+        const rating = await this.db.collection(Collections.RATINGS)
+          .findOne({ _id: new ObjectId(params.ratingId) });
+        return {...rating, _id: rating._id.toString()};
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -108,7 +110,7 @@ export class RatingStore implements RatingDataStore {
      */
     async getLearningObjectsRatings(params: {
       learningObjectId: string;
-    }): Promise<Rating[]> {
+    }): Promise<any> {
       try {
         const data = await this.db.collection(Collections.RATINGS)
           .aggregate(
@@ -127,7 +129,9 @@ export class RatingStore implements RatingDataStore {
                 },
                 ratings: {
                   $push: {
-                    _id: '$_id',
+                    _id: {
+                      $toString: '$_id',
+                    },
                     value: '$value',
                     user: '$user',
                     comment: '$comment',
@@ -138,7 +142,6 @@ export class RatingStore implements RatingDataStore {
             },
           ],
         ).toArray();
-
         return data[0];
       } catch (error) {
         reportError(error);
@@ -170,7 +173,7 @@ export class RatingStore implements RatingDataStore {
     }): Promise<void> {
       try {
         await this.db.collection(Collections.RATINGS)
-          .insert();
+          .insert(params.rating);
       } catch (error) {
         return Promise.reject(
           new ServiceError(
@@ -186,19 +189,45 @@ export class RatingStore implements RatingDataStore {
      * @param params
      * @property { string } username: username of the rating author
      *
-     * @returns { Promise<Rating> }
+     * @returns { Promise<Rating[]> }
      */
     async getUsersRatings(params: {
       username: string;
-    }): Promise<Rating[]> {
+    }): Promise<any> {
       try {
-        const ratings = await this.db.collection(Collections.RATINGS)
-          .find({
-            'user.username': params.username,
-          })
-          .toArray();
-        return ratings;
+        const data = await this.db.collection(Collections.RATINGS)
+          .aggregate(
+          [
+            {
+              $match: { 'user.username': params.username },
+            },
+            {
+              $sort: { date: 1 },
+            },
+            {
+              $group: {
+                _id: '$source',
+                avgValue: {
+                  $avg: '$value',
+                },
+                ratings: {
+                  $push: {
+                    _id: {
+                      $toString: '$_id',
+                    },
+                    value: '$value',
+                    user: '$user',
+                    comment: '$comment',
+                    date: '$date',
+                  },
+                },
+              },
+            },
+          ],
+        ).toArray();
+        return data[0];
       } catch (error) {
+        console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
             ServiceErrorType.INTERNAL,

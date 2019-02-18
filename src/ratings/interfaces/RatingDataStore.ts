@@ -13,7 +13,7 @@ export interface RatingDataStore {
     }): Promise<Rating>;
     getLearningObjectsRatings(params: {
         learningObjectId: string;
-    }): Promise<Rating[]>;
+    }): Promise<any>;
     createNewRating(params: {
         rating: Rating;
         learningObjectId: string;
@@ -23,5 +23,5 @@ export interface RatingDataStore {
     }): Promise<void>;
     getUsersRatings(params: {
         username: string;
-    }): Promise<Rating[]>;
+    }): Promise<any>;
 }
