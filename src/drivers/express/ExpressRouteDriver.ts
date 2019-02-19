@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as RatingsRouteHandler from '../../ratings/RatingsRouteHandler';
+import * as ResponseRouteHandler from '../../responses/ResponseRouteHandler';
 
 /**
  * A factory for producing a router for the express app.
@@ -35,6 +36,10 @@ export class ExpressRouteDriver {
     });
 
     RatingsRouteHandler.initializePublic({
+      router,
+    });
+
+    ResponseRouteHandler.initializePublic({
       router,
     });
   }

@@ -43,7 +43,9 @@ export class RatingStore implements RatingDataStore {
             { _id: new ObjectId(params.ratingId) },
             { $set: {
               value: params.updates.value,
-              comment: params.updates.comment, date: Date.now() },
+              comment: params.updates.comment,
+              date: Date.now(),
+            },
           });
         return Promise.resolve();
       } catch (error) {
@@ -173,7 +175,16 @@ export class RatingStore implements RatingDataStore {
     }): Promise<void> {
       try {
         await this.db.collection(Collections.RATINGS)
-          .insert(params.rating);
+          .insert({
+            ...params.rating,
+            user: {
+              username: params.username,
+              email: params.email,
+              name: params.name,
+            },
+            source: new ObjectId(params.learningObjectId),
+            date: Date.now(),
+          });
       } catch (error) {
         return Promise.reject(
           new ServiceError(

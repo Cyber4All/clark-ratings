@@ -1,6 +1,6 @@
 import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { MongoDriver } from '../drivers/MongoDriver';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { reportError } from '../drivers/SentryConnector';
 import { ServiceError, ServiceErrorType } from '../errors';
 import { Response } from '../types/Response';
@@ -40,10 +40,38 @@ export class ResponseStore implements ResponseDataStore {
         responseId: string,
     }): Promise<void> {
         try {
-            await this.db.collection(Collections.RESPONSES)
+            await this.db
+                .collection(Collections.RESPONSES)
                 .deleteOne({
-                    _id: params.responseId,
+                    _id: new ObjectId(params.responseId),
                 });
+        } catch (error) {
+            reportError(error);
+            return Promise.reject(
+                new ServiceError(
+                    ServiceErrorType.INTERNAL,
+                ),
+            );
+        }
+    }
+
+    /**
+     * fetch a response document by its source
+     * @export
+     * @param params
+     * @property {string } ratingId the id of the rating document (source of the response)
+     * @returns Promise<Response>
+     */
+    async getResponse(params: {
+        ratingId: string,
+    }): Promise<Response> {
+        try {
+            const response = await this.db
+                .collection(Collections.RESPONSES)
+                .findOne({
+                    source: new ObjectId(params.ratingId),
+                });
+            return response;
         } catch (error) {
             reportError(error);
             return Promise.reject(
@@ -69,10 +97,14 @@ export class ResponseStore implements ResponseDataStore {
     }): Promise<void> {
         try {
             const updates = params.updates;
-            await this.db.collection(Collections.RESPONSES)
+            await this.db
+                .collection(Collections.RESPONSES)
                 .findOneAndUpdate(
-                    {_id: params.responseId },
-                    { $set: { updates } },
+                    {_id: new ObjectId(params.responseId) },
+                    { $set: {
+                        ...updates,
+                        date: Date.now(),
+                    } },
                 );
         } catch (error) {
             reportError(error);
@@ -93,14 +125,23 @@ export class ResponseStore implements ResponseDataStore {
      * @returns Promise<void>
      */
     async createResponse(params: {
-        ratingId: string,
-        response: Response,
+        ratingId: string;
+        response: Response;
+        username: string;
+        name: string;
+        email: string;
     }): Promise<void> {
         try {
-            await this.db.collection(Collections.RESPONSES)
+            await this.db
+                .collection(Collections.RESPONSES)
                 .insert({
                     ...params.response,
-                    source: params.ratingId,
+                    source: new ObjectId(params.ratingId),
+                    user: {
+                        username: params.name,
+                        email: params.email,
+                        name: params.name,
+                    },
                     date: Date.now(),
                 });
         } catch (error) {

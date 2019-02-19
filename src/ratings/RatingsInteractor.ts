@@ -2,6 +2,7 @@ import { Rating, LearningObjectContainer } from '../types/Rating';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
+import { UserToken } from '../types/UserToken';
 
 /**
  * get a rating object
@@ -16,7 +17,7 @@ export async function getRating(params: {
     ratingId: string;
 }): Promise<Rating> {
     try {
-        let rating = await params.dataStore.getRating({
+        const rating = await params.dataStore.getRating({
             ratingId: params.ratingId,
         });
         return rating;
@@ -46,27 +47,13 @@ export async function updateRating(params: {
     dataStore: RatingDataStore;
     ratingId: string;
     updates: Rating;
-    currentUsername: string;
+    user: UserToken;
 }): Promise<void> {
     try {
-        const isRatingAuthor = await this.checkRatingAuthor(
-            params.currentUsername,
-            params.ratingId,
-            params.dataStore,
-        );
-        if (isRatingAuthor) {
-            await params.dataStore.updateRating({
-                ratingId: params.ratingId,
-                updates: params.updates,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Error! Current user is not the author of this review!',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
+        await params.dataStore.updateRating({
+            ratingId: params.ratingId,
+            updates: params.updates,
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -87,26 +74,12 @@ export async function updateRating(params: {
 export async function deleteRating(params: {
     dataStore: RatingDataStore;
     ratingId: string;
-    currentUsername: string;
+    user: UserToken;
 }): Promise<void> {
     try {
-        const isRatingAuthor = await this.checkRatingAuthor(
-            params.currentUsername,
-            params.ratingId,
-            params.dataStore,
-        );
-        if (isRatingAuthor) {
-            await params.dataStore.deleteRating({
-                ratingId: params.ratingId,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Error! Current user is not the author of this review!',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
+        await params.dataStore.deleteRating({
+            ratingId: params.ratingId,
+        });
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -160,9 +133,7 @@ export async function createRating(params: {
     dataStore: RatingDataStore;
     rating: Rating;
     learningObjectId: string,
-    username: string;
-    email: string;
-    name: string;
+    user: UserToken;
 }): Promise<void> {
     try {
         await params.dataStore.createNewRating({
@@ -170,7 +141,7 @@ export async function createRating(params: {
             learningObjectId: params.learningObjectId,
             username: params.username,
             email: params.email,
-            name,
+            name: params.name,
         });
     } catch (error) {
         reportError(error);

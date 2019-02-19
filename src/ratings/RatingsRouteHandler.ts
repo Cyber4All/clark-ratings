@@ -32,7 +32,7 @@ export function initializePublic({
             dataStore: getDataStore(),
             ratingId: req.params.ratingId,
           });
-          res.send(200).json(rating);
+          res.status(200).json(rating);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
           if (response.code === 500) {
@@ -54,7 +54,7 @@ export function initializePublic({
             dataStore: getDataStore(),
             learningObjectId: req.params.learningObjectId,
           });
-          res.send(200).json(ratings);
+          res.status(200).json(ratings);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
           if (response.code === 500) {
@@ -97,11 +97,11 @@ export function initializePrivate({
     const deleteRating = async (req: Request, res: Response) => {
         try {
           const ratingId = req.params.ratingId;
-          const currentUsername = req['user']['username'];
+          const user = req['user'];
           await interactor.deleteRating({
             dataStore: getDataStore(),
             ratingId,
-            currentUsername,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -123,12 +123,12 @@ export function initializePrivate({
         try {
           const updates = req.body;
           const ratingId = req.params.ratingId;
-          const currentUsername = req['user']['username'];
+          const user = req['user'];
           await interactor.updateRating({
             dataStore: getDataStore(),
             ratingId,
             updates,
-            currentUsername,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -150,16 +150,12 @@ export function initializePrivate({
         try {
           const rating = req.body;
           const learningObjectId = req.params.learningObjectId;
-          const username = req['user']['username'];
-          const email = req['user']['email'];
-          const name = req['user']['name'];
+          const user = req['user'];
           await interactor.createRating({
             dataStore: getDataStore(),
             rating,
             learningObjectId,
-            username,
-            email,
-            name,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {

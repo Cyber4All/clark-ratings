@@ -4,6 +4,52 @@ import { mapErrorToStatusCode } from '../errors';
 import { ResponseStore } from './ResponseStore';
 
 /**
+ * Initializes an express router with endpoints for public
+ * rating functions
+ *
+ * @export
+ * @param {{
+ *   router: Router
+ * }} {
+ *   router
+ * }
+ * @returns
+ */
+export function initializePublic({
+  router,
+}: {
+  router: Router;
+}) {
+
+    /**
+     * Fetch reponse for given rating
+     * @param {Request} req
+     * @param {Response} res
+     */
+    const getResponse = async (req: Request, res: Response) => {
+      try {
+        const ratingId = req.params.ratingId;
+        const response = await interactor.getResponse({
+          dataStore: getDataStore(),
+          ratingId,
+        });
+        res.status(200).json(response);
+      } catch (error) {
+        const response = mapErrorToStatusCode(error);
+        if (response.code === 500) {
+          res.status(response.code).json(response.message);
+        } else {
+          res.sendStatus(response.code);
+        }
+      }
+    };
+
+    router.get('/learning-objects/:learningObjectId/ratings/:ratingId/responses', getResponse);
+
+    return router;
+}
+
+/**
  * Initializes an express router with endpoints for private
  * rating functions
  *
@@ -73,10 +119,16 @@ export function initializePrivate({
         try {
           const response = req.body;
           const ratingId = req.params.ratingId;
+          const username = req['user']['username'];
+          const name = req['user']['name'];
+          const email = req['user']['email'];
           await interactor.createResponse({
             dataStore: getDataStore(),
             ratingId,
             response,
+            username,
+            name,
+            email,
           });
           res.sendStatus(200);
         } catch (error) {

@@ -1,5 +1,5 @@
 import { reportError } from '../drivers/SentryConnector';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { FlagDataStore } from './interfaces/FlagDataStore';
 import { Flag } from '../types/Flag';
@@ -8,7 +8,6 @@ enum Collections {
     FLAGS = 'flags',
     RATINGS = 'ratings',
 }
-
 export class FlagStore implements FlagDataStore {
     private static instance: FlagDataStore;
     private db: Db;
@@ -29,10 +28,12 @@ export class FlagStore implements FlagDataStore {
         flag: Flag,
     }): Promise<void> {
         try {
-            params.flag.ratingId = params.ratingId;
             params.flag.date = Date.now();
             await this.db.collection(Collections.FLAGS)
-                .insert(params.flag);
+                .insert({
+                    ...params.flag,
+                    ratingId: new ObjectId(params.ratingId),
+                });
             return Promise.resolve();
         } catch (error) {
             reportError(error);
@@ -53,51 +54,6 @@ export class FlagStore implements FlagDataStore {
         }
     }
 
-
-    async getUserFlags(params: {
-        username: string;
-    }): Promise<Flag[]> {
-        try {
-            const flags = await this.db
-                .collection(Collections.FLAGS)
-                .find({ username: params.username })
-                .toArray();
-            return flags;
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
-    }
-
-    async getLearningObjectFlags(params: {
-        learningObjectId: string;
-    }): Promise<Flag[]> {
-        try {
-            // get all rating ids that are attached to the specified learning object
-            const ratingIds = await this.db
-            .collection(Collections.RATINGS)
-            .aggregate([
-                { $match: params.learningObjectId },
-                { $unwind: '$ratings' },
-                {
-                    $project: {
-                        id: '$ratings._id',
-                    },
-                },
-            ])
-            .toArray();
-            const flags = await this.db
-                .collection(Collections.FLAGS)
-                .find({ ratingId: ratingIds })
-                .toArray();
-            return flags;
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
-    }
-
-
     async getRatingFlags(params: {
         ratingId: string;
     }): Promise<Flag[]> {
@@ -105,7 +61,7 @@ export class FlagStore implements FlagDataStore {
             // get learning object id
             const flags = await this.db
                 .collection(Collections.FLAGS)
-                .find({ ratingId: params.ratingId })
+                .find({ ratingId: new ObjectId(params.ratingId) })
                 .toArray();
             return flags;
         } catch (error) {
@@ -119,7 +75,7 @@ export class FlagStore implements FlagDataStore {
     }): Promise<void> {
         try {
             await this.db.collection(Collections.FLAGS)
-                .deleteOne({ _id: params.flagId });
+                .deleteOne({ _id: new ObjectId(params.flagId) });
             return Promise.resolve();
         } catch (error) {
             reportError(error);

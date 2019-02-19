@@ -6,12 +6,6 @@ export interface FlagDataStore {
         flag: Flag;
     }): Promise<void>;
     getAllFlags(): Promise<Flag[]>;
-    getUserFlags(params: {
-        username: string;
-    }): Promise<Flag[]>;
-    getLearningObjectFlags(params: {
-        learningObjectId: string;
-    }): Promise<Flag[]>;
     getRatingFlags(params: {
         ratingId: string;
     }): Promise<Flag[]>;

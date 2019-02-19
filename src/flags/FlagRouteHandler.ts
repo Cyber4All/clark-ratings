@@ -25,46 +25,10 @@ export function initializePrivate({
 
     const getAllFlags = async (req: Request, res: Response) => {
         try {
-            await interactor.getAllFlags({
+            const flags = await interactor.getAllFlags({
                 dataStore: getDataStore(),
             });
-            res.sendStatus(200);
-        } catch (error) {
-            const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
-        }
-    };
-
-    const getUserFlags = async (req: Request, res: Response) => {
-        try {
-            const username = req.params.username;
-            await interactor.getUserFlags({
-                dataStore: getDataStore(),
-                username,
-            });
-            res.sendStatus(200);
-        } catch (error) {
-            const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
-        }
-    };
-
-    const getLearningObjectFlags = async (req: Request, res: Response) => {
-        try {
-            const learningObjectId = req.params.learningObjectId;
-            await interactor.getLearningObjectFlags({
-                dataStore: getDataStore(),
-                learningObjectId,
-            });
-            res.sendStatus(200);
+            res.status(200).json(flags);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
             if (response.code === 500) {
@@ -78,11 +42,11 @@ export function initializePrivate({
     const getRatingFlags = async (req: Request, res: Response) => {
         try {
             const ratingId = req.params.ratingId;
-            await interactor.getRatingFlags({
+            const ratings = await interactor.getRatingFlags({
                 dataStore: getDataStore(),
                 ratingId,
             });
-            res.sendStatus(200);
+            res.status(200).json(ratings);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
             if (response.code === 500) {
@@ -95,10 +59,9 @@ export function initializePrivate({
 
     const deleteFlag = async (req: Request, res: Response) => {
         try {
-            const flagId = req.params.flagId;
             await interactor.deleteFlag({
                 dataStore: getDataStore(),
-                flagId,
+                flagId: req.params.flagId,
             });
             res.sendStatus(200);
         } catch (error) {
@@ -134,8 +97,6 @@ export function initializePrivate({
     };
 
     router.get('/flags', getAllFlags);
-    router.get('/users/:username/flags', getUserFlags);
-    router.get('/learning-objects/:learningObjectId/ratings/flags', getLearningObjectFlags);
     router.get('/learning-objects/:learningObjectId/ratings/:ratingId/flags', getRatingFlags);
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/flags/:flagId', deleteFlag);
     router.post('/learning-objects/:learningObjectId/ratings/:ratingId/flags', createFlag);

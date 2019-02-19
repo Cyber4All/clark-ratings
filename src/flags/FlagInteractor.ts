@@ -19,22 +19,10 @@ export async function flagRating(params: {
     flag: Flag;
 }): Promise<void> {
     try {
-        const isRatingAuthor = await this.checkRatingAuthor(
-            params.currentUsername,
-            params.ratingId,
-            params.dataStore,
-        );
-        if (!isRatingAuthor) {
-            await params.dataStore.flagRating({
-                ratingId: params.ratingId,
-                flag: params.flag,
-            });
-            return Promise.resolve();
-        } else {
-            return Promise.reject(
-                'Error the author of the rating cannot perform this action!',
-            );
-        }
+        await params.dataStore.flagRating({
+            ratingId: params.ratingId,
+            flag: params.flag,
+        });
     } catch (error) {
         return Promise.reject(`Problem flaging rating. Error: ${error}`);
     }
@@ -56,52 +44,6 @@ export async function getAllFlags(params: {
         return flags;
     } catch (error) {
         return Promise.reject(`Problem getting all flags (ADMIN). Error: ${error}`);
-    }
-}
-
-/**
- * Fetch all flags for a given user
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   username: string;
- * }}
- * @returns Promise<Flag[]>
- */
-export async function getUserFlags (params: {
-    dataStore: FlagDataStore,
-    username:  string,
-}): Promise<Flag[]> {
-    try {
-        const flags = await params.dataStore.getUserFlags({
-            username: params.username,
-        });
-        return flags;
-    } catch (error) {
-        return Promise.reject(`Problem getting user flags (ADMIN). Error: ${error}`);
-    }
-}
-
-/**
- * Fetch all flags for a given learning object
- * @export
- * @param {{
- *   dataStore: DataStore;
- *   learningObjectId: string;
- * }}
- * @returns Promise<Flag[]>
- */
-export async function getLearningObjectFlags (params: {
-    dataStore: FlagDataStore,
-    learningObjectId: string,
-}): Promise<Flag[]> {
-    try {
-        const flags = await params.dataStore.getLearningObjectFlags({
-            learningObjectId: params.learningObjectId,
-        });
-        return flags;
-    } catch (error) {
-        return Promise.reject(`Problem getting learning object flags (ADMIN). Error: ${error}`);
     }
 }
 
