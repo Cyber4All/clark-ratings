@@ -4,6 +4,7 @@ import { RatingDataStore } from './interfaces/RatingDataStore';
 import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { ServiceError, ServiceErrorType } from '../errors';
+import { UserInfo } from '../types/UserInfo';
 
 
 enum Collections {
@@ -169,19 +170,13 @@ export class RatingStore implements RatingDataStore {
     async createNewRating(params: {
       rating: Rating;
       learningObjectId: string;
-      username: string;
-      email: string;
-      name: string;
+      user: UserInfo;
     }): Promise<void> {
       try {
         await this.db.collection(Collections.RATINGS)
           .insert({
             ...params.rating,
-            user: {
-              username: params.username,
-              email: params.email,
-              name: params.name,
-            },
+            user: params.user,
             source: new ObjectId(params.learningObjectId),
             date: Date.now(),
           });

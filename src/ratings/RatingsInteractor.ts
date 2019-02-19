@@ -3,6 +3,7 @@ import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } fr
 import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
+import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
 
 /**
  * get a rating object
@@ -35,6 +36,8 @@ export async function getRating(params: {
 
 /**
  * update a rating object
+ * @Authorization
+ * *** Must be rating author ***
  * @export
  * @param params
  * @property { RatingDataStore } dataStore instance of RatingDataStore
@@ -50,10 +53,24 @@ export async function updateRating(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        await params.dataStore.updateRating({
+        const hasAccess = await hasRatingUpdateAccess({
+            dataStore: params.dataStore,
+            user: params.user,
             ratingId: params.ratingId,
-            updates: params.updates,
         });
+        if (hasAccess) {
+            await params.dataStore.updateRating({
+                ratingId: params.ratingId,
+                updates: params.updates,
+            });
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -64,6 +81,8 @@ export async function updateRating(params: {
 
 /**
  * delete a rating object
+ * @Authorization
+ * *** Must be rating author or have admin/editor access ***
  * @export
  * @param params
  * @property { RatingDataStore } dataStore instance of RatingDataStore
@@ -77,9 +96,23 @@ export async function deleteRating(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        await params.dataStore.deleteRating({
+        const hasAccess = await hasRatingDeleteAccess({
+            dataStore: params.dataStore,
+            user: params.user,
             ratingId: params.ratingId,
         });
+        if (hasAccess) {
+            await params.dataStore.deleteRating({
+                ratingId: params.ratingId,
+            });
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -119,6 +152,8 @@ export async function getLearningObjectRatings(params: {
 
 /**
  * Create a rating object
+ * @Authorization
+ * *** Cannot be author of learning object, Email Verified ***
  * @export
  * @param params
  * @property { RatingDataStore } dataStore instance of RatingDataStore
@@ -136,13 +171,25 @@ export async function createRating(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        await params.dataStore.createNewRating({
-            rating: params.rating,
+        const hasAccess = await hasRatingCreateAccess({
             learningObjectId: params.learningObjectId,
-            username: params.username,
-            email: params.email,
-            name: params.name,
+            user: params.user,
         });
+        if (hasAccess) {
+            const {organization, emailVerified, accessGroups, ...ratingUser} = params.user;
+            await params.dataStore.createNewRating({
+                rating: params.rating,
+                learningObjectId: params.learningObjectId,
+                user: ratingUser,
+            });
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         reportError(error);
         return Promise.reject(
@@ -155,6 +202,8 @@ export async function createRating(params: {
 
 /**
  * fetch all ratings for a given user
+ * @Authorization
+ * *** Admin Editor Reviewer@collection Curator@collection ***
  * @export
  * @param params
  * @property { RatingDataStore } dataStore instance of RatingDataStore

@@ -4,60 +4,9 @@ import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { UserToken, UserRole } from '../types/UserToken';
 import { getUser } from '../drivers/UserServiceConnector';
 
-/**
- * Checks if a user has the authority to update a Rating
- *
- * @export
- * @typedef {Object} params
- * @property {DataStore} dataStore instance of DataStore
- * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
- *
- * @returns Promise<boolean>/
- */
-export async function hasRatingUpdateAccess(params: {
-    dataStore: DataStore;
-    user: UserToken;
-    ratingId: string;
-}): Promise<boolean> {
-    return(
-        await isRatingAuthor({
-            dataStore: params.dataStore,
-            user: params.user,
-            ratingId: params.ratingId,
-        })
-    );
-}
 
-/**
- * Checks if a user has the authority to delete a Rating
- *
- * @export
- * @typedef {Object} params
- * @property {DataStore} dataStore instance of DataStore
- * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
- *
- * @returns Promise<boolean>/
- */
-export async function hasRatingDeleteAccess(params: {
-    dataStore: DataStore;
-    user: UserToken;
-    ratingId: string;
-}): Promise<boolean> {
-    return(
-        await isRatingAuthor({
-            dataStore: params.dataStore,
-            user: params.user,
-            ratingId: params.ratingId,
-        }) ||
-        await hasPrivilegedAccess({
-            dataStore: params.dataStore,
-            user: params.user,
-            ratingId: params.ratingId,
-        })
-    );
-}
+
+
 
 
 /**
@@ -87,101 +36,6 @@ export async function hasResponseCreationAccess(params: {
             ratingId: params.ratingId,
         })
     );
-}
-
-async function isLearningObjectAuthor(params: {
-    dataStore: DataStore;
-    ratingId: string;
-}): Promise<boolean> {
-    try {
-        const rating = await fetchRating({
-            dataStore: params.dataStore,
-            ratingId: params.ratingId,
-        });
-        const learningObject = await getLearningObject(rating.source);
-        const user = await getUser(rating.user.username);
-        if (learningObject['authorID'] === user['id']) {
-            return true;
-        } else {
-            return false;
-        }
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'Learning Object not found',
-                ResourceErrorReason.NOT_FOUND,
-            ),
-        );
-    }
-}
-
-async function isLearningObjectContributor(params: {
-
-}): Promise<boolean> {
-    try {
-        //
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'Learning Object not found',
-                ResourceErrorReason.NOT_FOUND,
-            ),
-        );
-    }
-}
-
-async function isRatingAuthor(params: {
-    dataStore: DataStore;
-    user: UserToken;
-    ratingId: string;
-}): Promise<boolean> {
-    try {
-        const rating = await this.fetchRating({
-            dataStore: params.dataStore,
-            ratingId: params.ratingId,
-        });
-        if (rating.user.username === params.user.username) {
-            return true;
-        } else {
-            return false;
-        }
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'User is not author of the specified rating',
-                ResourceErrorReason.INVALID_ACCESS,
-            ),
-        );
-    }
-}
-
-async function hasPrivilegedAccess(params: {
-    dataStore: DataStore;
-    user: UserToken;
-    ratingId: string;
-}): Promise<boolean> {
-    try {
-        if (params.user.accessGroups) {
-            if (isAdminOrEditor(params.user.accessGroups)) {
-                return true;
-            } else {
-                return checkCollectionWriteAccess({
-                    user: params.user,
-                    dataStore: params.dataStore,
-                    ratingId: params.ratingId,
-                });
-            }
-        } else {
-            return false;
-        }
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'User is not a member of required access group',
-                ResourceErrorReason.INVALID_ACCESS,
-            ),
-        );
-    }
 }
 
 /**

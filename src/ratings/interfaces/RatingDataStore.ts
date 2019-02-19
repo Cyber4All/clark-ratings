@@ -1,4 +1,5 @@
 import { Rating } from '../../types/Rating';
+import { UserInfo } from '../../types/UserInfo';
 
 export interface RatingDataStore {
     updateRating(params: {
@@ -17,9 +18,7 @@ export interface RatingDataStore {
     createNewRating(params: {
         rating: Rating;
         learningObjectId: string;
-        username: string;
-        email: string;
-        name: string;
+        user: UserInfo;
     }): Promise<void>;
     getUsersRatings(params: {
         username: string;

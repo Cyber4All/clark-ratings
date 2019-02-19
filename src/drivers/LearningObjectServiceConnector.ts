@@ -1,16 +1,26 @@
 import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
 import { generateServiceToken } from './TokenManager';
-import { request } from 'https';
+import * as request from 'request-promise';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { reportError } from './SentryConnector';
 
-export async function getLearningObject(learningObjectId: string) {
+export async function getLearningObject(params: {
+    learningObjectId: string;
+}) {
     try {
-        this.options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_LEARNING_OBJECT(
-            learningObjectId,
-        );
-        this.options.headers.Authorization = `Bearer ${generateServiceToken()}`;
-        return request(this.options);
+        const options = {
+            uri: '',
+            json: true,
+            headers: {
+              Authorization: 'Bearer',
+            },
+            method: 'GET',
+        };
+        options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_LEARNING_OBJECT({
+            learningObjectId: params.learningObjectId,
+        });
+        options.headers.Authorization = `Bearer ${generateServiceToken()}`;
+        return request(options);
     } catch (error) {
         reportError(error);
         return Promise.reject(
