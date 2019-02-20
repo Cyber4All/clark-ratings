@@ -69,10 +69,12 @@ export function initializePrivate({
      */
     const deleteResponse = async (req: Request, res: Response) => {
         try {
+          const user = req['user'];
           const responseId = req.params.responseId;
           await interactor.deleteResponse({
             dataStore: getDataStore(),
             responseId,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -92,12 +94,14 @@ export function initializePrivate({
      */
     const updateResponse = async (req: Request, res: Response) => {
         try {
+          const user = req['user'];
           const updates = req.body;
           const responseId = req.params.responseId;
           await interactor.updateResponse({
             dataStore: getDataStore(),
             responseId,
             updates,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {
@@ -119,16 +123,12 @@ export function initializePrivate({
         try {
           const response = req.body;
           const ratingId = req.params.ratingId;
-          const username = req['user']['username'];
-          const name = req['user']['name'];
-          const email = req['user']['email'];
+          const user = req['user'];
           await interactor.createResponse({
             dataStore: getDataStore(),
             ratingId,
             response,
-            username,
-            name,
-            email,
+            user,
           });
           res.sendStatus(200);
         } catch (error) {

@@ -147,7 +147,11 @@ export async function createResponse(params: {
             ratingId: params.ratingId,
         });
         if (hasAccess) {
-            const {organization, emailVerified, accessGroups, ...responseUser} = params.user;
+            const responseUser = {
+                username: params.user.username,
+                name: params.user.name,
+                email: params.user.email,
+            };
             await params.dataStore.createResponse({
                 ratingId: params.ratingId,
                 response: params.response,

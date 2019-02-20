@@ -119,7 +119,7 @@ export class RatingStore implements RatingDataStore {
           .aggregate(
           [
             {
-              $match: { source: params.learningObjectId },
+              $match: { source: new ObjectId(params.learningObjectId) },
             },
             {
               $sort: { date: 1 },

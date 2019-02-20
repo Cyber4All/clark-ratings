@@ -171,7 +171,11 @@ export async function createRating(params: {
             user: params.user,
         });
         if (hasAccess) {
-            const {organization, emailVerified, accessGroups, ...ratingUser} = params.user;
+            const ratingUser = {
+                username: params.user.username,
+                name: params.user.name,
+                email: params.user.email,
+            };
             await getDataStore().createNewRating({
                 rating: params.rating,
                 learningObjectId: params.learningObjectId,
