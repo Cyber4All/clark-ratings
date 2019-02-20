@@ -119,6 +119,7 @@ async function isLearningObjectAuthor(params: {
                 ),
             );
         }
+        console.log(learningObject);
         if (learningObject.author.username === params.user.username) {
             return true;
         } else {

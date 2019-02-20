@@ -4,6 +4,7 @@ import { Db, ObjectId } from 'mongodb';
 import { reportError } from '../drivers/SentryConnector';
 import { ServiceError, ServiceErrorType } from '../errors';
 import { Response } from '../types/Response';
+import { UserInfo } from '../types/UserInfo';
 
 enum Collections {
     RESPONSES = 'responses',
@@ -82,6 +83,33 @@ export class ResponseStore implements ResponseDataStore {
         }
     }
 
+    /**
+     * fetch a response document by its source
+     * @export
+     * @param params
+     * @property {string } responseId the id of the response
+     * @returns Promise<Response>
+     */
+    async getResponseById(params: {
+        responseId: string,
+    }): Promise<Response> {
+        try {
+            const response = await this.db
+                .collection(Collections.RESPONSES)
+                .findOne({
+                    _id: new ObjectId(params.responseId),
+                });
+            return response;
+        } catch (error) {
+            reportError(error);
+            return Promise.reject(
+                new ServiceError(
+                    ServiceErrorType.INTERNAL,
+                ),
+            );
+        }
+    }
+
 
     /**
      * Update a specified response document
@@ -127,9 +155,7 @@ export class ResponseStore implements ResponseDataStore {
     async createResponse(params: {
         ratingId: string;
         response: Response;
-        username: string;
-        name: string;
-        email: string;
+        user: UserInfo;
     }): Promise<void> {
         try {
             await this.db
@@ -137,11 +163,7 @@ export class ResponseStore implements ResponseDataStore {
                 .insert({
                     ...params.response,
                     source: new ObjectId(params.ratingId),
-                    user: {
-                        username: params.name,
-                        email: params.email,
-                        name: params.name,
-                    },
+                    user: params.user,
                     date: Date.now(),
                 });
         } catch (error) {

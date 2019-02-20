@@ -1,9 +1,9 @@
 import { Rating, LearningObjectContainer } from '../types/Rating';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
-import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
+import { RatingStore } from './RatingStore';
 
 /**
  * get a rating object
@@ -14,11 +14,10 @@ import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } f
  * @returns { Promise<Rating> }
  */
 export async function getRating(params: {
-    dataStore: RatingDataStore;
     ratingId: string;
 }): Promise<Rating> {
     try {
-        const rating = await params.dataStore.getRating({
+        const rating = await getDataStore().getRating({
             ratingId: params.ratingId,
         });
         return rating;
@@ -47,19 +46,18 @@ export async function getRating(params: {
  * @returns { Promise<void> }
  */
 export async function updateRating(params: {
-    dataStore: RatingDataStore;
     ratingId: string;
     updates: Rating;
     user: UserToken;
 }): Promise<void> {
     try {
         const hasAccess = await hasRatingUpdateAccess({
-            dataStore: params.dataStore,
+            dataStore: getDataStore(),
             user: params.user,
             ratingId: params.ratingId,
         });
         if (hasAccess) {
-            await params.dataStore.updateRating({
+            await getDataStore().updateRating({
                 ratingId: params.ratingId,
                 updates: params.updates,
             });
@@ -91,18 +89,17 @@ export async function updateRating(params: {
  * @returns { Promise<void> }
  */
 export async function deleteRating(params: {
-    dataStore: RatingDataStore;
     ratingId: string;
     user: UserToken;
 }): Promise<void> {
     try {
         const hasAccess = await hasRatingDeleteAccess({
-            dataStore: params.dataStore,
+            dataStore: getDataStore(),
             user: params.user,
             ratingId: params.ratingId,
         });
         if (hasAccess) {
-            await params.dataStore.deleteRating({
+            await getDataStore().deleteRating({
                 ratingId: params.ratingId,
             });
         } else {
@@ -132,11 +129,10 @@ export async function deleteRating(params: {
  * @returns { Promise<void> }
  */
 export async function getLearningObjectRatings(params: {
-    dataStore: RatingDataStore;
     learningObjectId: string;
 }): Promise<LearningObjectContainer> {
     try {
-        const ratings = await params.dataStore.getLearningObjectsRatings({
+        const ratings = await getDataStore().getLearningObjectsRatings({
             learningObjectId: params.learningObjectId,
         });
         return ratings;
@@ -165,7 +161,6 @@ export async function getLearningObjectRatings(params: {
  * @returns  { Promise<void> }
  */
 export async function createRating(params: {
-    dataStore: RatingDataStore;
     rating: Rating;
     learningObjectId: string,
     user: UserToken;
@@ -177,7 +172,7 @@ export async function createRating(params: {
         });
         if (hasAccess) {
             const {organization, emailVerified, accessGroups, ...ratingUser} = params.user;
-            await params.dataStore.createNewRating({
+            await getDataStore().createNewRating({
                 rating: params.rating,
                 learningObjectId: params.learningObjectId,
                 user: ratingUser,
@@ -211,11 +206,10 @@ export async function createRating(params: {
  * @returns { Promise<Rating[]> }
  */
 export async function getUsersRatings(params: {
-    dataStore: RatingDataStore;
     username: string;
 }): Promise<Rating[]> {
     try {
-        const ratings = await params.dataStore.getUsersRatings({
+        const ratings = await getDataStore().getUsersRatings({
             username: params.username,
         });
         return ratings;
@@ -228,3 +222,7 @@ export async function getUsersRatings(params: {
         );
     }
 }
+
+function getDataStore() {
+    return RatingStore.getInstance();
+  }

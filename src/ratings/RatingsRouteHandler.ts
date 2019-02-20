@@ -29,7 +29,6 @@ export function initializePublic({
     const getRating = async (req: Request, res: Response) => {
         try {
           const rating = await interactor.getRating({
-            dataStore: getDataStore(),
             ratingId: req.params.ratingId,
           });
           res.status(200).json(rating);
@@ -51,7 +50,6 @@ export function initializePublic({
     const getLearningObjectRatings = async (req: Request, res: Response) => {
         try {
           const ratings = await interactor.getLearningObjectRatings({
-            dataStore: getDataStore(),
             learningObjectId: req.params.learningObjectId,
           });
           res.status(200).json(ratings);
@@ -99,7 +97,6 @@ export function initializePrivate({
           const ratingId = req.params.ratingId;
           const user = req['user'];
           await interactor.deleteRating({
-            dataStore: getDataStore(),
             ratingId,
             user,
           });
@@ -125,7 +122,6 @@ export function initializePrivate({
           const ratingId = req.params.ratingId;
           const user = req['user'];
           await interactor.updateRating({
-            dataStore: getDataStore(),
             ratingId,
             updates,
             user,
@@ -152,7 +148,6 @@ export function initializePrivate({
           const learningObjectId = req.params.learningObjectId;
           const user = req['user'];
           await interactor.createRating({
-            dataStore: getDataStore(),
             rating,
             learningObjectId,
             user,
@@ -171,8 +166,4 @@ export function initializePrivate({
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId', deleteRating);
     router.patch('/learning-objects/:learningObjectId/ratings/:ratingId', updateRating);
     router.post('/learning-objects/:learningObjectId/ratings', createRating);
-}
-
-function getDataStore() {
-  return RatingStore.getInstance();
 }
