@@ -6,6 +6,7 @@ import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } f
 import { RatingStore } from './RatingStore';
 import { getResponse, getResponses } from '../responses/ResponseInteractor';
 import { disableConsoleAlerts } from 'raven';
+import { listenerCount } from 'cluster';
 
 /**
  * get a rating object
@@ -137,13 +138,7 @@ export async function getLearningObjectRatings(params: {
         const ratings = await getDataStore().getLearningObjectsRatings({
             learningObjectId: params.learningObjectId,
         });
-        console.log(ratings);
-        const ratingIds = ratings.ratings.map(rating => rating._id);
-        const responses = await getResponses({
-            ratingIds,
-        });
-
-        return {ratings, responses};
+        return ratings;
     } catch (error) {
         reportError(error);
         return Promise.reject(

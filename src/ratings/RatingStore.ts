@@ -125,6 +125,14 @@ export class RatingStore implements RatingDataStore {
               $sort: { date: 1 },
             },
             {
+              $lookup: {
+                from: 'responses',
+                localField: '_id',
+                foreignField: 'source',
+                as: 'response',
+              },
+            },
+            {
               $group: {
                 _id: '$source',
                 avgValue: {
@@ -139,6 +147,7 @@ export class RatingStore implements RatingDataStore {
                     user: '$user',
                     comment: '$comment',
                     date: '$date',
+                    response: '$response',
                   },
                 },
               },
