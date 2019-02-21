@@ -71,7 +71,7 @@ export class ResponseStore implements ResponseDataStore {
             const response = await this.db
                 .collection(Collections.RESPONSES)
                 .find({
-                    source: objectIds,
+                    source: { $in: objectIds },
                 }).toArray();
             return response;
         } catch (error) {

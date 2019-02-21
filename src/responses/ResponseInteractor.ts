@@ -63,10 +63,10 @@ export async function getResponses(params: {
     ratingIds: string[];
 }): Promise<Response[]> {
     try {
-        const response = await getDataStore().getResponses({
+        const responses = await getDataStore().getResponses({
             ratingIds: params.ratingIds,
         });
-        return response;
+        return responses;
     } catch (error) {
         reportError(error);
         return Promise.reject(

@@ -4,7 +4,8 @@ import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
 import { RatingStore } from './RatingStore';
-import { getResponse } from '../responses/ResponseInteractor';
+import { getResponse, getResponses } from '../responses/ResponseInteractor';
+import { disableConsoleAlerts } from 'raven';
 
 /**
  * get a rating object
@@ -131,13 +132,18 @@ export async function deleteRating(params: {
  */
 export async function getLearningObjectRatings(params: {
     learningObjectId: string;
-}): Promise<LearningObjectContainer> {
+}): Promise<object> {
     try {
         const ratings = await getDataStore().getLearningObjectsRatings({
             learningObjectId: params.learningObjectId,
         });
-        
-        return ratings;
+        console.log(ratings);
+        const ratingIds = ratings.ratings.map(rating => rating._id);
+        const responses = await getResponses({
+            ratingIds,
+        });
+
+        return {ratings, responses};
     } catch (error) {
         reportError(error);
         return Promise.reject(
