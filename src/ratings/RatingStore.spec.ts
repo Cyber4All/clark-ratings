@@ -52,9 +52,7 @@ describe('RatingStore', () => {
         return expect(driver.createNewRating({
           rating: MOCK_OBJECTS.RATING,
           learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
-          username: MOCK_OBJECTS.USER.username,
-          email: MOCK_OBJECTS.USER.email,
-          name: MOCK_OBJECTS.USER.name,
+          user: MOCK_OBJECTS.USER_TOKEN,
         }))
         .resolves
         .toBeUndefined();

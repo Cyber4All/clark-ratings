@@ -41,18 +41,6 @@ describe('getAllFlags', () => {
   });
 });
 
-describe('getUserFlags', () => {
-  it('Should return all flags for a specified user - this is an admin operation', () => {
-    expect.assertions(1);
-    return expect (interactor.getUserFlags({
-        dataStore: driver,
-        username: MOCK_OBJECTS.USERNAME,
-    }))
-    .resolves
-    .toEqual([MOCK_OBJECTS.FLAG]);
-  });
-});
-
 describe('getRatingFlags', () => {
   it('Should return all flags for a specified rating - this is an admin operation', () => {
     expect.assertions(1);

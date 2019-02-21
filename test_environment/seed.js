@@ -13,20 +13,20 @@ const RATING_MOCK = {
     date: 123,
     value:  2,
     comment: 'This is a mock rating',
-    source: 'learning-object-id',
+    source: new ObjectId('5ac520bdf5b97e1864689123'),
 }
 
 const FLAG_MOCK = { 
     _id: new ObjectId('5ac520bdf5b97e186468964c'),
     comment: 'This is a mock flag',
-    ratingId: '5ac520bdf5b97e186468964b',
+    ratingId: new ObjectId('5ac520bdf5b97e186468964b'),
     date: 123,
     username: 'author',
     concern: 'Other',
 }
 
 const RESPONSE_MOCK = { 
-    _id: 'response_id',
+    _id: new ObjectId('5c5c8fda47c664308b131469'),
     user: {
         username: 'username',
         email: 'email@email',
@@ -34,7 +34,7 @@ const RESPONSE_MOCK = {
     },
     date: 123,
     comment: 'This is a mock response',
-    source: '5ac520bdf5b97e186468964b',
+    source: new ObjectId('5ac520bdf5b97e186468964b'),
 }
 
 async function seedDatabase(uri){ 

@@ -4,6 +4,7 @@ import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
 import { RatingStore } from './RatingStore';
+import { getResponse } from '../responses/ResponseInteractor';
 
 /**
  * get a rating object
@@ -135,6 +136,9 @@ export async function getLearningObjectRatings(params: {
         const ratings = await getDataStore().getLearningObjectsRatings({
             learningObjectId: params.learningObjectId,
         });
+        const response = await getResponse({
+            
+        });
         return ratings;
     } catch (error) {
         reportError(error);
@@ -229,4 +233,4 @@ export async function getUsersRatings(params: {
 
 function getDataStore() {
     return RatingStore.getInstance();
-  }
+}

@@ -10,14 +10,14 @@ export const MOCK_OBJECTS = {
         date: 123,
         value:  2,
         comment: 'This is a mock rating',
-        source: 'learning-object-id',
+        source: '5ac520bdf5b97e1864689123',
     },
     USER: {
         username: 'username',
         email: 'test@test.com',
         name: 'unit test',
     },
-    LEARNING_OBJECT_ID: 'learning-object-id',
+    LEARNING_OBJECT_ID: '5ac520bdf5b97e1864689123',
     RATING_ID: '5ac520bdf5b97e186468964b',
     LEARNING_OBJECT_GROUPING: {
         '_id': 'learning-object-id',
@@ -42,6 +42,15 @@ export const MOCK_OBJECTS = {
                 '_id': '5ac520bdf5b97e186468964b',
                 'comment': 'This is a mock rating',
                 'date': 123,
-                'user': {'email': 'email@email', 'name': 'name', 'username': 'username'}, 'value': 2}]},
+                'user': {'email': 'email@email', 'name': 'name', 'username': 'username'}, 'value': 2}]
+    },
+    USER_TOKEN: {
+        username: 'username',
+        name: 'name',
+        email: 'email',
+        organization: 'organization',
+        emailVerified: false,
+        accessGroups: ['editor'],
+    },
 };
 

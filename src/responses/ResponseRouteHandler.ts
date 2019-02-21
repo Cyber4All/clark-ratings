@@ -30,7 +30,6 @@ export function initializePublic({
       try {
         const ratingId = req.params.ratingId;
         const response = await interactor.getResponse({
-          dataStore: getDataStore(),
           ratingId,
         });
         res.status(200).json(response);
@@ -72,7 +71,6 @@ export function initializePrivate({
           const user = req['user'];
           const responseId = req.params.responseId;
           await interactor.deleteResponse({
-            dataStore: getDataStore(),
             responseId,
             user,
           });
@@ -98,7 +96,6 @@ export function initializePrivate({
           const updates = req.body;
           const responseId = req.params.responseId;
           await interactor.updateResponse({
-            dataStore: getDataStore(),
             responseId,
             updates,
             user,
@@ -125,7 +122,6 @@ export function initializePrivate({
           const ratingId = req.params.ratingId;
           const user = req['user'];
           await interactor.createResponse({
-            dataStore: getDataStore(),
             ratingId,
             response,
             user,
@@ -144,8 +140,4 @@ export function initializePrivate({
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', deleteResponse);
     router.patch('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', updateResponse);
     router.post('/learning-objects/:learningObjectId/ratings/:ratingId/responses', createResponse);
-}
-
-function getDataStore() {
-  return ResponseStore.getInstance();
 }

@@ -8,12 +8,9 @@ describe('createNewRating', () => {
   it('Should create a new rating object', () => {
     expect.assertions(1);
     return expect(interactor.createRating({
-      dataStore: driver,
       rating: MOCK_OBJECTS.RATING,
       learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
-      username: MOCK_OBJECTS.USER.username,
-      email: MOCK_OBJECTS.USER.email,
-      name: MOCK_OBJECTS.USER.name,
+      user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();
@@ -23,7 +20,6 @@ describe('createNewRating', () => {
 describe('getLearningObjectRatings', () => {
   it('Should get rating created in first test', () => {
     return expect(interactor.getLearningObjectRatings({
-      dataStore: driver,
       learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
     }))
     .resolves
@@ -35,10 +31,9 @@ describe('updateRating', () => {
   it('Should throw error - only author of rating can do this', () => {
     expect.assertions(1);
     return expect(interactor.updateRating({
-      dataStore: driver,
       ratingId: MOCK_OBJECTS.RATING._id,
       updates: MOCK_OBJECTS.RATING,
-      currentUsername: MOCK_OBJECTS.USER.username,
+      user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();
@@ -46,10 +41,9 @@ describe('updateRating', () => {
   it('Should update the rating object created in first test', () => {
     expect.assertions(1);
     return expect(interactor.updateRating({
-      dataStore: driver,
       ratingId: MOCK_OBJECTS.RATING._id,
       updates: MOCK_OBJECTS.RATING,
-      currentUsername: MOCK_OBJECTS.USER.username,
+      user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();
@@ -60,9 +54,8 @@ describe('deleteRating', () => {
   it('Should throw error - only the author of rating can do this', () => {
     expect.assertions(1);
     return expect(interactor.deleteRating({
-      dataStore: driver,
       ratingId: MOCK_OBJECTS.RATING._id,
-      currentUsername: MOCK_OBJECTS.USER.username,
+      user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();
@@ -70,9 +63,8 @@ describe('deleteRating', () => {
   it('Should delete the rating', () => {
     expect.assertions(1);
     return expect(interactor.deleteRating({
-      dataStore: driver,
       ratingId: MOCK_OBJECTS.RATING._id,
-      currentUsername: MOCK_OBJECTS.USER.username,
+      user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();

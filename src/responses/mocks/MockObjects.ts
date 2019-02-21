@@ -10,4 +10,12 @@ export const MOCK_OBJECTS = {
         comment: 'This is a mock response',
         source: 'rating_id',
     },
+    USER_TOKEN: {
+        username: 'username',
+        name: 'name',
+        email: 'email',
+        organization: 'organization',
+        emailVerified: false,
+        accessGroups: ['editor'],
+    },
 };

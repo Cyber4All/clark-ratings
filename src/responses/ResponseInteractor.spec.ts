@@ -11,6 +11,7 @@ describe('deleteResponse', () => {
       return expect (interactor.deleteResponse({
         dataStore: driver,
         responseId: MOCK_OBJECTS.RESPONSE._id,
+        user: MOCK_OBJECTS.USER_TOKEN,
       }))
       .resolves
       .toBeUndefined();
@@ -24,6 +25,7 @@ describe('updateResponse', () => {
         dataStore: driver,
         responseId: MOCK_OBJECTS.RESPONSE._id,
         updates: MOCK_OBJECTS.RESPONSE,
+        user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();
@@ -37,6 +39,7 @@ describe('createResponse', () => {
         dataStore: driver,
         ratingId: MOCK_OBJECTS.RESPONSE._id,
         response: MOCK_OBJECTS.RESPONSE,
+        user: MOCK_OBJECTS.USER_TOKEN,
     }))
     .resolves
     .toBeUndefined();

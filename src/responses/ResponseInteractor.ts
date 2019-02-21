@@ -4,6 +4,7 @@ import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { Response } from '../types/Response';
 import { hasResponseUpdateDeleteAccess, hasResponseCreateAccess } from './ResponseAuthorization';
 import { UserToken } from '../types/UserToken';
+import { ResponseStore } from './ResponseStore';
 
 /**
  * Delete a response
@@ -17,18 +18,17 @@ import { UserToken } from '../types/UserToken';
  * @returns { Promise<void> }
  */
 export async function deleteResponse(params: {
-    dataStore: ResponseDataStore;
     responseId: string;
     user: UserToken;
 }): Promise<void> {
     try {
         const hasAccess = hasResponseUpdateDeleteAccess({
-            dataStore: params.dataStore,
+            dataStore: getDataStore(),
             user: params.user,
             responseId: params.responseId,
         });
         if (hasAccess) {
-            await params.dataStore.deleteResponse({
+            await getDataStore().deleteResponse({
                 responseId: params.responseId,
             });
         } else {
@@ -60,11 +60,10 @@ export async function deleteResponse(params: {
  * @returns { Promise<void> }
  */
 export async function getResponse(params: {
-    dataStore: ResponseDataStore;
     ratingId: string;
 }): Promise<Response> {
     try {
-        const response = await params.dataStore.getResponse({
+        const response = await getDataStore().getResponse({
             ratingId: params.ratingId,
         });
         return response;
@@ -91,19 +90,18 @@ export async function getResponse(params: {
  * @returns { Promise<void> }
  */
 export async function updateResponse(params: {
-    dataStore: ResponseDataStore;
     responseId: string;
     updates: Response;
     user: UserToken;
 }): Promise<void> {
     try {
         const hasAccess = hasResponseUpdateDeleteAccess({
-            dataStore: params.dataStore,
+            dataStore: getDataStore(),
             user: params.user,
             responseId: params.responseId,
         });
         if (hasAccess) {
-            await params.dataStore.updateResponse({
+            await getDataStore().updateResponse({
                 responseId: params.responseId,
                 updates: params.updates,
             });
@@ -135,14 +133,13 @@ export async function updateResponse(params: {
  * @returns { Promise<void> }
  */
 export async function createResponse(params: {
-    dataStore: ResponseDataStore;
     ratingId: string;
     response: Response;
     user: UserToken;
 }): Promise<void> {
     try {
         const hasAccess = hasResponseCreateAccess({
-            dataStore: params.dataStore,
+            dataStore: getDataStore(),
             user: params.user,
             ratingId: params.ratingId,
         });
@@ -152,7 +149,7 @@ export async function createResponse(params: {
                 name: params.user.name,
                 email: params.user.email,
             };
-            await params.dataStore.createResponse({
+            await getDataStore().createResponse({
                 ratingId: params.ratingId,
                 response: params.response,
                 user: responseUser,
@@ -173,4 +170,8 @@ export async function createResponse(params: {
             ),
         );
     }
+}
+
+function getDataStore() {
+    return ResponseStore.getInstance();
 }
