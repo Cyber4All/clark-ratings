@@ -29,8 +29,8 @@ export function initializePublic({
     const getResponse = async (req: Request, res: Response) => {
       try {
         const ratingId = req.params.ratingId;
-        const response = await interactor.getResponse({
-          ratingId,
+        const response = await interactor.getResponses({
+          ratingIds: [ratingId],
         });
         res.status(200).json(response);
       } catch (error) {

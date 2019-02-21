@@ -3,8 +3,8 @@ import { Response } from '../../types/Response';
 import { MOCK_OBJECTS } from './MockObjects';
 
 export class MockResponseStore implements ResponseDataStore {
-    getResponse(params: { ratingId: string; }): Promise<Response> {
-        return Promise.resolve(MOCK_OBJECTS.RESPONSE);
+    getResponses(params: { ratingId: string; }): Promise<Response[]> {
+        return Promise.resolve([MOCK_OBJECTS.RESPONSE]);
     }
     getResponseById(params: { responseId: string; }): Promise<Response> {
         return Promise.resolve(MOCK_OBJECTS.RESPONSE);

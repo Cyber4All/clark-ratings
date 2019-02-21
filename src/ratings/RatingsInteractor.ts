@@ -136,9 +136,7 @@ export async function getLearningObjectRatings(params: {
         const ratings = await getDataStore().getLearningObjectsRatings({
             learningObjectId: params.learningObjectId,
         });
-        const response = await getResponse({
-            
-        });
+        
         return ratings;
     } catch (error) {
         reportError(error);

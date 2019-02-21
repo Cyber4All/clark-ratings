@@ -63,15 +63,16 @@ export class ResponseStore implements ResponseDataStore {
      * @property {string } ratingId the id of the rating document (source of the response)
      * @returns Promise<Response>
      */
-    async getResponse(params: {
-        ratingId: string,
-    }): Promise<Response> {
+    async getResponses(params: {
+        ratingIds: string[],
+    }): Promise<Response[]> {
         try {
+            const objectIds  = params.ratingIds.map(id => new ObjectId(id));
             const response = await this.db
                 .collection(Collections.RESPONSES)
-                .findOne({
-                    source: new ObjectId(params.ratingId),
-                });
+                .find({
+                    source: objectIds,
+                }).toArray();
             return response;
         } catch (error) {
             reportError(error);

@@ -14,9 +14,9 @@ export interface ResponseDataStore {
         response: Response,
         user: UserInfo,
     }): Promise<void>;
-    getResponse(params: {
-        ratingId: string,
-    }): Promise<Response>;
+    getResponses(params: {
+        ratingIds: string[],
+    }): Promise<Response[]>;
     getResponseById(params: {
         responseId: string,
     }): Promise<Response>;

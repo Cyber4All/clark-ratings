@@ -59,12 +59,12 @@ export async function deleteResponse(params: {
  *
  * @returns { Promise<void> }
  */
-export async function getResponse(params: {
-    ratingId: string;
-}): Promise<Response> {
+export async function getResponses(params: {
+    ratingIds: string[];
+}): Promise<Response[]> {
     try {
-        const response = await getDataStore().getResponse({
-            ratingId: params.ratingId,
+        const response = await getDataStore().getResponses({
+            ratingIds: params.ratingIds,
         });
         return response;
     } catch (error) {
