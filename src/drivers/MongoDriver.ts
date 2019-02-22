@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 import { reportError } from './SentryConnector';
-import { ServiceError, ServiceErrorReason, ResourceError, ResourceErrorReason } from '../errors';
+import { ServiceError, ServiceErrorReason } from '../errors';
 
 export class MongoDriver {
   private static db: Db;
