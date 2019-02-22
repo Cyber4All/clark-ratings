@@ -16,7 +16,7 @@ describe('FlagStore', () => {
       expect.assertions(1);
       return expect(
         driver.getAllFlags(),
-      ).resolves.toEqual([MOCK_OBJECTS.FLAG]);
+      ).resolves.toEqual(MOCK_OBJECTS.FLAG_REPSONSE);
     });
   });
 
@@ -24,7 +24,7 @@ describe('FlagStore', () => {
     it('Should insert a document into the flags collection', () => {
       expect.assertions(1);
       return expect(driver.flagRating({
-        ratingId: MOCK_OBJECTS.FLAG._id,
+        ratingId: MOCK_OBJECTS.RATING._id,
         flag: MOCK_OBJECTS.FLAG,
       }))
       .resolves
