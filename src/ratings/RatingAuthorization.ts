@@ -1,6 +1,6 @@
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
+import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 
 /**
@@ -88,16 +88,11 @@ async function isRatingAuthor(params: {
         const rating = await params.dataStore.getRating({
             ratingId: params.ratingId,
         });
-        if (rating.user.username === params.user.username) {
-            return true;
-        } else {
-            return false;
-        }
+        return rating.user.username === params.user.username;
     } catch (error) {
         return Promise.reject(
-            new ResourceError(
-                'User is not author of the specified rating',
-                ResourceErrorReason.INVALID_ACCESS,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -119,31 +114,11 @@ async function isLearningObjectAuthor(params: {
                 ),
             );
         }
-        console.log(learningObject);
-        if (learningObject.author.username === params.user.username) {
-            return true;
-        } else {
-            return false;
-        }
+        return learningObject.author.username === params.user.username;
     } catch (error) {
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
-            ),
-        );
-    }
-}
-
-async function isLearningObjectContributor(params: {
-
-}): Promise<boolean> {
-    try {
-        //
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'Learning Object not found',
-                ResourceErrorReason.NOT_FOUND,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

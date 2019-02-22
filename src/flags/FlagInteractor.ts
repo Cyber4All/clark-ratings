@@ -3,6 +3,7 @@ import { FlagDataStore } from './interfaces/FlagDataStore';
 import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
+import { FlagStore } from './FlagStore';
 
 /**
  * Create a flag for a specified rating
@@ -28,7 +29,7 @@ export async function flagRating(params: {
             ratingId: params.ratingId,
         });
         if (hasAccess) {
-            await params.dataStore.flagRating({
+            await getDataStore().flagRating({
                 ratingId: params.ratingId,
                 flag: params.flag,
             });
@@ -46,39 +47,54 @@ export async function flagRating(params: {
 }
 
 /**
- * Fetch all flags
+ * Get all flags
+ * @Authorization
+ * *** Must be admin or editor ***
  * @export
- * @param {{
- *   dataStore: DataStore;
- * }}
- * @returns Promise<Flag[]>
+ * @param params
+ * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @returns { Promise<Flag[]> }
  */
 export async function getAllFlags(params: {
     dataStore: FlagDataStore,
 }): Promise<Flag[]> {
     try {
-        const flags = await params.dataStore.getAllFlags();
-        return flags;
+        const hasAccess = await hasFlagCreateAccess({
+            user: params.user,
+            ratingId: params.ratingId,
+        });
+        if (hasAccess) {
+            const flags = await getDataStore().getAllFlags();
+            return flags;
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         return Promise.reject(`Problem getting all flags (ADMIN). Error: ${error}`);
     }
 }
 
 /**
- * Fetch all flags for a given ratings
+ * Get all flags for a given rating
+ * @Authorization
+ * *** Must be admin or editor ***
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- * }}
- * @returns Promise<Flag[]>
+ * @param params
+ * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { string } ratingId the id of the parent rating document
+ * @returns { Promise<Flag[]> }
  */
 export async function getRatingFlags (params: {
     dataStore: FlagDataStore,
     ratingId: string,
 }): Promise<Flag[]> {
     try {
-        const flags = await params.dataStore.getRatingFlags({
+        const flags =  await getDataStore().getRatingFlags({
             ratingId: params.ratingId,
         });
         return flags;
@@ -89,24 +105,30 @@ export async function getRatingFlags (params: {
 
 /**
  * Delete a flag
+ * @Authorization
+ * *** Must be admin or editor ***
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   flagId: string;
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { string } flagId the id of the flag
+ * @returns { Promise<void> }
  */
 export async function deleteFlag (params: {
     dataStore: FlagDataStore,
     flagId: string,
 }): Promise<void> {
     try {
-        await params.dataStore.deleteFlag({
+        await getDataStore().deleteFlag({
             flagId: params.flagId,
         });
         return Promise.resolve();
     } catch (error) {
         return Promise.reject(`Problem deleting flag (ADMIN). Error: ${error}`);
     }
+}
+
+
+function getDataStore() {
+    return FlagStore.getInstance();
 }
 

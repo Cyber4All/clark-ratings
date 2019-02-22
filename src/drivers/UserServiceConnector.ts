@@ -1,6 +1,6 @@
 import { generateServiceToken } from './TokenManager';
 import { request } from 'https';
-import { ResourceErrorReason, ResourceError } from '../errors';
+import { ServiceError, ServiceErrorReason } from '../errors';
 import { reportError } from './SentryConnector';
 import { USER_SERVICE_ROUTES } from '../routes';
 
@@ -16,9 +16,8 @@ export async function getUser(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'Could not fetch User',
-                ResourceErrorReason.NOT_FOUND,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

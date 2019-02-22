@@ -1,4 +1,4 @@
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
+import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
 import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { Response } from '../types/Response';
@@ -42,9 +42,8 @@ export async function deleteResponse(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'Could not fetch rating',
-                ResourceErrorReason.NOT_FOUND,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -70,9 +69,8 @@ export async function getResponses(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'Could not fetch response',
-                ResourceErrorReason.NOT_FOUND,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -116,7 +114,7 @@ export async function updateResponse(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ServiceError(ServiceErrorType.INTERNAL),
+            new ServiceError(ServiceErrorReason.INTERNAL),
         );
     }
 }
@@ -166,7 +164,7 @@ export async function createResponse(params: {
         reportError(error);
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

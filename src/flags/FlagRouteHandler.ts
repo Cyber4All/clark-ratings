@@ -25,17 +25,11 @@ export function initializePrivate({
 
     const getAllFlags = async (req: Request, res: Response) => {
         try {
-            const flags = await interactor.getAllFlags({
-                dataStore: getDataStore(),
-            });
+            const flags = await interactor.getAllFlags();
             res.status(200).json(flags);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
+            res.status(response.code).json(response.message);
         }
     };
 
@@ -43,34 +37,24 @@ export function initializePrivate({
         try {
             const ratingId = req.params.ratingId;
             const ratings = await interactor.getRatingFlags({
-                dataStore: getDataStore(),
                 ratingId,
             });
             res.status(200).json(ratings);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
+            res.status(response.code).json(response.message);
         }
     };
 
     const deleteFlag = async (req: Request, res: Response) => {
         try {
             await interactor.deleteFlag({
-                dataStore: getDataStore(),
                 flagId: req.params.flagId,
             });
             res.sendStatus(200);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
+            res.status(response.code).json(response.message);
         }
     };
 
@@ -78,21 +62,15 @@ export function initializePrivate({
         try {
             const ratingId = req.params.ratingId;
             const flag = req.body;
-            const currentUsername = req['user']['username'];
             await interactor.flagRating({
-                dataStore: getDataStore(),
                 ratingId,
-                currentUsername,
+                user: req['user'],
                 flag,
             });
             res.sendStatus(200);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
-            if (response.code === 500) {
-                res.status(response.code).json(response.message);
-            } else {
-                res.sendStatus(response.code);
-            }
+            res.status(response.code).json(response.message);
         }
     };
 
@@ -100,8 +78,4 @@ export function initializePrivate({
     router.get('/learning-objects/:learningObjectId/ratings/:ratingId/flags', getRatingFlags);
     router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/flags/:flagId', deleteFlag);
     router.post('/learning-objects/:learningObjectId/ratings/:ratingId/flags', createFlag);
-}
-
-function getDataStore() {
-    return FlagStore.getInstance();
 }

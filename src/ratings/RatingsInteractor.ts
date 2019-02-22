@@ -1,5 +1,5 @@
-import { Rating, LearningObjectContainer } from '../types/Rating';
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
+import { Rating } from '../types/Rating';
+import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
@@ -20,13 +20,20 @@ export async function getRating(params: {
         const rating = await getDataStore().getRating({
             ratingId: params.ratingId,
         });
+        if (rating === null) {
+            return Promise.reject(
+                new ResourceError(
+                    'Could not fetch rating',
+                    ResourceErrorReason.NOT_FOUND,
+                ),
+            );
+        }
         return rating;
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'Could not fetch rating',
-                ResourceErrorReason.NOT_FOUND,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -72,7 +79,7 @@ export async function updateRating(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ServiceError(ServiceErrorType.INTERNAL),
+            new ServiceError(ServiceErrorReason.INTERNAL),
         );
     }
 }
@@ -114,7 +121,7 @@ export async function deleteRating(params: {
         reportError(error);
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -140,7 +147,7 @@ export async function getLearningObjectRatings(params: {
         reportError(error);
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -193,7 +200,7 @@ export async function createRating(params: {
         reportError(error);
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -221,7 +228,7 @@ export async function getUsersRatings(params: {
         reportError(error);
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

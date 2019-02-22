@@ -1,8 +1,9 @@
 import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceErrorType, ServiceError } from '../errors';
+import { ResourceError, ResourceErrorReason, ServiceErrorReason, ServiceError } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from '../ratings/RatingsInteractor';
+import { reportError } from '../drivers/SentryConnector';
 
 /**
  * Checks if a user has the authority to create a response
@@ -63,16 +64,20 @@ async function isResponseAuthor(params: {
         const response = await params.dataStore.getResponseById({
             responseId: params.responseId,
         });
-        if (response.user.username === params.user.username) {
-            return true;
-        } else {
-            return false;
+        if (response === null) {
+            return Promise.reject(
+                new ResourceError(
+                    'Response not found',
+                    ResourceErrorReason.NOT_FOUND,
+                ),
+            );
         }
+        return response.user.username === params.user.username;
     } catch (error) {
+        reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'User is not author of the specified response',
-                ResourceErrorReason.INVALID_ACCESS,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }
@@ -100,15 +105,11 @@ async function isLearningObjectAuthorOrContributor(params: {
         }
         const owners = learningObject.contributors.map(user => user.username);
         owners.push(learningObject.author.username);
-        if (owners.includes(params.user.username)) {
-            return true;
-        } else {
-            return false;
-        }
+        return owners.includes(params.user.username);
     } catch (error) {
         return Promise.reject(
             new ServiceError(
-                ServiceErrorType.INTERNAL,
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

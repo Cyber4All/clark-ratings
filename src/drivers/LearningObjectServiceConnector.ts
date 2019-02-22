@@ -1,7 +1,7 @@
 import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
 import { generateServiceToken } from './TokenManager';
 import * as request from 'request-promise';
-import { ResourceError, ResourceErrorReason } from '../errors';
+import { ServiceError, ServiceErrorReason } from '../errors';
 import { reportError } from './SentryConnector';
 
 export async function getLearningObject(params: {
@@ -24,9 +24,8 @@ export async function getLearningObject(params: {
     } catch (error) {
         reportError(error);
         return Promise.reject(
-            new ResourceError(
-                'Could not fetch Learning Object',
-                ResourceErrorReason.NOT_FOUND,
+            new ServiceError(
+                ServiceErrorReason.INTERNAL,
             ),
         );
     }

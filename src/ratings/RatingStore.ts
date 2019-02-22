@@ -3,7 +3,7 @@ import { reportError } from '../drivers/SentryConnector';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
-import { ServiceError, ServiceErrorType } from '../errors';
+import { ServiceError, ServiceErrorReason } from '../errors';
 import { UserInfo } from '../types/UserInfo';
 
 
@@ -53,7 +53,7 @@ export class RatingStore implements RatingDataStore {
         console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
@@ -75,7 +75,7 @@ export class RatingStore implements RatingDataStore {
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
@@ -98,7 +98,7 @@ export class RatingStore implements RatingDataStore {
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
@@ -158,7 +158,7 @@ export class RatingStore implements RatingDataStore {
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
@@ -192,7 +192,7 @@ export class RatingStore implements RatingDataStore {
       } catch (error) {
         return Promise.reject(
           new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
@@ -245,7 +245,7 @@ export class RatingStore implements RatingDataStore {
         console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }

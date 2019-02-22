@@ -35,11 +35,7 @@ export function initializePublic({
         res.status(200).json(response);
       } catch (error) {
         const response = mapErrorToStatusCode(error);
-        if (response.code === 500) {
-          res.status(response.code).json(response.message);
-        } else {
-          res.sendStatus(response.code);
-        }
+        res.status(response.code).json(response.message);
       }
     };
 
@@ -77,11 +73,7 @@ export function initializePrivate({
           res.sendStatus(200);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
-          if (response.code === 500) {
-            res.status(response.code).json(response.message);
-          } else {
-            res.sendStatus(response.code);
-          }
+          res.status(response.code).json(response.message);
         }
     };
 
@@ -103,11 +95,7 @@ export function initializePrivate({
           res.sendStatus(200);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
-          if (response.code === 500) {
-            res.status(response.code).json(response.message);
-          } else {
-            res.sendStatus(response.code);
-          }
+          res.status(response.code).json(response.message);
         }
     };
 
@@ -129,11 +117,7 @@ export function initializePrivate({
           res.sendStatus(200);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
-          if (response.code === 500) {
-            res.status(response.code).json(response.message);
-          } else {
-            res.sendStatus(response.code);
-          }
+          res.status(response.code).json(response.message);
         }
     };
 

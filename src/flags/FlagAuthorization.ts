@@ -1,5 +1,5 @@
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorType } from '../errors';
+import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from '../ratings/RatingsInteractor';
 

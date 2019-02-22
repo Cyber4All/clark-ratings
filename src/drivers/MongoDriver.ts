@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 import { reportError } from './SentryConnector';
-import { ServiceError, ServiceErrorType, ResourceError, ResourceErrorReason } from '../errors';
+import { ServiceError, ServiceErrorReason, ResourceError, ResourceErrorReason } from '../errors';
 
 export class MongoDriver {
   private static db: Db;
@@ -53,14 +53,14 @@ export class MongoDriver {
       } else {
         return Promise.reject(
           new ServiceError(
-            ServiceErrorType.INTERNAL,
+            ServiceErrorReason.INTERNAL,
           ),
         );
       }
     } catch (error) {
       return Promise.reject(
         new ServiceError(
-          ServiceErrorType.INTERNAL,
+          ServiceErrorReason.INTERNAL,
         ),
       );
     }

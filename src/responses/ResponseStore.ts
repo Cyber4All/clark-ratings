@@ -2,7 +2,7 @@ import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { Db, ObjectId } from 'mongodb';
 import { reportError } from '../drivers/SentryConnector';
-import { ServiceError, ServiceErrorType } from '../errors';
+import { ServiceError, ServiceErrorReason } from '../errors';
 import { Response } from '../types/Response';
 import { UserInfo } from '../types/UserInfo';
 
@@ -50,7 +50,7 @@ export class ResponseStore implements ResponseDataStore {
             reportError(error);
             return Promise.reject(
                 new ServiceError(
-                    ServiceErrorType.INTERNAL,
+                    ServiceErrorReason.INTERNAL,
                 ),
             );
         }
@@ -78,7 +78,7 @@ export class ResponseStore implements ResponseDataStore {
             reportError(error);
             return Promise.reject(
                 new ServiceError(
-                    ServiceErrorType.INTERNAL,
+                    ServiceErrorReason.INTERNAL,
                 ),
             );
         }
@@ -105,7 +105,7 @@ export class ResponseStore implements ResponseDataStore {
             reportError(error);
             return Promise.reject(
                 new ServiceError(
-                    ServiceErrorType.INTERNAL,
+                    ServiceErrorReason.INTERNAL,
                 ),
             );
         }
@@ -139,7 +139,7 @@ export class ResponseStore implements ResponseDataStore {
             reportError(error);
             return Promise.reject(
                 new ServiceError(
-                    ServiceErrorType.INTERNAL,
+                    ServiceErrorReason.INTERNAL,
                 ),
             );
         }
@@ -171,7 +171,7 @@ export class ResponseStore implements ResponseDataStore {
             reportError(error);
             return Promise.reject(
                 new ServiceError(
-                    ServiceErrorType.INTERNAL,
+                    ServiceErrorReason.INTERNAL,
                 ),
             );
         }
