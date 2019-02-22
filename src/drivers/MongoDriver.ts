@@ -17,9 +17,6 @@ export class MongoDriver {
    *       variable which can only ever be created once, only one
    *       connection will ever be active at a time.
    *
-   * TODO: Verify that connections are automatically closed
-   *       when they no longer have a reference.
-   *
    * @param {string} dbIP the host and port on which mongodb is running
    */
   private async connect(dbURI: string, retryAttempt?: number): Promise<void> {

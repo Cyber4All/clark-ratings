@@ -1,30 +1,47 @@
 import { Flag } from '../types/Flag';
 import { FlagDataStore } from './interfaces/FlagDataStore';
+import { UserToken } from '../types/UserToken';
+import { hasFlagCreateAccess } from './FlagAuthorization';
+import { ResourceError, ResourceErrorReason } from '../errors';
 
 /**
  * Create a flag for a specified rating
+ * @Authorization
+ * *** Must not be rating author ***
  * @export
- * @param {{
- *   dataStore: DataStore;
- *   ratingId: string;
- *   currentUsername: string;
- *   flag: Flag
- * }}
- * @returns Promise<void>
+ * @param params
+ * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { string } ratingId the id of the parent rating document
+ * @property { UerToken } user current user information
+ * @property { Flag } flag the flag being created
+ * @returns { Promise<void> }
  */
 export async function flagRating(params: {
     dataStore: FlagDataStore;
     ratingId: string;
-    currentUsername: string;
+    user: UserToken;
     flag: Flag;
 }): Promise<void> {
     try {
-        await params.dataStore.flagRating({
+        const hasAccess = await hasFlagCreateAccess({
+            user: params.user,
             ratingId: params.ratingId,
-            flag: params.flag,
         });
+        if (hasAccess) {
+            await params.dataStore.flagRating({
+                ratingId: params.ratingId,
+                flag: params.flag,
+            });
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
-        return Promise.reject(`Problem flaging rating. Error: ${error}`);
+        return Promise.reject(new Error(`Problem flaging rating. Error: ${error}`));
     }
 }
 

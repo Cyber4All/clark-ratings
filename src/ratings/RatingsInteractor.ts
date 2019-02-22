@@ -4,9 +4,6 @@ import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
 import { RatingStore } from './RatingStore';
-import { getResponse, getResponses } from '../responses/ResponseInteractor';
-import { disableConsoleAlerts } from 'raven';
-import { listenerCount } from 'cluster';
 
 /**
  * get a rating object

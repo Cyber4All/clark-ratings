@@ -9,8 +9,8 @@ describe('flagRating', () => {
       expect.assertions(1);
       return expect (interactor.flagRating({
         dataStore: driver,
-        ratingId: MOCK_OBJECTS.FLAG._id,
-        currentUsername: MOCK_OBJECTS.USERNAME,
+        ratingId: MOCK_OBJECTS.RATING._id,
+        user: MOCK_OBJECTS.USER_TOKEN,
         flag: MOCK_OBJECTS.FLAG,
       }))
       .resolves
@@ -21,7 +21,7 @@ describe('flagRating', () => {
     return expect (interactor.flagRating({
       dataStore: driver,
       ratingId: MOCK_OBJECTS.FLAG._id,
-      currentUsername: MOCK_OBJECTS.USERNAME,
+      user: MOCK_OBJECTS.USER_TOKEN,
       flag: MOCK_OBJECTS.FLAG,
     }))
     .resolves
