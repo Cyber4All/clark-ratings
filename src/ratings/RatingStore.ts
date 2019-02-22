@@ -50,7 +50,6 @@ export class RatingStore implements RatingDataStore {
           });
         return Promise.resolve();
       } catch (error) {
-        console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
             ServiceErrorReason.INTERNAL,
@@ -94,7 +93,7 @@ export class RatingStore implements RatingDataStore {
       try {
         const rating = await this.db.collection(Collections.RATINGS)
           .findOne({ _id: new ObjectId(params.ratingId) });
-        return {...rating, _id: rating._id.toString()};
+        return {...rating, _id: rating._id.toString(), source: rating.source.toString()};
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -134,7 +133,9 @@ export class RatingStore implements RatingDataStore {
             },
             {
               $group: {
-                _id: '$source',
+                _id: {
+                  $toString: '$source',
+                },
                 avgValue: {
                   $avg: '$value',
                 },
@@ -221,7 +222,9 @@ export class RatingStore implements RatingDataStore {
             },
             {
               $group: {
-                _id: '$source',
+                _id: {
+                  $toString: '$source',
+                },
                 avgValue: {
                   $avg: '$value',
                 },
@@ -242,7 +245,6 @@ export class RatingStore implements RatingDataStore {
         ).toArray();
         return data[0];
       } catch (error) {
-        console.error(error);
         reportError(error);
         return Promise.reject(new ServiceError(
             ServiceErrorReason.INTERNAL,
