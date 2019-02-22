@@ -34,11 +34,7 @@ async function isRatingAuthor(params: {
         const rating = await getRating({
             ratingId: params.ratingId,
         });
-        if (rating.user.username === params.user.username) {
-            return true;
-        } else {
-            return false;
-        }
+        return rating.user.username === params.user.username;
     } catch (error) {
         return Promise.reject(
             new ResourceError(
@@ -49,7 +45,7 @@ async function isRatingAuthor(params: {
     }
 }
 
-async function hasPrivilegedAccess(params: {
+export async function hasPrivilegedAccess(params: {
     user: UserToken;
 }): Promise<boolean> {
     return params.user.accessGroups.includes('admin') || params.user.accessGroups.includes('editor');

@@ -1,7 +1,7 @@
 import { Flag } from '../types/Flag';
 import { FlagDataStore } from './interfaces/FlagDataStore';
 import { UserToken } from '../types/UserToken';
-import { hasFlagCreateAccess } from './FlagAuthorization';
+import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
 
@@ -18,7 +18,6 @@ import { FlagStore } from './FlagStore';
  * @returns { Promise<void> }
  */
 export async function flagRating(params: {
-    dataStore: FlagDataStore;
     ratingId: string;
     user: UserToken;
     flag: Flag;
@@ -42,7 +41,7 @@ export async function flagRating(params: {
             );
         }
     } catch (error) {
-        return Promise.reject(new Error(`Problem flaging rating. Error: ${error}`));
+        return Promise.reject(`Problem flaging rating. Error: ${error}`);
     }
 }
 
@@ -56,12 +55,11 @@ export async function flagRating(params: {
  * @returns { Promise<Flag[]> }
  */
 export async function getAllFlags(params: {
-    dataStore: FlagDataStore,
+    user: UserToken;
 }): Promise<Flag[]> {
     try {
-        const hasAccess = await hasFlagCreateAccess({
+        const hasAccess = await hasPrivilegedAccess({
             user: params.user,
-            ratingId: params.ratingId,
         });
         if (hasAccess) {
             const flags = await getDataStore().getAllFlags();
@@ -90,14 +88,26 @@ export async function getAllFlags(params: {
  * @returns { Promise<Flag[]> }
  */
 export async function getRatingFlags (params: {
-    dataStore: FlagDataStore,
     ratingId: string,
+    user: UserToken;
 }): Promise<Flag[]> {
     try {
-        const flags =  await getDataStore().getRatingFlags({
-            ratingId: params.ratingId,
+        const hasAccess = await hasPrivilegedAccess({
+            user: params.user,
         });
-        return flags;
+        if (hasAccess) {
+            const flags =  await getDataStore().getRatingFlags({
+                ratingId: params.ratingId,
+            });
+            return flags;
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         return Promise.reject(`Problem getting rating flags (ADMIN). Error: ${error}`);
     }
@@ -114,14 +124,25 @@ export async function getRatingFlags (params: {
  * @returns { Promise<void> }
  */
 export async function deleteFlag (params: {
-    dataStore: FlagDataStore,
     flagId: string,
+    user: UserToken;
 }): Promise<void> {
     try {
-        await getDataStore().deleteFlag({
-            flagId: params.flagId,
+        const hasAccess = await hasPrivilegedAccess({
+            user: params.user,
         });
-        return Promise.resolve();
+        if (hasAccess) {
+            await getDataStore().deleteFlag({
+                flagId: params.flagId,
+            });
+        } else {
+            return Promise.reject(
+                new ResourceError(
+                    'Invalid Access',
+                    ResourceErrorReason.INVALID_ACCESS,
+                ),
+            );
+        }
     } catch (error) {
         return Promise.reject(`Problem deleting flag (ADMIN). Error: ${error}`);
     }

@@ -25,7 +25,9 @@ export function initializePrivate({
 
     const getAllFlags = async (req: Request, res: Response) => {
         try {
-            const flags = await interactor.getAllFlags();
+            const flags = await interactor.getAllFlags({
+                user: req['user'],
+            });
             res.status(200).json(flags);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
@@ -37,6 +39,7 @@ export function initializePrivate({
         try {
             const ratingId = req.params.ratingId;
             const ratings = await interactor.getRatingFlags({
+                user: req['user'],
                 ratingId,
             });
             res.status(200).json(ratings);
@@ -49,6 +52,7 @@ export function initializePrivate({
     const deleteFlag = async (req: Request, res: Response) => {
         try {
             await interactor.deleteFlag({
+                user: req['user'],
                 flagId: req.params.flagId,
             });
             res.sendStatus(200);
