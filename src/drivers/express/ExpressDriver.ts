@@ -13,7 +13,7 @@ export class ExpressDriver {
     static app = express();
     static start(
     ) {
-      Sentry.init({ dsn: 'https://d38ff66aa9a44baab644145ee2547155@sentry.io/1402458' });
+      Sentry.init({ dsn: process.env.SENTRY_URI });
       this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
       this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
       // configure app to use bodyParser()
