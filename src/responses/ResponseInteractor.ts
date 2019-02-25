@@ -22,7 +22,7 @@ export async function deleteResponse(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        const hasAccess = hasResponseUpdateDeleteAccess({
+        const hasAccess = await hasResponseUpdateDeleteAccess({
             dataStore: getDataStore(),
             user: params.user,
             responseId: params.responseId,
@@ -77,7 +77,7 @@ export async function getResponses(params: {
 }
 
 /**
- * Delete a response
+ * Update a response
  * @Authorization
  * *** Must be response author ***
  * @export
@@ -93,7 +93,7 @@ export async function updateResponse(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        const hasAccess = hasResponseUpdateDeleteAccess({
+        const hasAccess = await hasResponseUpdateDeleteAccess({
             dataStore: getDataStore(),
             user: params.user,
             responseId: params.responseId,
@@ -122,7 +122,7 @@ export async function updateResponse(params: {
 /**
  * Create a response
  * @Authorization
- * *** Must be learning object author or contributor ***
+ * *** Must be learning object author or contributor, Learning Object must not have a response already***
  * @export
  * @param params
  * @property { ResponseDataStore } dataStore instance of ResponseDataStore
@@ -136,7 +136,7 @@ export async function createResponse(params: {
     user: UserToken;
 }): Promise<void> {
     try {
-        const hasAccess = hasResponseCreateAccess({
+        const hasAccess = await hasResponseCreateAccess({
             dataStore: getDataStore(),
             user: params.user,
             ratingId: params.ratingId,
