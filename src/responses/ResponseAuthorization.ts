@@ -1,9 +1,8 @@
 import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceErrorReason, ServiceError } from '../errors';
+import { ResourceError, ResourceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from '../ratings/RatingsInteractor';
-import { reportError } from '../drivers/SentryConnector';
 import { getResponses } from './ResponseInteractor';
 
 /**
