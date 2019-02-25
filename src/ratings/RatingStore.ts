@@ -19,11 +19,16 @@ export class RatingStore implements RatingDataStore {
       this.db = MongoDriver.getConnection();
   }
 
+  /**
+   * Get instance of RatingDataStore
+   *
+   * @returns { RatingDataStore }
+   */
   static getInstance(): RatingDataStore {
-      if (!RatingStore.instance) {
-          RatingStore.instance = new RatingStore();
+      if (!this.instance) {
+          this.instance = new RatingStore();
       }
-      return RatingStore.instance;
+      return this.instance;
   }
 
   /**

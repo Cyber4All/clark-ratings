@@ -8,11 +8,10 @@ import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
  *
  * @export
  * @typedef {Object} params
- * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
  * @property {string} ratingId id of specified rating
  *
- * @returns Promise<boolean>/
+ * @returns Promise<boolean>
  */
 export async function hasRatingCreateAccess(params: {
     user: UserToken;
@@ -79,6 +78,17 @@ export async function hasRatingDeleteAccess(params: {
     );
 }
 
+/**
+ * Checks if a user is the author of rating
+ *
+ * @export
+ * @typedef {Object} params
+ * @property {DataStore} dataStore instance of RatingDataStore
+ * @property {UserToken} user UserToken object
+ * @property {string} ratingId id of specified rating
+ *
+ * @returns Promise<boolean>
+ */
 async function isRatingAuthor(params: {
     dataStore: RatingDataStore;
     user: UserToken;
@@ -98,6 +108,16 @@ async function isRatingAuthor(params: {
     }
 }
 
+/**
+ * Checks if a user is the author of learning object
+ *
+ * @export
+ * @typedef {Object} params
+ * @property {UserToken} user UserToken object
+ * @property {string} learningobjectId id of specified learning object
+ *
+ * @returns Promise<boolean>
+ */
 async function isLearningObjectAuthor(params: {
     user: UserToken;
     learningObjectId: string;
@@ -124,6 +144,15 @@ async function isLearningObjectAuthor(params: {
     }
 }
 
+/**
+ * Checks if a user has admin or editor access
+ *
+ * @export
+ * @typedef {Object} params
+ * @property {UserToken} user UserToken object
+ *
+ * @returns Promise<boolean>
+ */
 async function hasPrivilegedAccess(params: {
     user: UserToken;
 }): Promise<boolean> {

@@ -9,7 +9,6 @@ import { RatingStore } from './RatingStore';
  * Get a rating object
  * @export
  * @param params
- * @property { RatingDataStore } dataStore instance of RatingDataStore
  * @property { string } ratingId the id of the parent rating document
  * @returns { Promise<Rating> }
  */
@@ -46,10 +45,9 @@ export async function getRating(params: {
  * *** Must be rating author ***
  * @export
  * @param params
- * @property { RatingDataStore } dataStore instance of RatingDataStore
  * @property { string } ratingId the id of the parent rating document
  * @property { Rating } updates updated rating object
- * @property { stringg } currentUsername username of user trying to update
+ * @property { UserToken } user username of user trying to update
  * @returns { Promise<void> }
  */
 export async function updateRating(params: {
@@ -90,9 +88,8 @@ export async function updateRating(params: {
  * *** Must be rating author or have admin/editor access ***
  * @export
  * @param params
- * @property { RatingDataStore } dataStore instance of RatingDataStore
  * @property { string } ratingId the id of the parent rating document
- * @property { stringg } currentUsername username of user trying to update
+ * @property { UerToken } user username of user trying to update
  * @returns { Promise<void> }
  */
 export async function deleteRating(params: {
@@ -159,12 +156,9 @@ export async function getLearningObjectRatings(params: {
  * *** Cannot be author of learning object, Email Verified ***
  * @export
  * @param params
- * @property { RatingDataStore } dataStore instance of RatingDataStore
  * @property { Rating } rating the rating being created
  * @property { string } learningObjectId the id of the learning object
- * @property { string } username username of rating author
- * @property { string } email email of rating author
- * @property { string } name name of rating author
+ * @property { UserToken } user current user info
  * @returns  { Promise<void> }
  */
 export async function createRating(params: {

@@ -22,10 +22,10 @@ export class FlagStore implements FlagDataStore {
      * @returns { FlagDataStore }
      */
     static getInstance(): FlagDataStore {
-        if (!FlagStore.instance) {
-            FlagStore.instance = new FlagStore();
+        if (!this.instance) {
+            this.instance = new FlagStore();
         }
-        return FlagStore.instance;
+        return this.instance;
     }
 
     /**
