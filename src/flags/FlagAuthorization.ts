@@ -8,11 +8,10 @@ import { getRating } from '../ratings/RatingsInteractor';
  *
  * @export
  * @typedef {Object} params
- * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
  * @property {string} ratingId id of specified rating
  *
- * @returns Promise<boolean>/
+ * @returns Promise<boolean>
  */
 export async function hasFlagCreateAccess(params: {
     user: UserToken;
@@ -26,6 +25,16 @@ export async function hasFlagCreateAccess(params: {
     );
 }
 
+/**
+ * Checks if a user is author of a given rating
+ *
+ * @export
+ * @typedef {Object} params
+ * @property {UserToken} user UserToken object
+ * @property {string} ratingId id of specified rating
+ *
+ * @returns Promise<boolean>
+ */
 async function isRatingAuthor(params: {
     user: UserToken;
     ratingId: string;

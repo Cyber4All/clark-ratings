@@ -11,7 +11,6 @@ import { FlagStore } from './FlagStore';
  * *** Must not be rating author ***
  * @export
  * @param params
- * @property { FlagDataStore } dataStore instance of FlagDataStore
  * @property { string } ratingId the id of the parent rating document
  * @property { UerToken } user current user information
  * @property { Flag } flag the flag being created
@@ -51,7 +50,7 @@ export async function flagRating(params: {
  * *** Must be admin or editor ***
  * @export
  * @param params
- * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { UserToken } user current user information
  * @returns { Promise<Flag[]> }
  */
 export async function getAllFlags(params: {
@@ -83,7 +82,7 @@ export async function getAllFlags(params: {
  * *** Must be admin or editor ***
  * @export
  * @param params
- * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { UserToken } user current user information
  * @property { string } ratingId the id of the parent rating document
  * @returns { Promise<Flag[]> }
  */
@@ -119,7 +118,7 @@ export async function getRatingFlags (params: {
  * *** Must be admin or editor ***
  * @export
  * @param params
- * @property { FlagDataStore } dataStore instance of FlagDataStore
+ * @property { UserToken } user current user information
  * @property { string } flagId the id of the flag
  * @returns { Promise<void> }
  */
@@ -148,7 +147,10 @@ export async function deleteFlag (params: {
     }
 }
 
-
+/**
+ * Fetch instance of datastore
+ * @returns { FlagDataStore }
+ */
 function getDataStore() {
     return FlagStore.getInstance();
 }

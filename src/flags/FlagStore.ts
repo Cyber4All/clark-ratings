@@ -16,6 +16,11 @@ export class FlagStore implements FlagDataStore {
         this.db = MongoDriver.getConnection();
     }
 
+    /**
+     * Return instance of FlagDataStore
+     * Follows Singleton pattern
+     * @returns { FlagDataStore }
+     */
     static getInstance(): FlagDataStore {
         if (!FlagStore.instance) {
             FlagStore.instance = new FlagStore();
@@ -23,6 +28,14 @@ export class FlagStore implements FlagDataStore {
         return FlagStore.instance;
     }
 
+    /**
+     * Flag a rating
+     * @export
+     * @param params
+     * @property { Flag } flag new flag object
+     * @property { string } rating the id of the rating
+     * @returns { Promise<void> }
+     */
     async flagRating(params: {
         ratingId: string,
         flag: Flag,
@@ -41,6 +54,10 @@ export class FlagStore implements FlagDataStore {
         }
     }
 
+    /**
+     * Fetch all flags
+     * @returns { Promise<any> }
+     */
     async getAllFlags(): Promise<any> {
         try {
             const flags = await this.db
@@ -54,6 +71,12 @@ export class FlagStore implements FlagDataStore {
         }
     }
 
+    /**
+     * Get all flags for a rating
+     * @param params
+     * @property { string } ratingId the id of the rating
+     * @returns { Promise<Flag[]> }
+     */
     async getRatingFlags(params: {
         ratingId: string;
     }): Promise<Flag[]> {
@@ -70,6 +93,12 @@ export class FlagStore implements FlagDataStore {
         }
     }
 
+    /**
+     * Delete a flag
+     * @param params
+     * @property { string } flagId the id of the flag
+     * @returns { Promise<void> }
+     */
     async deleteFlag(params: {
         flagId: string;
     }): Promise<void> {

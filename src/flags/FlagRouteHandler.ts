@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from '../flags/FlagInteractor';
 import { mapErrorToStatusCode } from '../errors';
-import { FlagStore } from './FlagStore';
 
 /**
  * Initializes an express router with endpoints for public Creating, Updating, and Deleting
