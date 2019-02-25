@@ -1,10 +1,10 @@
-import * as raven from 'raven';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as logger from 'morgan';
 import * as cors from 'cors';
 import * as cookieParser from 'cookie-parser';
 import * as http from 'http';
+import * as Sentry from '@sentry/node';
 import { ExpressRouteDriver, ExpressAuthRouteDriver } from '../drivers';
 import { enforceAuthenticatedAccess } from '../../middleware/jwt.config';
 import { enforceEmailVerification } from '../../middleware/email-verification';
@@ -13,9 +13,9 @@ export class ExpressDriver {
     static app = express();
     static start(
     ) {
-      raven.config(process.env.SENTRY_DSN).install();
-      this.app.use(raven.requestHandler());
-      this.app.use(raven.errorHandler());
+      Sentry.init({ dsn: process.env.SENTRY_URI });
+      this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
+      this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
       // configure app to use bodyParser()
       this.app.use(
         bodyParser.urlencoded({

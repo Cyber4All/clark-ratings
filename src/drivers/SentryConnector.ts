@@ -1,5 +1,5 @@
-import * as raven from 'raven';
+import * as Sentry from '@sentry/node';
 
 export const reportError = (error: Error) => {
-  raven.captureException(error);
+  Sentry.captureException(error);
 };

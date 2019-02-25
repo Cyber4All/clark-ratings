@@ -1,6 +1,6 @@
 {
   "name": "clark-ratings",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A microservice for handlingy learning object ratings in the CLARK platform.",
   "main": "app.js",
   "scripts": {
@@ -14,6 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@cyber4all/clark-entity": "^2.0.5",
+    "@sentry/node": "^4.6.3",
     "chai": "^4.1.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
@@ -24,7 +25,6 @@
     "mongodb": "^3.1.13",
     "mongodb-memory-server": "^3.0.0",
     "morgan": "^1.9.1",
-    "raven": "^2.6.4",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "ts-jest": "^23.10.5"
