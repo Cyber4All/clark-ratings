@@ -7,6 +7,9 @@ import * as ResponseRouteHandler from '../../responses/ResponseRouteHandler';
  *
  * @author Sean Donnelly
  */
+
+// tslint:disable-next-line:no-require-imports
+const version = require('../../../package.json').version;
 export class ExpressRouteDriver {
   /**
    * Produces a configured express router
@@ -32,7 +35,10 @@ export class ExpressRouteDriver {
 
     router.get('/', (req, res) => {
       // default route
-      res.send('Welcome to the CLARK Rating Service');
+      res.json({
+        version,
+        message: `Welcome to the Learning Objects' API v${version}`,
+      });
     });
 
     RatingsRouteHandler.initializePublic({
