@@ -1,19 +1,21 @@
 export const LEARNING_OBJECT_SERVICE_ROUTES = {
-    GET_ID(author: string, objectName: string) {
+    GET_LEARNING_OBJECT(params: {
+      learningObjectId: string;
+    }) {
       return `${
         process.env.LEARNING_OBJECT_SERVICE_URI
-      }/learning-objects/${encodeURIComponent(author)}/${encodeURIComponent(
-        objectName
-      )}/id`;
-    }
+      }/learning-objects/${encodeURIComponent(params.learningObjectId)}`;
+    },
 };
 
 export const USER_SERVICE_ROUTES = {
-  GET_ID(author: string) {
+  GET_USER(params: {
+    userId: string;
+  }) {
     return `${
       process.env.USER_SERVICE_URI
     }/users/update?username=${encodeURIComponent(
-      author
+      params.userId,
     )}`;
-  }
+  },
 };
