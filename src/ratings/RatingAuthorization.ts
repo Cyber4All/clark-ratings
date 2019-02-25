@@ -2,6 +2,7 @@ import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
 import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
+import { reportError } from '../drivers/SentryConnector';
 
 /**
  * Checks if a user has the authority to update a Rating
@@ -100,6 +101,7 @@ async function isRatingAuthor(params: {
         });
         return rating.user.username === params.user.username;
     } catch (error) {
+        reportError(error);
         return Promise.reject(
             new ServiceError(
                 ServiceErrorReason.INTERNAL,
@@ -136,6 +138,7 @@ async function isLearningObjectAuthor(params: {
         }
         return learningObject.author.username === params.user.username;
     } catch (error) {
+        reportError(error);
         return Promise.reject(
             new ServiceError(
                 ServiceErrorReason.INTERNAL,

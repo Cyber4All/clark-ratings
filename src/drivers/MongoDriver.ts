@@ -52,12 +52,11 @@ export class MongoDriver {
         await driver.connect(dburi);
       } else {
         return Promise.reject(
-          new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
+          new Error('There can be only one MongoClient'),
         );
       }
     } catch (error) {
+      reportError(error);
       return Promise.reject(
         new ServiceError(
           ServiceErrorReason.INTERNAL,

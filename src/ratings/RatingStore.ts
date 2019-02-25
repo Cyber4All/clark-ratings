@@ -196,6 +196,7 @@ export class RatingStore implements RatingDataStore {
             date: Date.now(),
           });
       } catch (error) {
+        reportError(error);
         return Promise.reject(
           new ServiceError(
             ServiceErrorReason.INTERNAL,
