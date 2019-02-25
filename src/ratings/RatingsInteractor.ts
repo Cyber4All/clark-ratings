@@ -6,7 +6,7 @@ import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } f
 import { RatingStore } from './RatingStore';
 
 /**
- * get a rating object
+ * Get a rating object
  * @export
  * @param params
  * @property { RatingDataStore } dataStore instance of RatingDataStore
@@ -41,7 +41,7 @@ export async function getRating(params: {
 
 
 /**
- * update a rating object
+ * Update a rating object
  * @Authorization
  * *** Must be rating author ***
  * @export
@@ -85,7 +85,7 @@ export async function updateRating(params: {
 }
 
 /**
- * delete a rating object
+ * Delete a rating object
  * @Authorization
  * *** Must be rating author or have admin/editor access ***
  * @export
@@ -207,7 +207,7 @@ export async function createRating(params: {
 }
 
 /**
- * fetch all ratings for a given user
+ * Fetch all ratings for a given user
  * @Authorization
  * *** Admin Editor Reviewer@collection Curator@collection ***
  * @export

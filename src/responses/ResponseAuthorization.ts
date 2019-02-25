@@ -27,7 +27,7 @@ export async function hasResponseCreateAccess(params: {
             user: params.user,
             ratingId: params.ratingId,
         })  &&
-        await checkAvailability({
+        await hasResponse({
             ratingId: params.ratingId,
         })
     );
@@ -101,7 +101,14 @@ async function isLearningObjectAuthorOrContributor(params: {
     return owners.includes(params.user.username);
 }
 
-async function checkAvailability( params: {
+/**
+ * Checks if a rating already has a response
+ * @export
+ * @param params
+ * @property { string } ratingId id of the given rating
+ * @returns { boolean }
+ */
+async function hasResponse( params: {
     ratingId: string;
 }): Promise<boolean> {
     const response = await getResponses({

@@ -57,7 +57,7 @@ export class ResponseStore implements ResponseDataStore {
     }
 
     /**
-     * fetch a response document by its source
+     * Fetch a response document by its source
      * @export
      * @param params
      * @property {string } ratingId the id of the rating document (source of the response)
