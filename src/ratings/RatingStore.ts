@@ -138,17 +138,13 @@ export class RatingStore implements RatingDataStore {
             },
             {
               $group: {
-                _id: {
-                  $toString: '$source',
-                },
+                _id: '$source',
                 avgValue: {
                   $avg: '$value',
                 },
                 ratings: {
                   $push: {
-                    _id: {
-                      $toString: '$_id',
-                    },
+                    _id: '$_id',
                     value: '$value',
                     user: '$user',
                     comment: '$comment',
@@ -160,7 +156,8 @@ export class RatingStore implements RatingDataStore {
             },
           ],
         ).toArray();
-        return data[0];
+        const result = this.convertMongoId(data[0]);
+        return result;
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -206,57 +203,29 @@ export class RatingStore implements RatingDataStore {
     }
 
     /**
-     * Find all ratings that belong to a given user
-     * @export
-     * @param params
-     * @property { string } username: username of the rating author
-     *
-     * @returns { Promise<Rating[]> }
+     * Converts MongoDB ObjectId to string
      */
-    async getUsersRatings(params: {
-      username: string;
-    }): Promise<any> {
-      try {
-        const data = await this.db.collection(Collections.RATINGS)
-          .aggregate(
-          [
-            {
-              $match: { 'user.username': params.username },
-            },
-            {
-              $sort: { date: 1 },
-            },
-            {
-              $group: {
-                _id: {
-                  $toString: '$source',
-                },
-                avgValue: {
-                  $avg: '$value',
-                },
-                ratings: {
-                  $push: {
-                    _id: {
-                      $toString: '$_id',
-                    },
-                    value: '$value',
-                    user: '$user',
-                    comment: '$comment',
-                    date: '$date',
-                  },
-                },
-              },
-            },
-          ],
-        ).toArray();
-        return data[0];
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
+    convertMongoId(ratings: any) {
+      const root = { ...ratings, _id: ratings._id.toString()};
+      root.ratings = root.ratings.map((rating: any) => this.convertRatingObjectId(rating));
+      return root;
+    }
+
+    /**
+     * Iterates through the array of ratings and converts MongoDB ObjectIds to strings
+     */
+    convertRatingObjectId(rating: any) {
+      if (rating.response.length > 0) {
+        rating.response = rating.response.map((response: any) => this.convertResponseObjectId(response));
       }
+      return {...rating, _id: rating._id.toString() };
+    }
+
+    /**
+     * Iterates through the array of responses and converts MongoDB ObjectIds to strings
+     */
+    convertResponseObjectId(response: any) {
+      return {...response, _id: response._id.toString(), source: response.source.toString() };
     }
 }
 

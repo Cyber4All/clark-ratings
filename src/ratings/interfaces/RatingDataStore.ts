@@ -20,7 +20,4 @@ export interface RatingDataStore {
         learningObjectId: string;
         user: UserInfo;
     }): Promise<void>;
-    getUsersRatings(params: {
-        username: string;
-    }): Promise<any>;
 }

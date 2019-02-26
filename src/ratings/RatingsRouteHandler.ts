@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from './RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
-import { RatingStore } from './RatingStore';
 
 /**
  * Initializes an express router with endpoints for public
