@@ -30,10 +30,10 @@ export const MOCK_OBJECTS = {
             date: 123,
             response: [
                 {
-                _id: new ObjectId('5c5c8fda47c664308b131469'),
+                _id: '5c5c8fda47c664308b131469',
                 comment: 'This is a mock response',
                 date: 123,
-                source: new ObjectId('5ac520bdf5b97e186468964b'),
+                source: '5ac520bdf5b97e186468964b',
                 user: {
                     email: 'email@email',
                     name: 'name',
@@ -45,7 +45,7 @@ export const MOCK_OBJECTS = {
                 name: 'name',
                 username: 'username',
             },
-            value: 2
+            value: 2,
         }]},
     USER_GROUPING : {
         _id: '5ac520bdf5b97e1864689123',

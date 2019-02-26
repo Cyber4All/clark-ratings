@@ -35,17 +35,6 @@ describe('RatingStore', () => {
         });
     });
 
-    describe('getUsersRatings', () => {
-        it('Should fetch all ratings that belong to a user', () => {
-          expect.assertions(1);
-          return expect(driver.getUsersRatings({
-            username: MOCK_OBJECTS.USER.username,
-          }))
-          .resolves
-          .toEqual(MOCK_OBJECTS.USER_GROUPING);
-        });
-    });
-
     describe('createNewRating', () => {
       it('Should fetch all ratings that belong to a learning object', () => {
         expect.assertions(1);

@@ -202,56 +202,6 @@ export class RatingStore implements RatingDataStore {
     }
 
     /**
-     * Find all ratings that belong to a given user
-     * @export
-     * @param params
-     * @property { string } username: username of the rating author
-     *
-     * @returns { Promise<Rating[]> }
-     */
-    async getUsersRatings(params: {
-      username: string;
-    }): Promise<any> {
-      try {
-        const data = await this.db.collection(Collections.RATINGS)
-          .aggregate(
-          [
-            {
-              $match: { 'user.username': params.username },
-            },
-            {
-              $sort: { date: 1 },
-            },
-            {
-              $group: {
-                _id: '$source',
-                avgValue: {
-                  $avg: '$value',
-                },
-                ratings: {
-                  $push: {
-                    _id: '$_id',
-                    value: '$value',
-                    user: '$user',
-                    comment: '$comment',
-                    date: '$date',
-                  },
-                },
-              },
-            },
-          ],
-        ).toArray();
-        return data[0];
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
-      }
-    }
-
-    /**
      * Converts MongoDB ObjectId to string
      */
     convertMongoId(ratings: any) {

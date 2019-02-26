@@ -200,34 +200,6 @@ export async function createRating(params: {
     }
 }
 
-/**
- * Fetch all ratings for a given user
- * @Authorization
- * *** Admin Editor Reviewer@collection Curator@collection ***
- * @export
- * @param params
- * @property { RatingDataStore } dataStore instance of RatingDataStore
- * @property { string } username username of rating author
- * @returns { Promise<Rating[]> }
- */
-export async function getUsersRatings(params: {
-    username: string;
-}): Promise<Rating[]> {
-    try {
-        const ratings = await getDataStore().getUsersRatings({
-            username: params.username,
-        });
-        return ratings;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
-        );
-    }
-}
-
 function getDataStore() {
     return RatingStore.getInstance();
 }
