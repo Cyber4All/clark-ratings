@@ -256,7 +256,7 @@ export class RatingStore implements RatingDataStore {
      */
     convertMongoId(ratings: any) {
       const root = { ...ratings, _id: ratings._id.toString()};
-      root.ratings = root.ratings.map(rating => this.convertRatingObjectId(rating));
+      root.ratings = root.ratings.map((rating: any) => this.convertRatingObjectId(rating));
       return root;
     }
 
@@ -265,7 +265,7 @@ export class RatingStore implements RatingDataStore {
      */
     convertRatingObjectId(rating: any) {
       if (rating.response.length > 0) {
-        rating.response = rating.response.map(response => this.convertResponseObjectId(response));
+        rating.response = rating.response.map((response: any) => this.convertResponseObjectId(response));
       }
       return {...rating, _id: rating._id.toString() };
     }
