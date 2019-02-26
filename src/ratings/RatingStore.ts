@@ -138,17 +138,13 @@ export class RatingStore implements RatingDataStore {
             },
             {
               $group: {
-                _id: {
-                  $toString: '$source',
-                },
+                _id: '$source',
                 avgValue: {
                   $avg: '$value',
                 },
                 ratings: {
                   $push: {
-                    _id: {
-                      $toString: '$_id',
-                    },
+                    _id: '$_id',
                     value: '$value',
                     user: '$user',
                     comment: '$comment',
@@ -160,7 +156,8 @@ export class RatingStore implements RatingDataStore {
             },
           ],
         ).toArray();
-        return data[0];
+        const result = this.convertMongoId(data[0]);
+        return result;
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -227,17 +224,13 @@ export class RatingStore implements RatingDataStore {
             },
             {
               $group: {
-                _id: {
-                  $toString: '$source',
-                },
+                _id: '$source',
                 avgValue: {
                   $avg: '$value',
                 },
                 ratings: {
                   $push: {
-                    _id: {
-                      $toString: '$_id',
-                    },
+                    _id: '$_id',
                     value: '$value',
                     user: '$user',
                     comment: '$comment',
@@ -256,6 +249,32 @@ export class RatingStore implements RatingDataStore {
           ),
         );
       }
+    }
+
+    /**
+     * Converts MongoDB ObjectId to string
+     */
+    convertMongoId(ratings: any) {
+      const root = { ...ratings, _id: ratings._id.toString()};
+      root.ratings = root.ratings.map(rating => this.convertRatingObjectId(rating));
+      return root;
+    }
+
+    /**
+     * Iterates through the array of ratings and converts MongoDB ObjectIds to strings
+     */
+    convertRatingObjectId(rating: any) {
+      if (rating.response.length > 0) {
+        rating.response = rating.response.map(response => this.convertResponseObjectId(response));
+      }
+      return {...rating, _id: rating._id.toString() };
+    }
+
+    /**
+     * Iterates through the array of responses and converts MongoDB ObjectIds to strings
+     */
+    convertResponseObjectId(response: any) {
+      return {...response, _id: response._id.toString(), source: response.source.toString() };
     }
 }
 
