@@ -156,8 +156,11 @@ export class RatingStore implements RatingDataStore {
             },
           ],
         ).toArray();
-        const result = this.convertMongoId(data[0]);
-        return result;
+        if (data.length > 0) {
+          const result = this.convertMongoId(data[0]);
+          return result;
+        }
+        return data[0];
       } catch (error) {
         reportError(error);
         return Promise.reject(new ServiceError(
@@ -228,4 +231,3 @@ export class RatingStore implements RatingDataStore {
       return {...response, _id: response._id.toString(), source: response.source.toString() };
     }
 }
-
