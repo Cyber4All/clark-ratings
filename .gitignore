@@ -5,3 +5,4 @@ data
 dist
 dist.zip
 coverage
+test_environment/globalConfig.json
