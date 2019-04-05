@@ -96,7 +96,7 @@ async function isLearningObjectAuthorOrContributor(params: {
             ),
         );
     }
-    const owners = learningObject.contributors.map(user => user.username);
+    const owners = learningObject.contributors.map((user: {username: string}) => user.username);
     owners.push(learningObject.author.username);
     return owners.includes(params.user.username);
 }
