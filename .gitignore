@@ -6,3 +6,10 @@ dist
 dist.zip
 coverage
 test_environment/globalConfig.json
+
+
+.vscode/*
+
+# Include Launch Config for Debugging
+!/.vscode/launch.json
+
