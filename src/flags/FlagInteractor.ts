@@ -4,6 +4,7 @@ import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
+import { sendFlagToSlack } from './gateways/SlackGateway';
 
 /**
  * Create a flag for a specified rating
@@ -31,6 +32,7 @@ export async function flagRating(params: {
                 ratingId: params.ratingId,
                 flag: params.flag,
             });
+            await sendFlagToSlack();
         } else {
             return Promise.reject(
                 new ResourceError(
