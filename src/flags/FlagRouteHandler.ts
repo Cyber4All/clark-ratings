@@ -70,7 +70,7 @@ export function initializePrivate({
                 user: req['user'],
                 flag,
             });
-            res.sendStatus(200);
+            res.sendStatus(204);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
             res.status(response.code).json(response.message);
