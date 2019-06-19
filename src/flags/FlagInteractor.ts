@@ -1,5 +1,4 @@
 import { Flag } from '../types/Flag';
-import { FlagDataStore } from './interfaces/FlagDataStore';
 import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
