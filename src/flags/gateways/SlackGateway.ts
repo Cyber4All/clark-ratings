@@ -1,7 +1,6 @@
 import { reportError } from '../../drivers/SentryConnector';
 import * as request from 'request-promise';
 
-// FIXME: after finishing task, change SLACK_URI to the security injections slack
 const slackURI = process.env.SLACK_URI;
 
 /**
@@ -31,7 +30,6 @@ function initializePayload(username: string, ratingComment: string, loName: stri
     };
 }
 
-// post request - username of person who flagged, comment that has been flagged, and link to details page of that learning object.
 /**
  * Posts a message on slack when triggered using a post request.
  * @param username the name of the user who flagged the rating comment
