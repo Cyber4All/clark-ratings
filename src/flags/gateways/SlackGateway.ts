@@ -15,8 +15,8 @@ function initializePayload(username: string, ratingComment: string, loName: stri
         text: 'A rating has been flagged.',
         attachments: [
             {
-                'fallback': `<http://localhost:4200/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
-                'pretext': `<http://localhost:4200/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
+                'fallback': `<https://clark.center/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
+                'pretext': `<https://clark.center/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
                 'color': '#D00000',
                 'fields': [
                     {
