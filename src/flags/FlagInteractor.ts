@@ -5,6 +5,9 @@ import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
 import { sendFlagToSlack } from './gateways/SlackGateway';
+import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
+import { getRating } from './gateways/RatingGateway';
+import { Rating } from '../types/Rating';
 
 /**
  * Create a flag for a specified rating
@@ -21,6 +24,7 @@ export async function flagRating(params: {
     ratingId: string;
     user: UserToken;
     flag: Flag;
+    rating: Rating
 }): Promise<void> {
     try {
         const hasAccess = await hasFlagCreateAccess({
@@ -32,7 +36,11 @@ export async function flagRating(params: {
                 ratingId: params.ratingId,
                 flag: params.flag,
             });
-            await sendFlagToSlack();
+            const rating = await getRating(params.ratingId);
+            const learningObject = await getLearningObject({
+                learningObjectId: rating.source,
+            });
+            await sendFlagToSlack(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
         } else {
             return Promise.reject(
                 new ResourceError(
