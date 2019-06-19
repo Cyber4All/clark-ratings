@@ -6,7 +6,6 @@ import { FlagStore } from './FlagStore';
 import { sendFlagToSlack } from './gateways/SlackGateway';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from './gateways/RatingGateway';
-import { Rating } from '../types/Rating';
 
 /**
  * Create a flag for a specified rating
