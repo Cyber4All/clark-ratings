@@ -23,7 +23,6 @@ export async function flagRating(params: {
     ratingId: string;
     user: UserToken;
     flag: Flag;
-    rating: Rating
 }): Promise<void> {
     try {
         const hasAccess = await hasFlagCreateAccess({
