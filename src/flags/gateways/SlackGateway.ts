@@ -21,7 +21,7 @@ function initializePayload(username: string, ratingComment: string, loName: stri
                 'fields': [
                     {
                         'title': `Flagged by ${username}`,
-                        'value': `${ratingComment}`,
+                        'value': `"${ratingComment}"`,
                         'short': 'true',
                     },
                 ],
