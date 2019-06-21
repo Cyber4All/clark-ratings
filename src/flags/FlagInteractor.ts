@@ -3,9 +3,10 @@ import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
-import { sendFlagToSlack } from './gateways/SlackGateway';
+import { SlackGateway } from './gateways/SlackGateway';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from './gateways/RatingGateway';
+import { FlagNotifier } from './interfaces/FlagNotifier';
 
 /**
  * Create a flag for a specified rating
@@ -37,7 +38,8 @@ export async function flagRating(params: {
             const learningObject = await getLearningObject({
                 learningObjectId: rating.source,
             });
-            await sendFlagToSlack(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
+            const flagNotifier: FlagNotifier = new SlackGateway();
+            await flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
         } else {
             return Promise.reject(
                 new ResourceError(
