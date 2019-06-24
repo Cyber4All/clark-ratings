@@ -39,11 +39,9 @@ export async function flagRating(params: {
             const learningObject = await getLearningObject({
                 learningObjectId: rating.source,
             });
-            try {
-                params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
-            } catch (error) {
+            params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username).catch(error => {
                 reportError(error);
-            }
+            });
         } else {
             return Promise.reject(
                 new ResourceError(
