@@ -3,6 +3,7 @@ import * as request from 'request-promise';
 import { FlagNotifier } from '../interfaces/FlagNotifier';
 
 const slackURI = process.env.SLACK_URI;
+const nodeEnv = process.env.NODE_ENV;
 
 export class SlackGateway implements FlagNotifier {
 
@@ -41,7 +42,7 @@ export class SlackGateway implements FlagNotifier {
     * @param loAuthor the username of the user who created the learning object
     */
     async sendFlagNotification(username: string, ratingComment: string, loName: string, loAuthor: string) {
-        if (process.env.NODE_ENV === 'production') {
+        if (nodeEnv === 'production') {
             try {
                 const options = {
                     uri: slackURI,
