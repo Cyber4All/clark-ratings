@@ -7,6 +7,7 @@ import { SlackGateway } from './gateways/SlackGateway';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from './gateways/RatingGateway';
 import { FlagNotifier } from './interfaces/FlagNotifier';
+import { reportError } from '../drivers/SentryConnector';
 
 /**
  * Create a flag for a specified rating
@@ -39,7 +40,11 @@ export async function flagRating(params: {
                 learningObjectId: rating.source,
             });
             const flagNotifier: FlagNotifier = new SlackGateway();
-            await flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
+            try {
+                flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
+            } catch (error) {
+                reportError(error);
+            }
         } else {
             return Promise.reject(
                 new ResourceError(
