@@ -3,7 +3,6 @@ import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
-import { SlackGateway } from './gateways/SlackGateway';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 import { getRating } from './gateways/RatingGateway';
 import { FlagNotifier } from './interfaces/FlagNotifier';
@@ -24,6 +23,7 @@ export async function flagRating(params: {
     ratingId: string;
     user: UserToken;
     flag: Flag;
+    flagNotifier: FlagNotifier;
 }): Promise<void> {
     try {
         const hasAccess = await hasFlagCreateAccess({
@@ -39,9 +39,8 @@ export async function flagRating(params: {
             const learningObject = await getLearningObject({
                 learningObjectId: rating.source,
             });
-            const flagNotifier: FlagNotifier = new SlackGateway();
             try {
-                flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
+                params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username);
             } catch (error) {
                 reportError(error);
             }
