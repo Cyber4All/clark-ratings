@@ -1,6 +1,8 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from '../flags/FlagInteractor';
 import { mapErrorToStatusCode } from '../errors';
+import { FlagNotifier } from './interfaces/FlagNotifier';
+import { SlackGateway } from './gateways/SlackGateway';
 
 /**
  * Initializes an express router with endpoints for public Creating, Updating, and Deleting
@@ -65,12 +67,14 @@ export function initializePrivate({
         try {
             const ratingId = req.params.ratingId;
             const flag = req.body;
+            const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
                 ratingId,
                 user: req['user'],
                 flag,
+                flagNotifier,
             });
-            res.sendStatus(200);
+            res.sendStatus(204);
         } catch (error) {
             const response = mapErrorToStatusCode(error);
             res.status(response.code).json(response.message);

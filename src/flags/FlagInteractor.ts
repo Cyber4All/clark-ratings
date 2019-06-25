@@ -1,9 +1,12 @@
 import { Flag } from '../types/Flag';
-import { FlagDataStore } from './interfaces/FlagDataStore';
 import { UserToken } from '../types/UserToken';
 import { hasFlagCreateAccess, hasPrivilegedAccess } from './FlagAuthorization';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { FlagStore } from './FlagStore';
+import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
+import { getRating } from './gateways/RatingGateway';
+import { FlagNotifier } from './interfaces/FlagNotifier';
+import { reportError } from '../drivers/SentryConnector';
 
 /**
  * Create a flag for a specified rating
@@ -20,6 +23,7 @@ export async function flagRating(params: {
     ratingId: string;
     user: UserToken;
     flag: Flag;
+    flagNotifier: FlagNotifier;
 }): Promise<void> {
     try {
         const hasAccess = await hasFlagCreateAccess({
@@ -30,6 +34,13 @@ export async function flagRating(params: {
             await getDataStore().flagRating({
                 ratingId: params.ratingId,
                 flag: params.flag,
+            });
+            const rating = await getRating(params.ratingId);
+            const learningObject = await getLearningObject({
+                learningObjectId: rating.source,
+            });
+            params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username).catch(error => {
+                reportError(error);
             });
         } else {
             return Promise.reject(
