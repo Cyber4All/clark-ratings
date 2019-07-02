@@ -16,7 +16,7 @@ export class SlackGateway implements RatingNotifier {
                 {
                     // 'fallback': `<https://clark.center/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
                     'pretext': `<http://localhost:4200/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
-                    'color': '#FFFF00',
+                    'color': '#0000ff',
                     'fields': [
                         {
                             'title': `Created by ${ratingAuthor}`,
