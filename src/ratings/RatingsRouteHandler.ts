@@ -1,6 +1,8 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from './RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
+import { RatingNotifier } from './interfaces/RatingNotifier';
+import { SlackGateway } from './gateways/SlackGateway';
 
 /**
  * Initializes an express router with endpoints for public
@@ -146,12 +148,14 @@ export function initializePrivate({
           const rating = req.body;
           const learningObjectId = req.params.learningObjectId;
           const user = req['user'];
+          const ratingNotifier: RatingNotifier = new SlackGateway();
           await interactor.createRating({
             rating,
             learningObjectId,
             user,
+            ratingNotifier,
           });
-          res.sendStatus(200);
+          res.sendStatus(204);
         } catch (error) {
           const response = mapErrorToStatusCode(error);
           if (response.code === 500) {

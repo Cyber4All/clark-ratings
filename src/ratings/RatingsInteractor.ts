@@ -4,6 +4,8 @@ import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
 import { hasRatingCreateAccess, hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
 import { RatingStore } from './RatingStore';
+import { RatingNotifier } from './interfaces/RatingNotifier';
+import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 
 /**
  * Get a rating object
@@ -165,6 +167,7 @@ export async function createRating(params: {
     rating: Rating;
     learningObjectId: string,
     user: UserToken;
+    ratingNotifier: RatingNotifier;
 }): Promise<void> {
     try {
         const hasAccess = await hasRatingCreateAccess({
@@ -181,6 +184,12 @@ export async function createRating(params: {
                 rating: params.rating,
                 learningObjectId: params.learningObjectId,
                 user: ratingUser,
+            });
+            const learningObject = await getLearningObject({
+                learningObjectId: params.learningObjectId,
+            });
+            params.ratingNotifier.sendRatingNotification(params.user.username, params.rating.comment, learningObject.name, learningObject.author).catch(error => {
+                reportError(error);
             });
         } else {
             return Promise.reject(
