@@ -37,7 +37,7 @@ export class ExpressRouteDriver {
       // default route
       res.json({
         version,
-        message: `Welcome to the Learning Objects' API v${version}`,
+        message: `Welcome to the Ratings API v${version}`,
       });
     });
 
