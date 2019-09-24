@@ -1,6 +1,4 @@
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
-import { reportError } from '../drivers/SentryConnector';
-import { ResponseDataStore } from './interfaces/ResponseDataStore';
+import { ResourceError, ResourceErrorReason } from '../errors';
 import { Response } from '../types/Response';
 import { hasResponseUpdateDeleteAccess, hasResponseCreateAccess } from './ResponseAuthorization';
 import { UserToken } from '../types/UserToken';
@@ -13,40 +11,28 @@ import { ResponseStore } from './ResponseStore';
  * @export
  * @param params
  * @property { ResponseDataStore } dataStore instance of ResponseDataStore
- * @property { string } responseId id of response being deleted
+ * @property { string } responseID ID of response being deleted
  *
- * @returns { Promise<void> }
+ * @returns { Promise<voID> }
  */
 export async function deleteResponse(params: {
-    responseId: string;
+    responseID: string;
     user: UserToken;
 }): Promise<void> {
-    try {
-        const hasAccess = await hasResponseUpdateDeleteAccess({
-            dataStore: getDataStore(),
-            user: params.user,
-            responseId: params.responseId,
-        });
-        if (hasAccess) {
-            await getDataStore().deleteResponse({
-                responseId: params.responseId,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
+    const hasAccess = await hasResponseUpdateDeleteAccess({
+        dataStore: getDataStore(),
+        user: params.user,
+        responseID: params.responseID,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
         );
     }
+    await getDataStore().deleteResponse({
+        responseID: params.responseID,
+    });
 }
 
 /**
@@ -54,26 +40,17 @@ export async function deleteResponse(params: {
  * @export
  * @param params
  * @property { ResponseDataStore } dataStore instance of ResponseDataStore
- * @property { string } ratingId id of rating that the reponse is attached to
+ * @property { string } ratingID ID of rating that the reponse is attached to
  *
- * @returns { Promise<void> }
+ * @returns { Promise<voID> }
  */
 export async function getResponses(params: {
-    ratingIds: string[];
+    ratingIDs: string[];
 }): Promise<Response[]> {
-    try {
-        const responses = await getDataStore().getResponses({
-            ratingIds: params.ratingIds,
-        });
-        return responses;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
-        );
-    }
+    const responses = await getDataStore().getResponses({
+        ratingIDs: params.ratingIDs,
+    });
+    return responses;
 }
 
 /**
@@ -83,40 +60,30 @@ export async function getResponses(params: {
  * @export
  * @param params
  * @property { ResponseDataStore } dataStore instance of ResponseDataStore
- * @property { string } responseId id of response being deleted
+ * @property { string } responseID ID of response being deleted
  *
- * @returns { Promise<void> }
+ * @returns { Promise<voID> }
  */
 export async function updateResponse(params: {
-    responseId: string;
+    responseID: string;
     updates: Response;
     user: UserToken;
 }): Promise<void> {
-    try {
-        const hasAccess = await hasResponseUpdateDeleteAccess({
-            dataStore: getDataStore(),
-            user: params.user,
-            responseId: params.responseId,
-        });
-        if (hasAccess) {
-            await getDataStore().updateResponse({
-                responseId: params.responseId,
-                updates: params.updates,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(ServiceErrorReason.INTERNAL),
+    const hasAccess = await hasResponseUpdateDeleteAccess({
+        dataStore: getDataStore(),
+        user: params.user,
+        responseID: params.responseID,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'InvalID Access',
+            ResourceErrorReason.INVALID_ACCESS,
         );
     }
+    await getDataStore().updateResponse({
+        responseID: params.responseID,
+        updates: params.updates,
+    });
 }
 
 /**
@@ -126,48 +93,36 @@ export async function updateResponse(params: {
  * @export
  * @param params
  * @property { ResponseDataStore } dataStore instance of ResponseDataStore
- * @property { string } responseId id of response being deleted
+ * @property { string } responseID ID of response being deleted
  *
- * @returns { Promise<void> }
+ * @returns { Promise<voID> }
  */
 export async function createResponse(params: {
-    ratingId: string;
+    ratingID: string;
     response: Response;
     user: UserToken;
 }): Promise<void> {
-    try {
-        const hasAccess = await hasResponseCreateAccess({
-            dataStore: getDataStore(),
-            user: params.user,
-            ratingId: params.ratingId,
-        });
-        if (hasAccess) {
-            const responseUser = {
-                username: params.user.username,
-                name: params.user.name,
-                email: params.user.email,
-            };
-            await getDataStore().createResponse({
-                ratingId: params.ratingId,
-                response: params.response,
-                user: responseUser,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
+    const hasAccess = await hasResponseCreateAccess({
+        dataStore: getDataStore(),
+        user: params.user,
+        ratingID: params.ratingID,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
         );
     }
+    const responseUser = {
+        username: params.user.username,
+        name: params.user.name,
+        email: params.user.email,
+    };
+    await getDataStore().createResponse({
+        ratingID: params.ratingID,
+        response: params.response,
+        user: responseUser,
+    });
 }
 
 function getDataStore() {

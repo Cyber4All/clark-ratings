@@ -3,21 +3,21 @@ import { UserInfo } from '../../types/UserInfo';
 
 export interface ResponseDataStore {
     deleteResponse(params: {
-        responseId: string,
+        responseID: string,
     }): Promise<void>;
     updateResponse(params: {
-        responseId: string,
+        responseID: string,
         updates: Response,
     }): Promise<void>;
     createResponse(params: {
-        ratingId: string,
+        ratingID: string,
         response: Response,
         user: UserInfo,
     }): Promise<void>;
     getResponses(params: {
-        ratingIds: string[],
+        ratingIDs: string[],
     }): Promise<Response[]>;
     getResponseById(params: {
-        responseId: string,
+        responseID: string,
     }): Promise<Response>;
 }

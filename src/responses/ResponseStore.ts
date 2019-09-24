@@ -20,7 +20,7 @@ export class ResponseStore implements ResponseDataStore {
     }
 
     /**
-     * Single pattern - returns up to one instance of
+     * returns up to one instance of
      * the ResponseStore class
      */
     static getInstance(): ResponseDataStore {
@@ -34,81 +34,54 @@ export class ResponseStore implements ResponseDataStore {
      * Delete a specified response document
      * @export
      * @param params
-     * @property {string } responseId the id of the reponse document
+     * @property {string } responseID the ID of the response document
      * @returns Promise<void>
      */
     async deleteResponse(params: {
-        responseId: string,
+        responseID: string,
     }): Promise<void> {
-        try {
-            await this.db
-                .collection(Collections.RESPONSES)
-                .deleteOne({
-                    _id: new ObjectId(params.responseId),
-                });
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(
-                new ServiceError(
-                    ServiceErrorReason.INTERNAL,
-                ),
-            );
-        }
+        await this.db
+            .collection(Collections.RESPONSES)
+            .deleteOne({
+                _id: new ObjectId(params.responseID),
+            });
     }
 
     /**
      * Fetch a response document by its source
      * @export
      * @param params
-     * @property {string } ratingId the id of the rating document (source of the response)
+     * @property {string } ratingID the id of the rating document (source of the response)
      * @returns Promise<Response>
      */
     async getResponses(params: {
-        ratingIds: string[],
+        ratingIDs: string[],
     }): Promise<Response[]> {
-        try {
-            const objectIds  = params.ratingIds.map(id => new ObjectId(id));
-            const response = await this.db
-                .collection(Collections.RESPONSES)
-                .find({
-                    source: { $in: objectIds },
-                }).toArray();
-            return response;
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(
-                new ServiceError(
-                    ServiceErrorReason.INTERNAL,
-                ),
-            );
-        }
+        const objectIds  = params.ratingIDs.map(id => new ObjectId(id));
+        const response = await this.db
+            .collection(Collections.RESPONSES)
+            .find({
+                source: { $in: objectIds },
+            }).toArray();
+        return response;
     }
 
     /**
      * fetch a response document by its source
      * @export
      * @param params
-     * @property {string } responseId the id of the response
+     * @property {string } responseID the ID of the response
      * @returns Promise<Response>
      */
     async getResponseById(params: {
-        responseId: string,
+        responseID: string,
     }): Promise<Response> {
-        try {
-            const response = await this.db
-                .collection(Collections.RESPONSES)
-                .findOne({
-                    _id: new ObjectId(params.responseId),
-                });
-            return response;
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(
-                new ServiceError(
-                    ServiceErrorReason.INTERNAL,
-                ),
-            );
-        }
+        const response = await this.db
+            .collection(Collections.RESPONSES)
+            .findOne({
+                _id: new ObjectId(params.responseID),
+            });
+        return response;
     }
 
 
@@ -116,64 +89,46 @@ export class ResponseStore implements ResponseDataStore {
      * Update a specified response document
      * @export
      * @param params
-     * @property { string } responseId the id of the reponse document
+     * @property { string } responseID the ID of the reponse document
      * @property { Response } updates Response object containing updated values
      * @returns Promise<void>
      */
     async updateResponse(params: {
-        responseId: string,
+        responseID: string,
         updates: Response,
     }): Promise<void> {
-        try {
-            const updates = params.updates;
-            await this.db
-                .collection(Collections.RESPONSES)
-                .findOneAndUpdate(
-                    {_id: new ObjectId(params.responseId) },
-                    { $set: {
-                        ...updates,
-                        date: Date.now(),
-                    } },
-                );
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(
-                new ServiceError(
-                    ServiceErrorReason.INTERNAL,
-                ),
+        const updates = params.updates;
+        await this.db
+            .collection(Collections.RESPONSES)
+            .findOneAndUpdate(
+                {_id: new ObjectId(params.responseID) },
+                { $set: {
+                    ...updates,
+                    date: Date.now(),
+                } },
             );
-        }
     }
 
     /**
      * Update a specified response document
      * @export
      * @param params
-     * @property { string } ratingId the id of the parent rating document
+     * @property { string } ratingID the id of the parent rating document
      * @property { Response } response Reponse object to insert
      * @returns Promise<void>
      */
     async createResponse(params: {
-        ratingId: string;
+        ratingID: string;
         response: Response;
         user: UserInfo;
     }): Promise<void> {
-        try {
-            await this.db
-                .collection(Collections.RESPONSES)
-                .insert({
-                    ...params.response,
-                    source: new ObjectId(params.ratingId),
-                    user: params.user,
-                    date: Date.now(),
-                });
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(
-                new ServiceError(
-                    ServiceErrorReason.INTERNAL,
-                ),
-            );
-        }
+        await this.db
+            .collection(Collections.RESPONSES)
+            .insert({
+                ...params.response,
+                source: new ObjectId(params.ratingID),
+                user: params.user,
+                date: Date.now(),
+            });
     }
 }

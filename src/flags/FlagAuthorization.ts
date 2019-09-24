@@ -1,5 +1,4 @@
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason } from '../errors';
 import { getRating } from '../ratings/RatingsInteractor';
 
 /**
@@ -14,14 +13,15 @@ import { getRating } from '../ratings/RatingsInteractor';
  */
 export async function hasFlagCreateAccess(params: {
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
-    return !(
-        await isRatingAuthor({
+        const isAuthor = await isRatingAuthor({
             user: params.user,
-            ratingId: params.ratingId,
-        })
-    );
+            ratingID: params.ratingID,
+        });
+        // Rating author cannot flag their own rating
+        const hasCreateAccess = !isAuthor;
+        return hasCreateAccess;
 }
 
 /**
@@ -36,21 +36,12 @@ export async function hasFlagCreateAccess(params: {
  */
 async function isRatingAuthor(params: {
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
-    try {
-        const rating = await getRating({
-            ratingId: params.ratingId,
-        });
-        return rating.user.username === params.user.username;
-    } catch (error) {
-        return Promise.reject(
-            new ResourceError(
-                'User is not author of the specified rating',
-                ResourceErrorReason.INVALID_ACCESS,
-            ),
-        );
-    }
+    const rating = await getRating({
+        ratingID: params.ratingID,
+    });
+    return rating.user.username === params.user.username;
 }
 
 export async function hasPrivilegedAccess(params: {

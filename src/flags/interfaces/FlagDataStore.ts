@@ -2,14 +2,14 @@ import { Flag } from '../../types/Flag';
 
 export interface FlagDataStore {
     flagRating(params: {
-        ratingId: string;
+        ratingID: string;
         flag: Flag;
     }): Promise<void>;
     getAllFlags(): Promise<Flag[]>;
     getRatingFlags(params: {
-        ratingId: string;
+        ratingID: string;
     }): Promise<Flag[]>;
     deleteFlag(params: {
-        flagId: string;
+        flagID: string;
     }): Promise<void>;
 }

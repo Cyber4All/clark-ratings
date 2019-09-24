@@ -18,11 +18,7 @@ import { SlackGateway } from './gateways/SlackGateway';
  * }
  * @returns
  */
-export function initializePrivate({
-    router,
-}: {
-    router: Router;
-}) {
+export function initializePrivate(router: Router) {
 
     const getAllFlags = async (req: Request, res: Response) => {
         try {
@@ -38,10 +34,10 @@ export function initializePrivate({
 
     const getRatingFlags = async (req: Request, res: Response) => {
         try {
-            const ratingId = req.params.ratingId;
+            const ratingID = req.params.ratingID;
             const ratings = await interactor.getRatingFlags({
                 user: req['user'],
-                ratingId,
+                ratingID,
             });
             res.status(200).json(ratings);
         } catch (error) {
@@ -54,7 +50,7 @@ export function initializePrivate({
         try {
             await interactor.deleteFlag({
                 user: req['user'],
-                flagId: req.params.flagId,
+                flagID: req.params.flagID,
             });
             res.sendStatus(200);
         } catch (error) {
@@ -65,11 +61,11 @@ export function initializePrivate({
 
     const createFlag = async (req: Request, res: Response) => {
         try {
-            const ratingId = req.params.ratingId;
+            const ratingID = req.params.ratingID;
             const flag = req.body;
             const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
-                ratingId,
+                ratingID,
                 user: req['user'],
                 flag,
                 flagNotifier,
@@ -82,7 +78,7 @@ export function initializePrivate({
     };
 
     router.get('/flags', getAllFlags);
-    router.get('/learning-objects/:learningObjectId/ratings/:ratingId/flags', getRatingFlags);
-    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/flags/:flagId', deleteFlag);
-    router.post('/learning-objects/:learningObjectId/ratings/:ratingId/flags', createFlag);
+    router.get('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags', getRatingFlags);
+    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags/:flagID', deleteFlag);
+    router.post('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags', createFlag);
 }

@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import * as interactor from './ResponseInteractor';
 import { mapErrorToStatusCode } from '../errors';
-import { ResponseStore } from './ResponseStore';
 
 /**
  * Initializes an express router with endpoints for public
@@ -15,11 +14,7 @@ import { ResponseStore } from './ResponseStore';
  * }
  * @returns
  */
-export function initializePublic({
-  router,
-}: {
-  router: Router;
-}) {
+export function initializePublic(router: Router) {
 
     /**
      * Fetch reponse for given rating
@@ -28,9 +23,9 @@ export function initializePublic({
      */
     const getResponse = async (req: Request, res: Response) => {
       try {
-        const ratingId = req.params.ratingId;
+        const ratingID = req.params.ratingID;
         const response = await interactor.getResponses({
-          ratingIds: [ratingId],
+          ratingIDs: [ratingID],
         });
         res.status(200).json(response);
       } catch (error) {
@@ -39,7 +34,7 @@ export function initializePublic({
       }
     };
 
-    router.get('/learning-objects/:learningObjectId/ratings/:ratingId/responses', getResponse);
+    router.get('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses', getResponse);
 
     return router;
 }
@@ -51,12 +46,7 @@ export function initializePublic({
  * @export
  * @property { Router } router instance of Express Router
  */
-export function initializePrivate({
-    router,
-}: {
-    router: Router;
-}) {
-
+export function initializePrivate(router: Router) {
     /**
      * Delete a specifed response
      * @param {Request} req
@@ -65,9 +55,9 @@ export function initializePrivate({
     const deleteResponse = async (req: Request, res: Response) => {
         try {
           const user = req['user'];
-          const responseId = req.params.responseId;
+          const responseID = req.params.responseId;
           await interactor.deleteResponse({
-            responseId,
+            responseID,
             user,
           });
           res.sendStatus(200);
@@ -86,9 +76,9 @@ export function initializePrivate({
         try {
           const user = req['user'];
           const updates = req.body;
-          const responseId = req.params.responseId;
+          const responseID = req.params.responseID;
           await interactor.updateResponse({
-            responseId,
+            responseID,
             updates,
             user,
           });
@@ -107,10 +97,10 @@ export function initializePrivate({
     const createResponse = async (req: Request, res: Response) => {
         try {
           const response = req.body;
-          const ratingId = req.params.ratingId;
+          const ratingID = req.params.ratingID;
           const user = req['user'];
           await interactor.createResponse({
-            ratingId,
+            ratingID,
             response,
             user,
           });
@@ -121,7 +111,7 @@ export function initializePrivate({
         }
     };
 
-    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', deleteResponse);
-    router.patch('/learning-objects/:learningObjectId/ratings/:ratingId/responses/:responseId', updateResponse);
-    router.post('/learning-objects/:learningObjectId/ratings/:ratingId/responses', createResponse);
+    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseId', deleteResponse);
+    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseId', updateResponse);
+    router.post('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses', createResponse);
 }

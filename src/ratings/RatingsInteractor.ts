@@ -2,7 +2,7 @@ import { Rating } from '../types/Rating';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { reportError } from '../drivers/SentryConnector';
 import { UserToken } from '../types/UserToken';
-import { hasRatingDeleteAccess, hasRatingUpdateAccess } from './RatingAuthorization';
+import { hasRatingDeleteAccess, hasRatingUpdateAccess, hasRatingCreateAccess } from './RatingAuthorization';
 import { RatingStore } from './RatingStore';
 import { RatingNotifier } from './interfaces/RatingNotifier';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
@@ -128,8 +128,9 @@ export async function createRating(params: {
     user: UserToken;
     ratingNotifier: RatingNotifier;
 }): Promise<void> {
-    const hasAccess = await hasRatingWriteAccess({
+    const hasAccess = await hasRatingCreateAccess({
         CUID: params.CUID,
+        versionID: params.versionID,
         user: params.user,
     });
     if (!hasAccess) {
@@ -162,12 +163,12 @@ export async function createRating(params: {
         user: ratingUser,
     });
 
-    params.ratingNotifier.sendRatingNotification(
-        params.user.username,
-        params.rating.comment,
-        learningObject.name,
-        learningObject.author,
-    ).catch(error => {
+    params.ratingNotifier.sendRatingNotification({
+        ratingAuthor: params.user.username,
+        ratingComment: params.rating.comment,
+        learningObjectName: learningObject.name,
+        learningObjectAuthorUsername: learningObject.author.username,
+    }).catch((error: Error) => {
         reportError(error);
     });
 }

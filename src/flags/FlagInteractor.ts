@@ -14,45 +14,41 @@ import { reportError } from '../drivers/SentryConnector';
  * *** Must not be rating author ***
  * @export
  * @param params
- * @property { string } ratingId the id of the parent rating document
+ * @property { string } ratingID the ID of the parent rating document
  * @property { UerToken } user current user information
  * @property { Flag } flag the flag being created
  * @returns { Promise<void> }
  */
 export async function flagRating(params: {
-    ratingId: string;
+    ratingID: string;
+    CUID: string;
+    versionID: string;
     user: UserToken;
     flag: Flag;
     flagNotifier: FlagNotifier;
 }): Promise<void> {
-    try {
-        const hasAccess = await hasFlagCreateAccess({
-            user: params.user,
-            ratingId: params.ratingId,
-        });
-        if (hasAccess) {
-            await getDataStore().flagRating({
-                ratingId: params.ratingId,
-                flag: params.flag,
-            });
-            const rating = await getRating(params.ratingId);
-            const learningObject = await getLearningObject({
-                learningObjectId: rating.source,
-            });
-            params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username).catch(error => {
-                reportError(error);
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        return Promise.reject(`Problem flaging rating. Error: ${error}`);
+    const hasAccess = await hasFlagCreateAccess({
+        user: params.user,
+        ratingID: params.ratingID,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
+        );
     }
+    await getDataStore().flagRating({
+        ratingID: params.ratingID,
+        flag: params.flag,
+    });
+    const rating = await getRating(params.ratingID);
+    const learningObject = await getLearningObject({
+        CUID: params.CUID,
+        versionID: params.versionID,
+    });
+    params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username).catch(error => {
+        reportError(error);
+    });
 }
 
 /**
@@ -67,24 +63,17 @@ export async function flagRating(params: {
 export async function getAllFlags(params: {
     user: UserToken;
 }): Promise<Flag[]> {
-    try {
-        const hasAccess = await hasPrivilegedAccess({
-            user: params.user,
-        });
-        if (hasAccess) {
-            const flags = await getDataStore().getAllFlags();
-            return flags;
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        return Promise.reject(`Problem getting all flags (ADMIN). Error: ${error}`);
+    const hasAccess = await hasPrivilegedAccess({
+        user: params.user,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
+        );
     }
+    const flags = await getDataStore().getAllFlags();
+    return flags;
 }
 
 /**
@@ -94,33 +83,26 @@ export async function getAllFlags(params: {
  * @export
  * @param params
  * @property { UserToken } user current user information
- * @property { string } ratingId the id of the parent rating document
+ * @property { string } ratingID the ID of the parent rating document
  * @returns { Promise<Flag[]> }
  */
 export async function getRatingFlags (params: {
-    ratingId: string,
+    ratingID: string,
     user: UserToken;
 }): Promise<Flag[]> {
-    try {
-        const hasAccess = await hasPrivilegedAccess({
-            user: params.user,
-        });
-        if (hasAccess) {
-            const flags =  await getDataStore().getRatingFlags({
-                ratingId: params.ratingId,
-            });
-            return flags;
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        return Promise.reject(`Problem getting rating flags (ADMIN). Error: ${error}`);
+    const hasAccess = await hasPrivilegedAccess({
+        user: params.user,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
+        );
     }
+    const flags =  await getDataStore().getRatingFlags({
+        ratingID: params.ratingID,
+    });
+    return flags;
 }
 
 /**
@@ -130,32 +112,25 @@ export async function getRatingFlags (params: {
  * @export
  * @param params
  * @property { UserToken } user current user information
- * @property { string } flagId the id of the flag
+ * @property { string } flagID the ID of the flag
  * @returns { Promise<void> }
  */
 export async function deleteFlag (params: {
-    flagId: string,
+    flagID: string,
     user: UserToken;
 }): Promise<void> {
-    try {
-        const hasAccess = await hasPrivilegedAccess({
-            user: params.user,
-        });
-        if (hasAccess) {
-            await getDataStore().deleteFlag({
-                flagId: params.flagId,
-            });
-        } else {
-            return Promise.reject(
-                new ResourceError(
-                    'Invalid Access',
-                    ResourceErrorReason.INVALID_ACCESS,
-                ),
-            );
-        }
-    } catch (error) {
-        return Promise.reject(`Problem deleting flag (ADMIN). Error: ${error}`);
+    const hasAccess = await hasPrivilegedAccess({
+        user: params.user,
+    });
+    if (!hasAccess) {
+        throw new ResourceError(
+            'Invalid Access',
+            ResourceErrorReason.INVALID_ACCESS,
+        );
     }
+    await getDataStore().deleteFlag({
+        flagID: params.flagID,
+    });
 }
 
 /**
