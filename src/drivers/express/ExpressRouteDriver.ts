@@ -41,12 +41,8 @@ export class ExpressRouteDriver {
       });
     });
 
-    RatingsRouteHandler.initializePublic({
-      router,
-    });
+    RatingsRouteHandler.initializePublic(router);
 
-    ResponseRouteHandler.initializePublic({
-      router,
-    });
+    ResponseRouteHandler.initializePublic(router);
   }
 }

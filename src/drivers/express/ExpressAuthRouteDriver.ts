@@ -30,17 +30,11 @@ export class ExpressAuthRouteDriver {
    */
   private setRoutes(router: Router) {
 
-    RatingsRouteHandler.initializePrivate({
-      router,
-    });
+    RatingsRouteHandler.initializePrivate(router);
 
-    FlagRouteHandler.initializePrivate({
-      router,
-    });
+    FlagRouteHandler.initializePrivate(router);
 
-    ResponseRouteHandler.initializePrivate({
-      router,
-    });
+    ResponseRouteHandler.initializePrivate(router);
   }
 }
 
