@@ -4,12 +4,17 @@
 export interface RatingNotifier {
 
     /**
-     * Sends a message on slack when triggered using a post request
+     * Posts a message on slack when triggered..
      *
      * @param ratingAuthor [the username of the user that created the rating]
      * @param ratingComment [the comment that was left with the rating]
-     * @param loName [the name of the learning object]
-     * @param loAuthor [the username of the user that created the learning object]
+     * @param learningObjectName [the name of the Learning Object]
+     * @param learningObjectAuthorUsername [the username of the user that created the Learning Object]
      */
-    sendRatingNotification(ratingAuthor: string, ratingComment: string, loName: string, loAuthor: string): Promise<void>;
+    sendRatingNotification(params: {
+        ratingAuthor: string;
+        ratingComment: string;
+        learningObjectName: string;
+        learningObjectAuthorUsername: string;
+    }): Promise<void>;
 }

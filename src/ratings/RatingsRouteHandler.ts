@@ -28,30 +28,30 @@ export function initializePublic({
      * @param {Response} res
      */
     const getRating = async (req: Request, res: Response) => {
-        try {
-          const rating = await interactor.getRating({
-            ratingId: req.params.ratingId,
-          });
-          res.status(200).json(rating);
-        } catch (error) {
-          const response = mapErrorToStatusCode(error);
-          if (response.code === 500) {
-            res.status(response.code).json(response.message);
-          } else {
-            res.sendStatus(response.code);
-          }
+      try {
+        const rating = await interactor.getRating({
+          ratingID: req.params.ratingID,
+        });
+        res.status(200).json(rating);
+      } catch (error) {
+        const response = mapErrorToStatusCode(error);
+        if (response.code === 500) {
+          res.status(response.code).json(response.message);
+        } else {
+          res.sendStatus(response.code);
         }
+      }
     };
 
     /**
-     * Retrieve all ratings associated with a specified learning object
+     * Retrieve all ratings associated with a specified Learning Object
      * @param {Request} req
      * @param {Response} res
      */
     const getLearningObjectRatings = async (req: Request, res: Response) => {
         try {
           const ratings = await interactor.getLearningObjectRatings({
-            learningObjectId: req.params.learningObjectId,
+            CUID: req.params.CUID,
           });
           res.status(200).json(ratings);
         } catch (error) {
@@ -64,8 +64,8 @@ export function initializePublic({
         }
     };
 
-    router.get('/ratings/:ratingId', getRating);
-    router.get('/learning-objects/:learningObjectId/ratings', getLearningObjectRatings);
+    router.get('/ratings/:ratingID', getRating);
+    router.get('/learning-objects/:CUID/version/:versionID/ratings', getLearningObjectRatings);
 
     return router;
   }
@@ -95,10 +95,10 @@ export function initializePrivate({
      */
     const deleteRating = async (req: Request, res: Response) => {
         try {
-          const ratingId = req.params.ratingId;
+          const ratingID = req.params.ratingID;
           const user = req['user'];
           await interactor.deleteRating({
-            ratingId,
+            ratingID,
             user,
           });
           res.sendStatus(200);
@@ -120,10 +120,10 @@ export function initializePrivate({
     const updateRating = async (req: Request, res: Response) => {
         try {
           const updates = req.body;
-          const ratingId = req.params.ratingId;
+          const ratingID = req.params.ratingID;
           const user = req['user'];
           await interactor.updateRating({
-            ratingId,
+            ratingID,
             updates,
             user,
           });
@@ -146,12 +146,14 @@ export function initializePrivate({
     const createRating = async (req: Request, res: Response) => {
         try {
           const rating = req.body;
-          const learningObjectId = req.params.learningObjectId;
+          const CUID = req.params.CUID;
+          const versionID = req.params.versionID;
           const user = req['user'];
           const ratingNotifier: RatingNotifier = new SlackGateway();
           await interactor.createRating({
             rating,
-            learningObjectId,
+            CUID,
+            versionID,
             user,
             ratingNotifier,
           });
@@ -166,7 +168,7 @@ export function initializePrivate({
         }
     };
 
-    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId', deleteRating);
-    router.patch('/learning-objects/:learningObjectId/ratings/:ratingId', updateRating);
-    router.post('/learning-objects/:learningObjectId/ratings', createRating);
+    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID', deleteRating);
+    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID', updateRating);
+    router.post('/learning-objects/:CUID/version/:versionID/ratings', createRating);
 }

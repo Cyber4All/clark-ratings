@@ -5,28 +5,21 @@ import { ServiceError, ServiceErrorReason } from '../errors';
 import { reportError } from './SentryConnector';
 
 export async function getLearningObject(params: {
-    learningObjectId: string;
+    CUID: string;
+    versionID: string;
 }) {
-    try {
-        const options = {
-            uri: '',
-            json: true,
-            headers: {
-              Authorization: 'Bearer',
-            },
-            method: 'GET',
-        };
-        options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_LEARNING_OBJECT({
-            learningObjectId: params.learningObjectId,
-        });
-        options.headers.Authorization = `Bearer ${generateServiceToken()}`;
-        return request(options);
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
-        );
-    }
+    const options = {
+        uri: '',
+        json: true,
+        headers: {
+            Authorization: 'Bearer',
+        },
+        method: 'GET',
+    };
+    options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_LEARNING_OBJECT({
+        CUID: params.CUID,
+        versionID: params.versionID,
+    });
+    options.headers.Authorization = `Bearer ${generateServiceToken()}`;
+    return request(options);
 }

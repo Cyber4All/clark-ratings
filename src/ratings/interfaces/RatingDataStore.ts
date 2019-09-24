@@ -13,11 +13,11 @@ export interface RatingDataStore {
         ratingId: string;
     }): Promise<Rating>;
     getLearningObjectsRatings(params: {
-        learningObjectId: string;
+        CUID: string;
     }): Promise<any>;
     createNewRating(params: {
         rating: Rating;
-        learningObjectId: string;
+        CUID: string;
         user: UserInfo;
     }): Promise<void>;
 }

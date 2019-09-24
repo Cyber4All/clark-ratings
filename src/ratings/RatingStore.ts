@@ -116,14 +116,14 @@ export class RatingStore implements RatingDataStore {
      * @returns { Promise<Rating[]> }
      */
     async getLearningObjectsRatings(params: {
-      learningObjectId: string;
+      CUID: string;
     }): Promise<any> {
       try {
         const data = await this.db.collection(Collections.RATINGS)
           .aggregate(
           [
             {
-              $match: { source: new ObjectId(params.learningObjectId) },
+              $match: { source: params.CUID },
             },
             {
               $sort: { date: 1 },
@@ -184,7 +184,7 @@ export class RatingStore implements RatingDataStore {
      */
     async createNewRating(params: {
       rating: Rating;
-      learningObjectId: string;
+      CUID: string;
       user: UserInfo;
     }): Promise<void> {
       try {
@@ -192,7 +192,7 @@ export class RatingStore implements RatingDataStore {
           .insert({
             ...params.rating,
             user: params.user,
-            source: new ObjectId(params.learningObjectId),
+            source: new ObjectId(params.CUID),
             date: Date.now(),
           });
       } catch (error) {

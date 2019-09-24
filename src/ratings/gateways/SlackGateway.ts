@@ -1,4 +1,3 @@
-import { reportError } from '../../drivers/SentryConnector';
 import * as request from 'request-promise';
 import { RatingNotifier } from '../interfaces/RatingNotifier';
 
@@ -12,21 +11,34 @@ export class SlackGateway implements RatingNotifier {
      *
      * @param ratingAuthor [the username of the creator of the rating]
      * @param ratingComment [the comment that was left with the rating]
-     * @param loName [the name of the learning object]
-     * @param loAuthor [the username of the user that created the learning object]
+     * @param learningObjectName [the name of the Learning Object]
+     * @param learningObjectAuthorUsername [the username of the user that created the Learning Object]
      */
-    private initializePayload(ratingAuthor: string, ratingComment: string, loName: string, loAuthor: string) {
+    private initializePayload(params: {
+        ratingAuthor: string,
+        ratingComment: string,
+        learningObjectName: string,
+        learningObjectAuthorUsername: string,
+    }) {
         return {
             text: 'A rating has been created.',
             attachments: [
                 {
-                    'fallback': `<https://clark.center/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
-                    'pretext': `<https://clark.center/details/${encodeURIComponent(loAuthor)}/${encodeURIComponent(loName)}|View Rating>`,
+                    'fallback': `<https://clark.center/details/${
+                            encodeURIComponent(params.learningObjectAuthorUsername)
+                        }/${
+                            encodeURIComponent(params.learningObjectName)
+                        }|View Rating>`,
+                    'pretext': `<https://clark.center/details/${
+                            encodeURIComponent(params.learningObjectAuthorUsername)
+                        }/${
+                            encodeURIComponent(params.learningObjectName)
+                        }|View Rating>`,
                     'color': '#0000ff',
                     'fields': [
                         {
-                            'title': `Created by ${ratingAuthor}`,
-                            'value': `"${ratingComment}"`,
+                            'title': `Created by ${params.ratingAuthor}`,
+                            'value': `"${params.ratingComment}"`,
                             'short': 'true',
                         },
                     ],
@@ -36,26 +48,27 @@ export class SlackGateway implements RatingNotifier {
     }
 
     /**
-     * Posts a message on slack when triggered using a post request.
-     *
-     * @param ratingAuthor [the username of the user that created the rating]
-     * @param ratingComment [the comment that was left with the rating]
-     * @param loName [the name of the learning object]
-     * @param loAuthor [the username of the user that created the learning object]
+     * @inheritDoc
      */
-    async sendRatingNotification(ratingAuthor: string, ratingComment: string, loName: string, loAuthor: string) {
+    async sendRatingNotification(params: {
+        ratingAuthor: string;
+        ratingComment: string;
+        learningObjectName: string;
+        learningObjectAuthorUsername: string;
+    }): Promise<void> {
         if (nodeEnv === 'production') {
-            try {
-                const options = {
-                    uri: slackURI,
-                    json: true,
-                    body: this.initializePayload(ratingAuthor, ratingComment, loName, loAuthor),
-                    method: 'POST',
-                };
-                await request(options);
-            } catch (error) {
-                reportError(error);
-            }
+            const options = {
+                uri: slackURI,
+                json: true,
+                body: this.initializePayload({
+                    ratingAuthor: params.ratingAuthor,
+                    ratingComment: params.ratingComment,
+                    learningObjectAuthorUsername: params.learningObjectName,
+                    learningObjectName: params.learningObjectName,
+                }),
+                method: 'POST',
+            };
+            await request(options);
         } else {
             console.log('Sent to Slack');
         }
