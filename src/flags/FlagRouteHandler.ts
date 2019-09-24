@@ -4,20 +4,6 @@ import { mapErrorToStatusCode } from '../errors';
 import { FlagNotifier } from './interfaces/FlagNotifier';
 import { SlackGateway } from './gateways/SlackGateway';
 
-/**
- * Initializes an express router with endpoints for public Creating, Updating, and Deleting
- * a Learning Object.
- *
- * @export
- * @param {{
- *   fileManager: FileManager;
- *   library: LibraryCommunicator;
- * }} {
- *   fileManager,
- *   library,
- * }
- * @returns
- */
 export function initializePrivate(router: Router) {
 
     const getAllFlags = async (req: Request, res: Response) => {
@@ -62,10 +48,14 @@ export function initializePrivate(router: Router) {
     const createFlag = async (req: Request, res: Response) => {
         try {
             const ratingID = req.params.ratingID;
+            const CUID = req.params.CUID;
+            const versionID = req.params.versionID;
             const flag = req.body;
             const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
                 ratingID,
+                versionID,
+                CUID,
                 user: req['user'],
                 flag,
                 flagNotifier,

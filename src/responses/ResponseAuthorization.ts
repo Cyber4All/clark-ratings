@@ -84,8 +84,8 @@ async function isLearningObjectAuthorOrContributor(params: {
         ratingID: params.ratingID,
     });
     const learningObject = await getLearningObject({
-        CUID: rating.source,
-        versionID: rating.version,
+        CUID: rating.source.CUID,
+        versionID: rating.source.version,
     });
     if (!learningObject) {
         throw new ResourceError(

@@ -4,23 +4,8 @@ import { mapErrorToStatusCode } from '../errors';
 import { RatingNotifier } from './interfaces/RatingNotifier';
 import { SlackGateway } from './gateways/SlackGateway';
 
-/**
- * Initializes an express router with endpoints for public
- * rating functions
- *
- * @export
- * @param {{
- *   router: Router
- * }} {
- *   router
- * }
- * @returns
- */
-export function initializePublic({
-    router,
-  }: {
-    router: Router;
-  }) {
+
+export function initializePublic(router: Router) {
 
     /**
      * Retrieve a rating by a specified ID
@@ -70,23 +55,7 @@ export function initializePublic({
     return router;
   }
 
-/**
- * Initializes an express router with endpoints for private
- * rating functions
- *
- * @export
- * @param {{
- *   router: Router
- * }} {
- *   router
- * }
- * @returns
- */
-export function initializePrivate({
-    router,
-}: {
-    router: Router;
-}) {
+export function initializePrivate(router: Router) {
 
     /**
      * Delete a specifed rating

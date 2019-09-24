@@ -160,6 +160,7 @@ export async function createRating(params: {
     await getDataStore().createNewRating({
         rating: params.rating,
         CUID: params.CUID,
+        versionID: params.versionID,
         user: ratingUser,
     });
 

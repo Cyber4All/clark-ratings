@@ -18,6 +18,7 @@ export interface RatingDataStore {
     createNewRating(params: {
         rating: Rating;
         CUID: string;
+        versionID: string;
         user: UserInfo;
     }): Promise<void>;
 }

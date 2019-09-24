@@ -4,7 +4,10 @@ export type Rating = {
     date?: number;
     value:  number;
     comment: string;
-    source: string;
+    source: {
+        CUID: string;
+        version: string;
+    };
 };
 
 export type LearningObjectContainer = {

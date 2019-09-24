@@ -2,18 +2,6 @@ import { Request, Response, Router } from 'express';
 import * as interactor from './ResponseInteractor';
 import { mapErrorToStatusCode } from '../errors';
 
-/**
- * Initializes an express router with endpoints for public
- * rating functions
- *
- * @export
- * @param {{
- *   router: Router
- * }} {
- *   router
- * }
- * @returns
- */
 export function initializePublic(router: Router) {
 
     /**

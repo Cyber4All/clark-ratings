@@ -1,4 +1,3 @@
-import { reportError } from '../drivers/SentryConnector';
 import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { FlagDataStore } from './interfaces/FlagDataStore';

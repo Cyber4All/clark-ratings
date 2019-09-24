@@ -15,13 +15,13 @@ export async function hasFlagCreateAccess(params: {
     user: UserToken;
     ratingID: string;
 }): Promise<boolean> {
-        const isAuthor = await isRatingAuthor({
-            user: params.user,
-            ratingID: params.ratingID,
-        });
-        // Rating author cannot flag their own rating
-        const hasCreateAccess = !isAuthor;
-        return hasCreateAccess;
+    const isAuthor = await isRatingAuthor({
+        user: params.user,
+        ratingID: params.ratingID,
+    });
+    // Rating author cannot flag their own rating
+    const hasCreateAccess = !isAuthor;
+    return hasCreateAccess;
 }
 
 /**
