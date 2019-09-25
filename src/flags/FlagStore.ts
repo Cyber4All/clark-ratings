@@ -94,6 +94,6 @@ export class FlagStore implements FlagDataStore {
      * @returns { object } flag object with string _id
      */
     convertMongoId(flag: Flag) {
-        return {...flag, _id: flag['_id'].toString(), ratingID: flag['ratingID'].toString()};
+        return {...flag, _id: flag['_id'].toString(), ratingId: flag['ratingId'].toString()};
     }
 }
