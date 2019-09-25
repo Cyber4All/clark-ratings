@@ -1,6 +1,5 @@
 import { Rating } from '../../types/Rating';
 import { ResourceError, ResourceErrorReason } from '../../errors';
-import { reportError } from '../../drivers/SentryConnector';
 import { UserToken } from '../../types/UserToken';
 import { hasRatingDeleteAccess, hasRatingUpdateAccess, hasRatingCreateAccess } from '../RatingAuthorization';
 import { RatingStore } from '../RatingStore';

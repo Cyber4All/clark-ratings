@@ -13,7 +13,10 @@ const RATING_MOCK = {
     date: 123,
     value:  2,
     comment: 'This is a mock rating',
-    source: new ObjectId('5ac520bdf5b97e1864689123'),
+    source: {
+        CUID: 'test_CUID',
+        version: '0',
+    },
 }
 
 const FLAG_MOCK = { 

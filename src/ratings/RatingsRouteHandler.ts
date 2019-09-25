@@ -37,6 +37,7 @@ export function initializePublic(router: Router) {
         try {
           const ratings = await interactor.getLearningObjectRatings({
             CUID: req.params.CUID,
+            versionID: req.params.versionID,
           });
           res.status(200).json(ratings);
         } catch (error) {
@@ -66,7 +67,11 @@ export function initializePrivate(router: Router) {
         try {
           const ratingID = req.params.ratingID;
           const user = req['user'];
+          const CUID = req.params.CUID;
+          const versionID = req.params.versionID;
           await interactor.deleteRating({
+            CUID,
+            versionID,
             ratingID,
             user,
           });
