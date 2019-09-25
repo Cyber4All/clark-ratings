@@ -1,8 +1,6 @@
 import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
 import { generateServiceToken } from './TokenManager';
 import * as request from 'request-promise';
-import { ServiceError, ServiceErrorReason } from '../errors';
-import { reportError } from './SentryConnector';
 
 export async function getLearningObject(params: {
     CUID: string;

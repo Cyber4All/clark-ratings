@@ -1,0 +1,118 @@
+import { RatingNotifier } from '../../interfaces/RatingNotifier';
+import { Rating } from '../../../types/Rating';
+import { createRating } from '../RatingsInteractor';
+import { UserToken } from '../../../types/UserToken';
+
+const stubRating: Rating = {
+    value: 0,
+    comment: 'test comment',
+};
+
+const stubUserToken: UserToken = {
+    username: 'test_username',
+    name: 'test_name',
+    email: 'test_email',
+    organization: 'test_organization',
+    emailVerified: true,
+    accessGroups: [''],
+};
+
+class StubNotifier implements RatingNotifier {
+    sendRatingNotification(params: {
+        ratingAuthor: string;
+        ratingComment: string;
+        learningObjectName: string;
+        learningObjectAuthorUsername: string;
+    }): Promise<void> {
+        return;
+    }
+}
+
+jest.mock('../../RatingStore', () => ({
+    __esModule: true,
+    RatingStore: {
+        getInstance: () => ({
+            updateRating: jest.fn(),
+            deleteRating: jest.fn(),
+            getRating: jest.fn(),
+            getLearningObjectsRatings: jest.fn(),
+            createNewRating: jest.fn(),
+        }),
+    },
+}));
+
+jest.mock('../../../drivers/LearningObjectServiceConnector', () => ({
+    __esModule: true,
+    getLearningObject: jest.fn(),
+}));
+
+import { getLearningObject } from '../../../drivers/LearningObjectServiceConnector';
+
+describe('When createRating is called', () => {
+    describe('and the requester is the author of the Learning Object', () => {
+        it('should throw an invalid access error', async () => {
+            getLearningObject['mockImplementation']((params: {
+                CUID: string;
+                versionID: string;
+            }): any => {
+                return {
+                    author: {
+                        username: 'learning_object_author',
+                    },
+                };
+            });
+            await expect(createRating({
+                rating: stubRating,
+                CUID: 'test_CUID',
+                versionID: 'test_versionID',
+                user: { ...stubUserToken, username: 'learning_object_author' },
+                ratingNotifier: new StubNotifier(),
+            }))
+            .rejects
+            .toThrowError('Invalid Access');
+        });
+    });
+    describe('and the requester is not the author of the Learning Object', () => {
+        describe('and the Learning Object does not exist', () => {
+            it('should throw a not found error', async () => {
+                getLearningObject['mockImplementation']((params: {
+                    CUID: string;
+                    versionID: string;
+                }): any => null);
+                await expect(createRating({
+                    rating: stubRating,
+                    CUID: 'test_CUID',
+                    versionID: 'test_versionID',
+                    user: { ...stubUserToken, username: 'learning_object_author' },
+                    ratingNotifier: new StubNotifier(),
+                }))
+                .rejects
+                .toThrowError('Learning Object not found');
+            });
+        });
+        describe('and the Learning Object does exist', () => {
+            it('should call sendRatingNotification', async () => {
+                getLearningObject['mockImplementation']((params: {
+                    CUID: string;
+                    versionID: string;
+                }): any => {
+                    return {
+                        author: {
+                            username: 'learning_object_author',
+                        },
+                    };
+                });
+                await expect(createRating({
+                    rating: stubRating,
+                    CUID: 'test_CUID',
+                    versionID: 'test_versionID',
+                    user: { ...stubUserToken },
+                    ratingNotifier: new StubNotifier(),
+                }))
+                .resolves
+                .not
+                .toThrowError();
+            });
+        });
+    });
+});

@@ -1,4 +1,4 @@
-import { getRating as fetchRating } from '../../ratings/RatingsInteractor';
+import { getRating as fetchRating } from '../../ratings/interactors/RatingsInteractor';
 
 /**
  * Grabs a rating object

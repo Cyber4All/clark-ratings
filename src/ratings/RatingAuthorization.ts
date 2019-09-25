@@ -1,6 +1,6 @@
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
+import { ResourceError, ResourceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
 
 /**

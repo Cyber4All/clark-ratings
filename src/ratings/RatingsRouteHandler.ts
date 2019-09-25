@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import * as interactor from './RatingsInteractor';
+import * as interactor from './interactors/RatingsInteractor';
 import { mapErrorToStatusCode } from '../errors';
 import { RatingNotifier } from './interfaces/RatingNotifier';
 import { SlackGateway } from './gateways/SlackGateway';
@@ -90,9 +90,13 @@ export function initializePrivate(router: Router) {
         try {
           const updates = req.body;
           const ratingID = req.params.ratingID;
+          const CUID = req.params.CUID;
+          const versionID = req.params.versionID;
           const user = req['user'];
           await interactor.updateRating({
             ratingID,
+            CUID,
+            versionID,
             updates,
             user,
           });

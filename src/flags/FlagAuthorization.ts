@@ -1,5 +1,5 @@
 import { UserToken } from '../types/UserToken';
-import { getRating } from '../ratings/RatingsInteractor';
+import { getRating } from '../ratings/interactors/RatingsInteractor';
 
 /**
  * Checks if a user has the authority to flag a rating

@@ -2,7 +2,7 @@ import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { UserToken } from '../types/UserToken';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
-import { getRating } from '../ratings/RatingsInteractor';
+import { getRating } from '../ratings/interactors/RatingsInteractor';
 import { getResponses } from './ResponseInteractor';
 
 /**

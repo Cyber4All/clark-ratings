@@ -1,11 +1,11 @@
-import { Rating } from '../types/Rating';
-import { ResourceError, ResourceErrorReason } from '../errors';
-import { reportError } from '../drivers/SentryConnector';
-import { UserToken } from '../types/UserToken';
-import { hasRatingDeleteAccess, hasRatingUpdateAccess, hasRatingCreateAccess } from './RatingAuthorization';
-import { RatingStore } from './RatingStore';
-import { RatingNotifier } from './interfaces/RatingNotifier';
-import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
+import { Rating } from '../../types/Rating';
+import { ResourceError, ResourceErrorReason } from '../../errors';
+import { reportError } from '../../drivers/SentryConnector';
+import { UserToken } from '../../types/UserToken';
+import { hasRatingDeleteAccess, hasRatingUpdateAccess, hasRatingCreateAccess } from '../RatingAuthorization';
+import { RatingStore } from '../RatingStore';
+import { RatingNotifier } from '../interfaces/RatingNotifier';
+import { getLearningObject } from '../../drivers/LearningObjectServiceConnector';
 
 /**
  * Get a rating object
@@ -29,7 +29,6 @@ export async function getRating(params: {
     return rating;
 }
 
-
 /**
  * Update a rating object
  * @Authorization
@@ -44,6 +43,8 @@ export async function getRating(params: {
 export async function updateRating(params: {
     ratingID: string;
     updates: Rating;
+    CUID: string;
+    versionID: string;
     user: UserToken;
 }): Promise<void> {
     const hasAccess = await hasRatingUpdateAccess({
@@ -57,6 +58,18 @@ export async function updateRating(params: {
             ResourceErrorReason.INVALID_ACCESS,
         );
     }
+
+    const learningObject = await getLearningObject({
+        CUID: params.CUID,
+        versionID: params.versionID,
+    });
+    if (!learningObject) {
+        throw new ResourceError(
+            'Specified Learning Object does not exist',
+            ResourceErrorReason.NOT_FOUND,
+        );
+    }
+
     await getDataStore().updateRating({
         ratingID: params.ratingID,
         updates: params.updates,
@@ -75,6 +88,8 @@ export async function updateRating(params: {
  */
 export async function deleteRating(params: {
     ratingID: string;
+    CUID: string;
+    versionID: string;
     user: UserToken;
 }): Promise<void> {
     const hasAccess = await hasRatingDeleteAccess({
@@ -88,6 +103,18 @@ export async function deleteRating(params: {
             ResourceErrorReason.INVALID_ACCESS,
         );
     }
+
+    const learningObject = await getLearningObject({
+        CUID: params.CUID,
+        versionID: params.versionID,
+    });
+    if (!learningObject) {
+        throw new ResourceError(
+            'Specified Learning Object does not exist',
+            ResourceErrorReason.NOT_FOUND,
+        );
+    }
+
     await getDataStore().deleteRating({
         ratingID: params.ratingID,
     });
@@ -103,7 +130,20 @@ export async function deleteRating(params: {
  */
 export async function getLearningObjectRatings(params: {
     CUID: string;
+    versionID: string;
 }): Promise<object> {
+    const learningObject = await getLearningObject({
+        CUID: params.CUID,
+        versionID: params.versionID,
+    });
+
+    if (!learningObject) {
+        throw new ResourceError(
+            'Specified Learning Object does not exist',
+            ResourceErrorReason.NOT_FOUND,
+        );
+    }
+
     const ratings = await getDataStore().getLearningObjectsRatings({
         CUID: params.CUID,
     });
@@ -145,13 +185,6 @@ export async function createRating(params: {
         versionID: params.versionID,
     });
 
-    if (!learningObject) {
-        throw new ResourceError(
-            'Specified Learning Object does not exist',
-            ResourceErrorReason.NOT_FOUND,
-        );
-    }
-
     const ratingUser = {
         username: params.user.username,
         name: params.user.name,
@@ -164,13 +197,11 @@ export async function createRating(params: {
         user: ratingUser,
     });
 
-    params.ratingNotifier.sendRatingNotification({
+    await params.ratingNotifier.sendRatingNotification({
         ratingAuthor: params.user.username,
         ratingComment: params.rating.comment,
         learningObjectName: learningObject.name,
         learningObjectAuthorUsername: learningObject.author.username,
-    }).catch((error: Error) => {
-        reportError(error);
     });
 }
 
