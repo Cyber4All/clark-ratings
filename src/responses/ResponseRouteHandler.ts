@@ -43,7 +43,7 @@ export function initializePrivate(router: Router) {
     const deleteResponse = async (req: Request, res: Response) => {
         try {
           const user = req['user'];
-          const responseID = req.params.responseId;
+          const responseID = req.params.responseID;
           await interactor.deleteResponse({
             responseID,
             user,
@@ -99,7 +99,7 @@ export function initializePrivate(router: Router) {
         }
     };
 
-    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseId', deleteResponse);
-    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseId', updateResponse);
+    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseID', deleteResponse);
+    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseID', updateResponse);
     router.post('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses', createResponse);
 }
