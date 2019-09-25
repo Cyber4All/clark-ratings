@@ -112,7 +112,7 @@ export class RatingStore implements RatingDataStore {
           },
           {
             $group: {
-              _id: '$source',
+              _id: '$source.CUID',
               avgValue: {
                 $avg: '$value',
               },
@@ -171,7 +171,7 @@ export class RatingStore implements RatingDataStore {
      * Converts MongoDB ObjectId to string
      */
     convertMongoId(ratings: any) {
-      const root = { ...ratings, _id: ratings._id.toString()};
+      const root = { ...ratings, _id: ratings._id.toString() };
       root.ratings = root.ratings.map((rating: any) => this.convertRatingObjectId(rating));
       return root;
     }
@@ -190,6 +190,6 @@ export class RatingStore implements RatingDataStore {
      * Iterates through the array of responses and converts MongoDB ObjectIds to strings
      */
     convertResponseObjectId(response: any) {
-      return {...response, _id: response._id.toString() };
+      return {...response, _id: response._id.toString(), source: response.source.toString() };
     }
 }

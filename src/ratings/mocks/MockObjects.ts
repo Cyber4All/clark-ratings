@@ -24,7 +24,7 @@ export const MOCK_OBJECTS = {
     CUID: 'test_CUID',
     RATING_ID: '5ac520bdf5b97e186468964b',
     LEARNING_OBJECT_GROUPING: {
-    _id: '5ac520bdf5b97e1864689123',
+    _id: 'test_CUID',
     avgValue: 2,
     ratings: [
         {
@@ -36,10 +36,7 @@ export const MOCK_OBJECTS = {
                 _id: '5c5c8fda47c664308b131469',
                 comment: 'This is a mock response',
                 date: 123,
-                source: {
-                    CUID: 'test_CUID',
-                    versionID: '0',
-                },
+                source: '5ac520bdf5b97e186468964b',
                 user: {
                     email: 'email@email',
                     name: 'name',
