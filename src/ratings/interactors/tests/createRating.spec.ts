@@ -32,11 +32,9 @@ jest.mock('../../RatingStore', () => ({
     __esModule: true,
     RatingStore: {
         getInstance: () => ({
-            updateRating: jest.fn(),
-            deleteRating: jest.fn(),
-            getRating: jest.fn(),
-            getLearningObjectsRatings: jest.fn(),
-            createNewRating: jest.fn(),
+            createNewRating: jest
+                .fn()
+                .mockResolvedValue( Promise.resolve() ),
         }),
     },
 }));
