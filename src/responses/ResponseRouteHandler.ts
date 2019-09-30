@@ -22,7 +22,7 @@ export function initializePublic(router: Router) {
       }
     };
 
-    router.get('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', getResponse);
+    router.get('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', getResponse);
 
     return router;
 }
@@ -99,7 +99,7 @@ export function initializePrivate(router: Router) {
         }
     };
 
-    router.delete('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', deleteResponse);
-    router.patch('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', updateResponse);
-    router.post('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', createResponse);
+    router.delete('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', deleteResponse);
+    router.patch('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', updateResponse);
+    router.post('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', createResponse);
 }

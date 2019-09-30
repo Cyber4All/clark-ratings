@@ -68,7 +68,7 @@ export function initializePrivate(router: Router) {
     };
 
     router.get('/flags', getAllFlags);
-    router.get('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', getRatingFlags);
-    router.delete('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags/:flagID', deleteFlag);
-    router.post('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', createFlag);
+    router.get('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', getRatingFlags);
+    router.delete('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags/:flagID', deleteFlag);
+    router.post('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', createFlag);
 }
