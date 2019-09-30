@@ -4,7 +4,8 @@ import * as request from 'request-promise';
 
 export async function getLearningObject(params: {
     CUID: string;
-    versionID: string;
+    version: string;
+    username: string;
 }) {
     const options = {
         uri: '',
@@ -16,7 +17,8 @@ export async function getLearningObject(params: {
     };
     options.uri = LEARNING_OBJECT_SERVICE_ROUTES.GET_LEARNING_OBJECT({
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
+        username: params.username,
     });
     options.headers.Authorization = `Bearer ${generateServiceToken()}`;
     return request(options);

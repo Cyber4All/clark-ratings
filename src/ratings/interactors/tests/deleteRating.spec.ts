@@ -49,7 +49,7 @@ describe('When deleteRating is called', () => {
             it('should throw a not found error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return null;
                 });
@@ -57,7 +57,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: ['admin'] },
                 }))
                 .rejects
@@ -68,7 +68,7 @@ describe('When deleteRating is called', () => {
             it('should resolve and not throw an error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return {
                         author: {
@@ -80,7 +80,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: ['admin'] },
                 }))
                 .resolves
@@ -94,7 +94,7 @@ describe('When deleteRating is called', () => {
             it('should throw a not found error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return null;
                 });
@@ -102,7 +102,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: ['editor'] },
                 }))
                 .rejects
@@ -113,7 +113,7 @@ describe('When deleteRating is called', () => {
             it('should resolve and not throw an error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return {
                         author: {
@@ -125,7 +125,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: ['editor'] },
                 }))
                 .resolves
@@ -139,7 +139,7 @@ describe('When deleteRating is called', () => {
             await expect(deleteRating({
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
                 user: { ...stubUserToken, accessGroups: ['curator@nccp'], username: 'not_author' },
             }))
             .rejects
@@ -151,7 +151,7 @@ describe('When deleteRating is called', () => {
             await expect(deleteRating({
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
                 user: { ...stubUserToken, accessGroups: ['reviewer@nccp'], username: 'not_author' },
             }))
             .rejects
@@ -163,7 +163,7 @@ describe('When deleteRating is called', () => {
             it('should throw a not found error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return null;
                 });
@@ -171,7 +171,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: [''] },
                 }))
                 .rejects
@@ -182,7 +182,7 @@ describe('When deleteRating is called', () => {
             it('should resolve and not throw an error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return {
                         author: {
@@ -194,7 +194,7 @@ describe('When deleteRating is called', () => {
                 await expect(deleteRating({
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, accessGroups: [''] },
                 }))
                 .resolves
@@ -208,7 +208,7 @@ describe('When deleteRating is called', () => {
             await expect(deleteRating({
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
                 user: { ...stubUserToken, accessGroups: [''], username: 'not_author' },
             }))
             .rejects

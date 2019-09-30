@@ -51,7 +51,7 @@ describe('When createRating is called', () => {
         it('should throw an invalid access error', async () => {
             getLearningObject['mockImplementation']((params: {
                 CUID: string;
-                versionID: string;
+                version: string;
             }): any => {
                 return {
                     author: {
@@ -62,7 +62,7 @@ describe('When createRating is called', () => {
             await expect(createRating({
                 rating: stubRating,
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
                 user: { ...stubUserToken, username: 'learning_object_author' },
                 ratingNotifier: new StubNotifier(),
             }))
@@ -75,12 +75,12 @@ describe('When createRating is called', () => {
             it('should throw a not found error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => null);
                 await expect(createRating({
                     rating: stubRating,
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken, username: 'learning_object_author' },
                     ratingNotifier: new StubNotifier(),
                 }))
@@ -92,7 +92,7 @@ describe('When createRating is called', () => {
             it('should call sendRatingNotification', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return {
                         author: {
@@ -103,7 +103,7 @@ describe('When createRating is called', () => {
                 await expect(createRating({
                     rating: stubRating,
                     CUID: 'test_CUID',
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken },
                     ratingNotifier: new StubNotifier(),
                 }))

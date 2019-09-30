@@ -22,7 +22,7 @@ import { reportError } from '../drivers/SentryConnector';
 export async function flagRating(params: {
     ratingID: string;
     CUID: string;
-    versionID: string;
+    version: string;
     user: UserToken;
     flag: Flag;
     flagNotifier: FlagNotifier;
@@ -44,7 +44,7 @@ export async function flagRating(params: {
     const rating = await getRating(params.ratingID);
     const learningObject = await getLearningObject({
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
     params.flagNotifier.sendFlagNotification(params.user.username, rating.comment, learningObject.name, learningObject.author.username).catch(error => {
         reportError(error);

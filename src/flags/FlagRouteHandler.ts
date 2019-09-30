@@ -9,7 +9,7 @@ export function initializePrivate(router: Router) {
     const getAllFlags = async (req: Request, res: Response) => {
         try {
             const flags = await interactor.getAllFlags({
-                user: req['user'],
+                user: req.user,
             });
             res.status(200).json(flags);
         } catch (error) {
@@ -22,7 +22,7 @@ export function initializePrivate(router: Router) {
         try {
             const ratingID = req.params.ratingID;
             const ratings = await interactor.getRatingFlags({
-                user: req['user'],
+                user: req.user,
                 ratingID,
             });
             res.status(200).json(ratings);
@@ -35,7 +35,7 @@ export function initializePrivate(router: Router) {
     const deleteFlag = async (req: Request, res: Response) => {
         try {
             await interactor.deleteFlag({
-                user: req['user'],
+                user: req.user,
                 flagID: req.params.flagID,
             });
             res.sendStatus(200);
@@ -49,14 +49,14 @@ export function initializePrivate(router: Router) {
         try {
             const ratingID = req.params.ratingID;
             const CUID = req.params.CUID;
-            const versionID = req.params.versionID;
+            const version = req.params.version;
             const flag = req.body;
             const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
                 ratingID,
-                versionID,
+                version,
                 CUID,
-                user: req['user'],
+                user: req.user,
                 flag,
                 flagNotifier,
             });
@@ -68,7 +68,7 @@ export function initializePrivate(router: Router) {
     };
 
     router.get('/flags', getAllFlags);
-    router.get('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags', getRatingFlags);
-    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags/:flagID', deleteFlag);
-    router.post('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/flags', createFlag);
+    router.get('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', getRatingFlags);
+    router.delete('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags/:flagID', deleteFlag);
+    router.post('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', createFlag);
 }

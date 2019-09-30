@@ -37,7 +37,8 @@ export function initializePublic(router: Router) {
         try {
           const ratings = await interactor.getLearningObjectRatings({
             CUID: req.params.CUID,
-            versionID: req.params.versionID,
+            version: req.params.version,
+            username: req.params.username,
           });
           res.status(200).json(ratings);
         } catch (error) {
@@ -51,7 +52,7 @@ export function initializePublic(router: Router) {
     };
 
     router.get('/ratings/:ratingID', getRating);
-    router.get('/learning-objects/:CUID/version/:versionID/ratings', getLearningObjectRatings);
+    router.get('users/:username/learning-objects/:CUID/version/:version/ratings', getLearningObjectRatings);
 
     return router;
   }
@@ -64,26 +65,28 @@ export function initializePrivate(router: Router) {
      * @param {Response} res
      */
     const deleteRating = async (req: Request, res: Response) => {
-        try {
-          const ratingID = req.params.ratingID;
-          const user = req['user'];
-          const CUID = req.params.CUID;
-          const versionID = req.params.versionID;
-          await interactor.deleteRating({
-            CUID,
-            versionID,
-            ratingID,
-            user,
-          });
-          res.sendStatus(200);
-        } catch (error) {
-          const response = mapErrorToStatusCode(error);
-          if (response.code === 500) {
-            res.status(response.code).json(response.message);
-          } else {
-            res.sendStatus(response.code);
-          }
+      try {
+        const username = req.params.username;
+        const ratingID = req.params.ratingID;
+        const user = req.user;
+        const CUID = req.params.CUID;
+        const version = req.params.version;
+        await interactor.deleteRating({
+          username,
+          CUID,
+          version,
+          ratingID,
+          user,
+        });
+        res.sendStatus(200);
+      } catch (error) {
+        const response = mapErrorToStatusCode(error);
+        if (response.code === 500) {
+          res.status(response.code).json(response.message);
+        } else {
+          res.sendStatus(response.code);
         }
+      }
     };
 
     /**
@@ -93,15 +96,17 @@ export function initializePrivate(router: Router) {
      */
     const updateRating = async (req: Request, res: Response) => {
         try {
+          const username = req.params.username;
           const updates = req.body;
           const ratingID = req.params.ratingID;
           const CUID = req.params.CUID;
-          const versionID = req.params.versionID;
-          const user = req['user'];
+          const version = req.params.version;
+          const user = req.user;
           await interactor.updateRating({
+            username,
             ratingID,
             CUID,
-            versionID,
+            version,
             updates,
             user,
           });
@@ -123,15 +128,17 @@ export function initializePrivate(router: Router) {
      */
     const createRating = async (req: Request, res: Response) => {
         try {
+          const username = req.params.username;
           const rating = req.body;
           const CUID = req.params.CUID;
-          const versionID = req.params.versionID;
-          const user = req['user'];
+          const version = req.params.version;
+          const user = req.user;
           const ratingNotifier: RatingNotifier = new SlackGateway();
           await interactor.createRating({
+            username,
             rating,
             CUID,
-            versionID,
+            version,
             user,
             ratingNotifier,
           });
@@ -146,7 +153,7 @@ export function initializePrivate(router: Router) {
         }
     };
 
-    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID', deleteRating);
-    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID', updateRating);
-    router.post('/learning-objects/:CUID/version/:versionID/ratings', createRating);
+    router.delete('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID', deleteRating);
+    router.patch('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID', updateRating);
+    router.post('users/:username/learning-objects/:CUID/version/:version/ratings', createRating);
 }

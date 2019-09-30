@@ -22,7 +22,7 @@ export function initializePublic(router: Router) {
       }
     };
 
-    router.get('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses', getResponse);
+    router.get('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', getResponse);
 
     return router;
 }
@@ -42,7 +42,7 @@ export function initializePrivate(router: Router) {
      */
     const deleteResponse = async (req: Request, res: Response) => {
         try {
-          const user = req['user'];
+          const user = req.user;
           const responseID = req.params.responseID;
           await interactor.deleteResponse({
             responseID,
@@ -62,7 +62,7 @@ export function initializePrivate(router: Router) {
      */
     const updateResponse = async (req: Request, res: Response) => {
         try {
-          const user = req['user'];
+          const user = req.user;
           const updates = req.body;
           const responseID = req.params.responseID;
           await interactor.updateResponse({
@@ -86,7 +86,7 @@ export function initializePrivate(router: Router) {
         try {
           const response = req.body;
           const ratingID = req.params.ratingID;
-          const user = req['user'];
+          const user = req.user;
           await interactor.createResponse({
             ratingID,
             response,
@@ -99,7 +99,7 @@ export function initializePrivate(router: Router) {
         }
     };
 
-    router.delete('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseID', deleteResponse);
-    router.patch('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses/:responseID', updateResponse);
-    router.post('/learning-objects/:CUID/version/:versionID/ratings/:ratingID/responses', createResponse);
+    router.delete('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', deleteResponse);
+    router.patch('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses/:responseID', updateResponse);
+    router.post('users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/responses', createResponse);
 }

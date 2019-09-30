@@ -40,10 +40,11 @@ export async function getRating(params: {
  * @returns { Promise<void> }
  */
 export async function updateRating(params: {
+    username: string;
     ratingID: string;
     updates: Rating;
     CUID: string;
-    versionID: string;
+    version: string;
     user: UserToken;
 }): Promise<void> {
     const hasAccess = await hasRatingUpdateAccess({
@@ -59,8 +60,9 @@ export async function updateRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
     if (!learningObject) {
         throw new ResourceError(
@@ -86,9 +88,10 @@ export async function updateRating(params: {
  * @returns { Promise<void> }
  */
 export async function deleteRating(params: {
+    username: string;
     ratingID: string;
     CUID: string;
-    versionID: string;
+    version: string;
     user: UserToken;
 }): Promise<void> {
     const hasAccess = await hasRatingDeleteAccess({
@@ -104,8 +107,9 @@ export async function deleteRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
     if (!learningObject) {
         throw new ResourceError(
@@ -129,11 +133,13 @@ export async function deleteRating(params: {
  */
 export async function getLearningObjectRatings(params: {
     CUID: string;
-    versionID: string;
+    version: string;
+    username: string;
 }): Promise<object> {
     const learningObject = await getLearningObject({
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
+        username: params.username,
     });
 
     if (!learningObject) {
@@ -161,15 +167,17 @@ export async function getLearningObjectRatings(params: {
  * @returns  { Promise<void> }
  */
 export async function createRating(params: {
+    username: string;
     rating: Rating;
     CUID: string;
-    versionID: string;
+    version: string;
     user: UserToken;
     ratingNotifier: RatingNotifier;
 }): Promise<void> {
     const hasAccess = await hasRatingCreateAccess({
+        username: params.username,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
         user: params.user,
     });
     if (!hasAccess) {
@@ -180,8 +188,9 @@ export async function createRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
 
     const ratingUser = {
@@ -192,7 +201,7 @@ export async function createRating(params: {
     await getDataStore().createNewRating({
         rating: params.rating,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
         user: ratingUser,
     });
 

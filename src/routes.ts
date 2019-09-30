@@ -1,14 +1,17 @@
 export const LEARNING_OBJECT_SERVICE_ROUTES = {
   GET_LEARNING_OBJECT(params: {
     CUID: string;
-    versionID: string;
+    version: string;
+    username: string;
   }): string {
     return `${
       process.env.LEARNING_OBJECT_SERVICE_URI
+    }/users/${
+      encodeURIComponent(params.username)
     }/learning-objects/${
       encodeURIComponent(params.CUID)
-    }/version/${
-      encodeURIComponent(params.versionID)
+    }?version=${
+      encodeURIComponent(params.version)
     }`;
   },
 };

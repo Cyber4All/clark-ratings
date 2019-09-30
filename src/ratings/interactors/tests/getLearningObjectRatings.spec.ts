@@ -34,14 +34,14 @@ describe('When getLearningObjectRatings is called', () => {
         it('should throw a not found error', async () => {
             getLearningObject['mockImplementation']((params: {
                 CUID: string;
-                versionID: string;
+                version: string;
             }): any => {
                 return null;
             });
 
             await expect(getLearningObjectRatings({
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
             }))
             .rejects
             .toThrowError('does not exist');
@@ -51,7 +51,7 @@ describe('When getLearningObjectRatings is called', () => {
         it('should return an array of rating objects', async () => {
             getLearningObject['mockImplementation']((params: {
                 CUID: string;
-                versionID: string;
+                version: string;
             }): any => {
                 return {
                     author: {
@@ -62,7 +62,7 @@ describe('When getLearningObjectRatings is called', () => {
 
             await expect(getLearningObjectRatings({
                 CUID: 'test_CUID',
-                versionID: 'test_versionID',
+                version: 'test_version',
             }))
             .resolves
             .toEqual([stubRating]);

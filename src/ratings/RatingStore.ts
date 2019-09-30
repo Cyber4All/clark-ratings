@@ -152,7 +152,7 @@ export class RatingStore implements RatingDataStore {
     async createNewRating(params: {
       rating: Rating;
       CUID: string;
-      versionID: string;
+      version: string;
       user: UserInfo;
     }): Promise<void> {
       await this.db.collection(Collections.RATINGS)
@@ -161,7 +161,7 @@ export class RatingStore implements RatingDataStore {
           user: params.user,
           source: {
             CUID: params.CUID,
-            version: params.versionID,
+            version: params.version,
           },
           date: Date.now(),
         });

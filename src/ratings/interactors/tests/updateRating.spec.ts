@@ -54,7 +54,7 @@ describe('When updateRating is called', () => {
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
                 updates: stubUpdates,
-                versionID: 'test_versionID',
+                version: 'test_version',
                 user: { ...stubUserToken, accessGroups: [''], username: 'not_author' },
             }))
             .rejects
@@ -66,7 +66,7 @@ describe('When updateRating is called', () => {
             it('should throw a not found error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return null;
                 });
@@ -75,7 +75,7 @@ describe('When updateRating is called', () => {
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     updates: stubUpdates,
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken },
                 }))
                 .rejects
@@ -86,7 +86,7 @@ describe('When updateRating is called', () => {
             it('should resolve and not throw an error', async () => {
                 getLearningObject['mockImplementation']((params: {
                     CUID: string;
-                    versionID: string;
+                    version: string;
                 }): any => {
                     return {
                         author: {
@@ -99,7 +99,7 @@ describe('When updateRating is called', () => {
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     updates: stubUpdates,
-                    versionID: 'test_versionID',
+                    version: 'test_version',
                     user: { ...stubUserToken },
                 }))
                 .resolves

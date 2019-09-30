@@ -14,14 +14,16 @@ import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
  * @returns Promise<boolean>
  */
 export async function hasRatingCreateAccess(params: {
+    username: string;
     user: UserToken;
     CUID: string;
-    versionID: string;
+    version: string;
 }): Promise<boolean> {
     const isAuthor = await isLearningObjectAuthor({
+        username: params.username,
         user: params.user,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
     // The author of a Learning Object cannot leave a rating
     const hasCreateAccess = !isAuthor;
@@ -114,13 +116,15 @@ async function isRatingAuthor(params: {
  * @returns Promise<boolean>
  */
 async function isLearningObjectAuthor(params: {
+    username: string;
     user: UserToken;
     CUID: string;
-    versionID: string;
+    version: string;
 }): Promise<boolean> {
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: params.CUID,
-        versionID: params.versionID,
+        version: params.version,
     });
     if (!learningObject) {
         throw new ResourceError(

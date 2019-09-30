@@ -39,7 +39,7 @@ describe('RatingStore', () => {
         return expect(driver.createNewRating({
           rating: MOCK_OBJECTS.RATING,
           CUID: 'test_CUID',
-          versionID: '0',
+          version: '0',
           user: MOCK_OBJECTS.USER_TOKEN,
         }))
         .resolves
