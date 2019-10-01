@@ -97,7 +97,7 @@ export class RatingStore implements RatingDataStore {
         .aggregate(
         [
           {
-            $match: { 'source.CUID': params.CUID },
+            $match: { 'source.cuid': params.CUID },
           },
           {
             $sort: { date: 1 },
@@ -112,7 +112,7 @@ export class RatingStore implements RatingDataStore {
           },
           {
             $group: {
-              _id: '$source.CUID',
+              _id: '$source.cuid',
               avgValue: {
                 $avg: '$value',
               },
@@ -160,7 +160,7 @@ export class RatingStore implements RatingDataStore {
           ...params.rating,
           user: params.user,
           source: {
-            CUID: params.CUID,
+            cuid: params.CUID,
             version: params.version,
           },
           date: Date.now(),
