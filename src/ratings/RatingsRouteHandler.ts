@@ -36,6 +36,7 @@ export function initializePublic(router: Router) {
     const getLearningObjectRatings = async (req: Request, res: Response) => {
         try {
           const ratings = await interactor.getLearningObjectRatings({
+            user: req.user,
             CUID: req.params.CUID,
             version: req.params.version,
             username: req.params.username,

@@ -1,8 +1,14 @@
 import * as jwt from 'jsonwebtoken';
+import { UserToken } from '../types/UserToken';
 
-export function generateServiceToken() {
+export function generateUserToken(user: UserToken) {
     const payload = {
-      SERVICE_KEY: process.env.SERVICE_KEY,
+      username: user.username,
+      name: user.name,
+      email: user.email,
+      organization: user.organization,
+      emailVerified: user.emailVerified,
+      accessGroups: user.accessGroups,
     };
     const options = {
       issuer: process.env.ISSUER,

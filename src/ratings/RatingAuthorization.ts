@@ -122,6 +122,7 @@ async function isLearningObjectAuthor(params: {
     version: string;
 }): Promise<boolean> {
     const learningObject = await getLearningObject({
+        user: params.user,
         username: params.username,
         CUID: params.CUID,
         version: params.version,
