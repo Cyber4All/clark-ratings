@@ -47,12 +47,14 @@ export function initializePrivate(router: Router) {
 
     const createFlag = async (req: Request, res: Response) => {
         try {
+            const username = req.params.username;
             const ratingID = req.params.ratingID;
             const CUID = req.params.CUID;
             const version = req.params.version;
             const flag = req.body;
             const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
+                username,
                 ratingID,
                 version,
                 CUID,

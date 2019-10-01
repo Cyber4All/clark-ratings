@@ -17,12 +17,14 @@ import { getResponses } from './ResponseInteractor';
  * @returns Promise<boolean>
  */
 export async function hasResponseCreateAccess(params: {
+    username: string;
     dataStore: ResponseDataStore;
     user: UserToken;
     ratingID: string;
 }): Promise<boolean> {
     return(
         await isLearningObjectAuthorOrContributor({
+            username: params.username,
             dataStore: params.dataStore,
             user: params.user,
             ratingID: params.ratingID,
@@ -76,6 +78,7 @@ async function isResponseAuthor(params: {
 }
 
 async function isLearningObjectAuthorOrContributor(params: {
+    username: string;
     dataStore: ResponseDataStore;
     user: UserToken;
     ratingID: string;
@@ -84,6 +87,7 @@ async function isLearningObjectAuthorOrContributor(params: {
         ratingID: params.ratingID,
     });
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: rating.source.CUID,
         version: rating.source.version,
     });

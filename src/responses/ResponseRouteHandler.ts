@@ -84,10 +84,12 @@ export function initializePrivate(router: Router) {
      */
     const createResponse = async (req: Request, res: Response) => {
         try {
+          const username = req.params.username;
           const response = req.body;
           const ratingID = req.params.ratingID;
           const user = req.user;
           await interactor.createResponse({
+            username,
             ratingID,
             response,
             user,

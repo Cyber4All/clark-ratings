@@ -98,11 +98,13 @@ export async function updateResponse(params: {
  * @returns { Promise<voID> }
  */
 export async function createResponse(params: {
+    username: string;
     ratingID: string;
     response: Response;
     user: UserToken;
 }): Promise<void> {
     const hasAccess = await hasResponseCreateAccess({
+        username: params.username,
         dataStore: getDataStore(),
         user: params.user,
         ratingID: params.ratingID,

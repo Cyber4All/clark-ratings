@@ -20,6 +20,7 @@ import { reportError } from '../drivers/SentryConnector';
  * @returns { Promise<void> }
  */
 export async function flagRating(params: {
+    username: string;
     ratingID: string;
     CUID: string;
     version: string;
@@ -43,6 +44,7 @@ export async function flagRating(params: {
     });
     const rating = await getRating(params.ratingID);
     const learningObject = await getLearningObject({
+        username: params.username,
         CUID: params.CUID,
         version: params.version,
     });

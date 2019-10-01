@@ -55,6 +55,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -78,6 +79,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -100,6 +102,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -123,6 +126,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -137,6 +141,7 @@ describe('When deleteRating is called', () => {
     describe('and the requester is a curator', () => {
         it('should throw an invalid access error', async () => {
             await expect(deleteRating({
+                username: 'test_username',
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
                 version: 'test_version',
@@ -149,6 +154,7 @@ describe('When deleteRating is called', () => {
     describe('and the requester is a reviewer', () => {
         it('Should throw an invalid access error', async () => {
             await expect(deleteRating({
+                username: 'test_username',
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
                 version: 'test_version',
@@ -169,6 +175,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -192,6 +199,7 @@ describe('When deleteRating is called', () => {
                 });
 
                 await expect(deleteRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -206,6 +214,7 @@ describe('When deleteRating is called', () => {
     describe('and the requester is not privileged and not the author', () => {
         it('Should throw an invalid access error', async () => {
             await expect(deleteRating({
+                username: 'test_username',
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
                 version: 'test_version',

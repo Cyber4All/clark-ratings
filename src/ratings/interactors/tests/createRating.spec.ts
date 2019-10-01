@@ -60,6 +60,7 @@ describe('When createRating is called', () => {
                 };
             });
             await expect(createRating({
+                username: 'test_username',
                 rating: stubRating,
                 CUID: 'test_CUID',
                 version: 'test_version',
@@ -78,6 +79,7 @@ describe('When createRating is called', () => {
                     version: string;
                 }): any => null);
                 await expect(createRating({
+                    username: 'test_username',
                     rating: stubRating,
                     CUID: 'test_CUID',
                     version: 'test_version',
@@ -101,6 +103,7 @@ describe('When createRating is called', () => {
                     };
                 });
                 await expect(createRating({
+                    username: 'test_username',
                     rating: stubRating,
                     CUID: 'test_CUID',
                     version: 'test_version',

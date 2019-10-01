@@ -40,6 +40,7 @@ describe('When getLearningObjectRatings is called', () => {
             });
 
             await expect(getLearningObjectRatings({
+                username: 'test_username',
                 CUID: 'test_CUID',
                 version: 'test_version',
             }))
@@ -61,6 +62,7 @@ describe('When getLearningObjectRatings is called', () => {
             });
 
             await expect(getLearningObjectRatings({
+                username: 'test_username',
                 CUID: 'test_CUID',
                 version: 'test_version',
             }))

@@ -51,6 +51,7 @@ describe('When updateRating is called', () => {
     describe('and the requester is not the author of the rating', () => {
         it('should throw an invalid access error', async () => {
             await expect(updateRating({
+                username: 'test_username',
                 ratingID: 'test_ratingID',
                 CUID: 'test_CUID',
                 updates: stubUpdates,
@@ -72,6 +73,7 @@ describe('When updateRating is called', () => {
                 });
 
                 await expect(updateRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     updates: stubUpdates,
@@ -96,6 +98,7 @@ describe('When updateRating is called', () => {
                 });
 
                 await expect(updateRating({
+                    username: 'test_username',
                     ratingID: 'test_ratingID',
                     CUID: 'test_CUID',
                     updates: stubUpdates,
