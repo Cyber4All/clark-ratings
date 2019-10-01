@@ -35,77 +35,52 @@ export class RatingStore implements RatingDataStore {
    * Update a specified rating document
    * @export
    * @param params
-   * @property { string } ratingId the id of the parent rating document
+   * @property { string } ratingID the id of the parent rating document
    * @property { Rating } updates Rating object that contains updates
    * @returns { Promise<void> }
    */
   async updateRating(params: {
-    ratingId: string;
+    ratingID: string;
     updates: Rating;
   }): Promise<void> {
-      try {
-        await this.db.collection(Collections.RATINGS)
-          .findOneAndUpdate(
-            { _id: new ObjectId(params.ratingId) },
-            { $set: {
-              value: params.updates.value,
-              comment: params.updates.comment,
-              date: Date.now(),
-            },
-          });
-        return Promise.resolve();
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
-      }
+    await this.db.collection(Collections.RATINGS)
+      .findOneAndUpdate(
+        { _id: new ObjectId(params.ratingID) },
+        { $set: {
+          value: params.updates.value,
+          comment: params.updates.comment,
+          date: Date.now(),
+        },
+      });
     }
 
     /**
      * Delete a specified response document
      * @export
      * @param params
-     * @property { string } ratingId the id of the parent rating document
+     * @property { string } ratingID the ID of the parent rating document
      * @returns { Promise<void> }
      */
     async deleteRating(params: {
-      ratingId: string;
+      ratingID: string;
     }): Promise<void> {
-      try {
-        await this.db.collection(Collections.RATINGS)
-          .findOneAndDelete({ _id: new ObjectId(params.ratingId) });
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
-      }
+      await this.db.collection(Collections.RATINGS)
+        .findOneAndDelete({ _id: new ObjectId(params.ratingID) });
     }
 
     /**
      * Fetch a specified response document
      * @export
      * @param params
-     * @property { string } ratingId the id of the parent rating document
+     * @property { string } ratingID the id of the parent rating document
      * @returns { Promise<Rating> }
      */
     async getRating(params: {
-      ratingId: string;
+      ratingID: string;
     }): Promise<Rating> {
-      try {
         const rating = await this.db.collection(Collections.RATINGS)
-          .findOne({ _id: new ObjectId(params.ratingId) });
-        return {...rating, _id: rating._id.toString(), source: rating.source.toString()};
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
-      }
+          .findOne({ _id: new ObjectId(params.ratingID) });
+        return { ...rating, _id: rating._id.toString() };
     }
 
     /**
@@ -116,58 +91,50 @@ export class RatingStore implements RatingDataStore {
      * @returns { Promise<Rating[]> }
      */
     async getLearningObjectsRatings(params: {
-      learningObjectId: string;
+      CUID: string;
     }): Promise<any> {
-      try {
-        const data = await this.db.collection(Collections.RATINGS)
-          .aggregate(
-          [
-            {
-              $match: { source: new ObjectId(params.learningObjectId) },
+      const data = await this.db.collection(Collections.RATINGS)
+        .aggregate(
+        [
+          {
+            $match: { 'source.cuid': params.CUID },
+          },
+          {
+            $sort: { date: 1 },
+          },
+          {
+            $lookup: {
+              from: 'responses',
+              localField: '_id',
+              foreignField: 'source',
+              as: 'response',
             },
-            {
-              $sort: { date: 1 },
-            },
-            {
-              $lookup: {
-                from: 'responses',
-                localField: '_id',
-                foreignField: 'source',
-                as: 'response',
+          },
+          {
+            $group: {
+              _id: '$source.cuid',
+              avgValue: {
+                $avg: '$value',
               },
-            },
-            {
-              $group: {
-                _id: '$source',
-                avgValue: {
-                  $avg: '$value',
-                },
-                ratings: {
-                  $push: {
-                    _id: '$_id',
-                    value: '$value',
-                    user: '$user',
-                    comment: '$comment',
-                    date: '$date',
-                    response: '$response',
-                  },
+              ratings: {
+                $push: {
+                  _id: '$_id',
+                  value: '$value',
+                  user: '$user',
+                  comment: '$comment',
+                  date: '$date',
+                  response: '$response',
                 },
               },
             },
-          ],
-        ).toArray();
-        if (data.length > 0) {
-          const result = this.convertMongoId(data[0]);
-          return result;
-        }
-        return data[0];
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
+          },
+        ],
+      ).toArray();
+      if (data.length > 0) {
+        const result = this.convertMongoId(data[0]);
+        return result;
       }
+      return data[0];
     }
 
     /**
@@ -184,32 +151,27 @@ export class RatingStore implements RatingDataStore {
      */
     async createNewRating(params: {
       rating: Rating;
-      learningObjectId: string;
+      CUID: string;
+      version: string;
       user: UserInfo;
     }): Promise<void> {
-      try {
-        await this.db.collection(Collections.RATINGS)
-          .insert({
-            ...params.rating,
-            user: params.user,
-            source: new ObjectId(params.learningObjectId),
-            date: Date.now(),
-          });
-      } catch (error) {
-        reportError(error);
-        return Promise.reject(
-          new ServiceError(
-            ServiceErrorReason.INTERNAL,
-          ),
-        );
-      }
+      await this.db.collection(Collections.RATINGS)
+        .insert({
+          ...params.rating,
+          user: params.user,
+          source: {
+            cuid: params.CUID,
+            version: params.version,
+          },
+          date: Date.now(),
+        });
     }
 
     /**
      * Converts MongoDB ObjectId to string
      */
     convertMongoId(ratings: any) {
-      const root = { ...ratings, _id: ratings._id.toString()};
+      const root = { ...ratings, _id: ratings._id.toString() };
       root.ratings = root.ratings.map((rating: any) => this.convertRatingObjectId(rating));
       return root;
     }

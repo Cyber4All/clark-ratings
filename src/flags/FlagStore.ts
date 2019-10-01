@@ -1,4 +1,3 @@
-import { reportError } from '../drivers/SentryConnector';
 import { Db, ObjectId } from 'mongodb';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { FlagDataStore } from './interfaces/FlagDataStore';
@@ -18,7 +17,6 @@ export class FlagStore implements FlagDataStore {
 
     /**
      * Return instance of FlagDataStore
-     * Follows Singleton pattern
      * @returns { FlagDataStore }
      */
     static getInstance(): FlagDataStore {
@@ -33,83 +31,60 @@ export class FlagStore implements FlagDataStore {
      * @export
      * @param params
      * @property { Flag } flag new flag object
-     * @property { string } rating the id of the rating
+     * @property { string } ratingID the ID of the rating
      * @returns { Promise<void> }
      */
     async flagRating(params: {
-        ratingId: string,
+        ratingID: string,
         flag: Flag,
     }): Promise<void> {
-        try {
-            params.flag.date = Date.now();
-            await this.db.collection(Collections.FLAGS)
-                .insert({
-                    ...params.flag,
-                    ratingId: new ObjectId(params.ratingId),
-                });
-            return Promise.resolve();
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
+        params.flag.date = Date.now();
+        await this.db.collection(Collections.FLAGS)
+            .insert({
+                ...params.flag,
+                ratingID: new ObjectId(params.ratingID),
+            });
     }
 
     /**
      * Fetch all flags
      * @returns { Promise<any> }
      */
-    async getAllFlags(): Promise<any> {
-        try {
-            const flags = await this.db
-                .collection(Collections.FLAGS)
-                .find({})
-                .toArray();
-            return flags.map(flag => this.convertMongoId(flag));
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
+    async getAllFlags(): Promise<Flag[]> {
+        const flags = await this.db
+            .collection(Collections.FLAGS)
+            .find({})
+            .toArray();
+        return flags.map(flag => this.convertMongoId(flag));
     }
 
     /**
      * Get all flags for a rating
      * @param params
-     * @property { string } ratingId the id of the rating
+     * @property { string } ratingID the id of the rating
      * @returns { Promise<Flag[]> }
      */
     async getRatingFlags(params: {
-        ratingId: string;
+        ratingID: string;
     }): Promise<Flag[]> {
-        try {
-            // get learning object id
-            const flags = await this.db
-                .collection(Collections.FLAGS)
-                .find({ ratingId: new ObjectId(params.ratingId) })
-                .toArray();
-            return flags;
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
+        const flags = await this.db
+            .collection(Collections.FLAGS)
+            .find({ ratingID: new ObjectId(params.ratingID) })
+            .toArray();
+        return flags;
     }
 
     /**
      * Delete a flag
      * @param params
-     * @property { string } flagId the id of the flag
+     * @property { string } flagID the id of the flag
      * @returns { Promise<void> }
      */
     async deleteFlag(params: {
-        flagId: string;
+        flagID: string;
     }): Promise<void> {
-        try {
-            await this.db.collection(Collections.FLAGS)
-                .deleteOne({ _id: new ObjectId(params.flagId) });
-            return Promise.resolve();
-        } catch (error) {
-            reportError(error);
-            return Promise.reject(error);
-        }
+        await this.db.collection(Collections.FLAGS)
+            .deleteOne({ _id: new ObjectId(params.flagID) });
     }
 
     /**
@@ -118,7 +93,7 @@ export class FlagStore implements FlagDataStore {
      * @param { object } flag object with ObjectId _id
      * @returns { object } flag object with string _id
      */
-    convertMongoId(flag: object) {
+    convertMongoId(flag: Flag) {
         return {...flag, _id: flag['_id'].toString(), ratingId: flag['ratingId'].toString()};
     }
 }

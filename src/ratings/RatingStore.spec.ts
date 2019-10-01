@@ -1,6 +1,4 @@
 import { MOCK_OBJECTS } from './mocks/MockObjects';
-import * as interactor from './RatingsInteractor';
-import { MockRatingStore } from './mocks/MockRatingStore';
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { MongoDriver } from '../drivers/MongoDriver';
 import { RatingStore } from './RatingStore';
@@ -14,10 +12,9 @@ describe('RatingStore', () => {
     });
 
     describe('getRating', () => {
-        it('Should fetch a document in the ratings collection', () => {
-          expect.assertions(1);
-          return expect(driver.getRating({
-            ratingId: MOCK_OBJECTS.RATING._id,
+        it('Should fetch a document in the ratings collection', async () => {
+          await expect(driver.getRating({
+            ratingID: MOCK_OBJECTS.RATING._id,
           }))
           .resolves
           .toEqual(MOCK_OBJECTS.RATING);
@@ -25,10 +22,9 @@ describe('RatingStore', () => {
     });
 
     describe('getLearningObjectRatings', () => {
-        it('Should fetch all ratings that belong to a learning object', () => {
-          expect.assertions(1);
-          return expect(driver.getLearningObjectsRatings({
-            learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
+        it('Should fetch all ratings that belong to a learning object', async () => {
+          await expect(driver.getLearningObjectsRatings({
+            CUID: MOCK_OBJECTS.CUID,
           }))
           .resolves
           .toEqual(MOCK_OBJECTS.LEARNING_OBJECT_GROUPING);
@@ -36,38 +32,39 @@ describe('RatingStore', () => {
     });
 
     describe('createNewRating', () => {
-      it('Should fetch all ratings that belong to a learning object', () => {
-        expect.assertions(1);
-        return expect(driver.createNewRating({
+      it('Should fetch all ratings that belong to a learning object', async () => {
+        await expect(driver.createNewRating({
           rating: MOCK_OBJECTS.RATING,
-          learningObjectId: MOCK_OBJECTS.LEARNING_OBJECT_ID,
+          CUID: 'test_CUID',
+          version: '0',
           user: MOCK_OBJECTS.USER_TOKEN,
         }))
         .resolves
-        .toBeUndefined();
+        .not
+        .toThrowError();
       });
   });
 
     describe('updateRating', () => {
-      it('Should update a document in the ratings collection', () => {
-        expect.assertions(1);
-        return expect(driver.updateRating({
-          ratingId: MOCK_OBJECTS.RATING._id,
+      it('Should update a document in the ratings collection', async () => {
+        await expect(driver.updateRating({
+          ratingID: MOCK_OBJECTS.RATING._id,
           updates: MOCK_OBJECTS.RATING,
         }))
         .resolves
-        .toBeUndefined();
+        .not
+        .toThrowError();
       });
     });
 
     describe('deleteRating', () => {
-      it('Should delete a document in the ratings collection', () => {
-        expect.assertions(1);
-        return expect(driver.deleteRating({
-          ratingId: MOCK_OBJECTS.RATING._id,
+      it('Should delete a document in the ratings collection', async () => {
+        await expect(driver.deleteRating({
+          ratingID: MOCK_OBJECTS.RATING._id,
         }))
         .resolves
-        .toBeUndefined();
+        .not
+        .toThrowError();
       });
   });
 });

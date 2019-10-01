@@ -4,11 +4,9 @@ export type Rating = {
     date?: number;
     value:  number;
     comment: string;
-    source: string;
+    source?: {
+        cuid: string;
+        version: string;
+    };
 };
 
-export type LearningObjectContainer = {
-    _id?: string;
-    avgRating: number;
-    ratings: Rating[];
-};

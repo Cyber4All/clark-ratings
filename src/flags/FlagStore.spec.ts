@@ -24,11 +24,12 @@ describe('FlagStore', () => {
     it('Should insert a document into the flags collection', () => {
       expect.assertions(1);
       return expect(driver.flagRating({
-        ratingId: MOCK_OBJECTS.RATING._id,
+        ratingID: MOCK_OBJECTS.RATING._id,
         flag: MOCK_OBJECTS.FLAG,
       }))
       .resolves
-      .toBeUndefined();
+      .not
+      .toThrowError();
     });
   });
 

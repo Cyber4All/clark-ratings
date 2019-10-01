@@ -11,17 +11,20 @@ export const MOCK_OBJECTS = {
         date: 123,
         value:  2,
         comment: 'This is a mock rating',
-        source: '5ac520bdf5b97e1864689123',
+        source: {
+            cuid: 'test_CUID',
+            version: '0',
+        },
     },
     USER: {
         username: 'username',
         email: 'test@test.com',
         name: 'unit test',
     },
-    LEARNING_OBJECT_ID: '5ac520bdf5b97e1864689123',
+    CUID: 'test_CUID',
     RATING_ID: '5ac520bdf5b97e186468964b',
     LEARNING_OBJECT_GROUPING: {
-    _id: '5ac520bdf5b97e1864689123',
+    _id: 'test_CUID',
     avgValue: 2,
     ratings: [
         {

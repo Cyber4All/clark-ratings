@@ -3,21 +3,22 @@ import { UserInfo } from '../../types/UserInfo';
 
 export interface RatingDataStore {
     updateRating(params: {
-        ratingId: string;
+        ratingID: string;
         updates: Rating;
     }): Promise<void>;
     deleteRating(params: {
-        ratingId: string;
+        ratingID: string;
     }): Promise<void>;
     getRating(params: {
-        ratingId: string;
+        ratingID: string;
     }): Promise<Rating>;
     getLearningObjectsRatings(params: {
-        learningObjectId: string;
+        CUID: string;
     }): Promise<any>;
     createNewRating(params: {
         rating: Rating;
-        learningObjectId: string;
+        CUID: string;
+        version: string;
         user: UserInfo;
     }): Promise<void>;
 }

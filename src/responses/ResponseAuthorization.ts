@@ -2,7 +2,7 @@ import { ResponseDataStore } from './interfaces/ResponseDataStore';
 import { UserToken } from '../types/UserToken';
 import { ResourceError, ResourceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
-import { getRating } from '../ratings/RatingsInteractor';
+import { getRating } from '../ratings/interactors/RatingsInteractor';
 import { getResponses } from './ResponseInteractor';
 
 /**
@@ -12,23 +12,25 @@ import { getResponses } from './ResponseInteractor';
  * @typedef {Object} params
  * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID ID of specified rating
  *
- * @returns Promise<boolean>/
+ * @returns Promise<boolean>
  */
 export async function hasResponseCreateAccess(params: {
+    username: string;
     dataStore: ResponseDataStore;
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
     return(
         await isLearningObjectAuthorOrContributor({
+            username: params.username,
             dataStore: params.dataStore,
             user: params.user,
-            ratingId: params.ratingId,
+            ratingID: params.ratingID,
         })  &&
         await hasResponse({
-            ratingId: params.ratingId,
+            ratingID: params.ratingID,
         })
     );
 }
@@ -40,20 +42,20 @@ export async function hasResponseCreateAccess(params: {
  * @typedef {Object} params
  * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID ID of specified rating
  *
  * @returns Promise<boolean>/
  */
 export async function hasResponseUpdateDeleteAccess(params: {
     dataStore: ResponseDataStore;
     user: UserToken;
-    responseId: string;
+    responseID: string;
 }): Promise<boolean> {
     return(
         await isResponseAuthor({
             dataStore: params.dataStore,
             user: params.user,
-            responseId: params.responseId,
+            responseID: params.responseID,
         })
     );
 }
@@ -61,39 +63,38 @@ export async function hasResponseUpdateDeleteAccess(params: {
 async function isResponseAuthor(params: {
     dataStore: ResponseDataStore;
     user: UserToken;
-    responseId: string;
+    responseID: string;
 }): Promise<boolean> {
     const response = await params.dataStore.getResponseById({
-        responseId: params.responseId,
+        responseID: params.responseID,
     });
-    if (response === null) {
-        return Promise.reject(
-            new ResourceError(
-                'Response not found',
-                ResourceErrorReason.NOT_FOUND,
-            ),
+    if (!response) {
+        throw new ResourceError(
+            'Response not found',
+            ResourceErrorReason.NOT_FOUND,
         );
     }
     return response.user.username === params.user.username;
 }
 
 async function isLearningObjectAuthorOrContributor(params: {
+    username: string;
     dataStore: ResponseDataStore;
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
     const rating = await getRating({
-        ratingId: params.ratingId,
+        ratingID: params.ratingID,
     });
     const learningObject = await getLearningObject({
-        learningObjectId: rating.source,
+        username: params.username,
+        CUID: rating.source.cuid,
+        version: rating.source.version,
     });
-    if (learningObject === null) {
-        return Promise.reject(
-            new ResourceError(
-                'Learning Object not found',
-                ResourceErrorReason.NOT_FOUND,
-            ),
+    if (!learningObject) {
+        throw new ResourceError(
+            'Learning Object not found',
+            ResourceErrorReason.NOT_FOUND,
         );
     }
     const owners = learningObject.contributors.map((user: {username: string}) => user.username);
@@ -105,14 +106,14 @@ async function isLearningObjectAuthorOrContributor(params: {
  * Checks if a rating already has a response
  * @export
  * @param params
- * @property { string } ratingId id of the given rating
+ * @property { string } ratingID ID of the given rating
  * @returns { boolean }
  */
 async function hasResponse( params: {
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
     const response = await getResponses({
-        ratingIds: [params.ratingId],
+        ratingIDs: [params.ratingID],
     });
     return !(response.length > 0);
 }

@@ -4,30 +4,12 @@ import { mapErrorToStatusCode } from '../errors';
 import { FlagNotifier } from './interfaces/FlagNotifier';
 import { SlackGateway } from './gateways/SlackGateway';
 
-/**
- * Initializes an express router with endpoints for public Creating, Updating, and Deleting
- * a Learning Object.
- *
- * @export
- * @param {{
- *   fileManager: FileManager;
- *   library: LibraryCommunicator;
- * }} {
- *   fileManager,
- *   library,
- * }
- * @returns
- */
-export function initializePrivate({
-    router,
-}: {
-    router: Router;
-}) {
+export function initializePrivate(router: Router) {
 
     const getAllFlags = async (req: Request, res: Response) => {
         try {
             const flags = await interactor.getAllFlags({
-                user: req['user'],
+                user: req.user,
             });
             res.status(200).json(flags);
         } catch (error) {
@@ -38,10 +20,10 @@ export function initializePrivate({
 
     const getRatingFlags = async (req: Request, res: Response) => {
         try {
-            const ratingId = req.params.ratingId;
+            const ratingID = req.params.ratingID;
             const ratings = await interactor.getRatingFlags({
-                user: req['user'],
-                ratingId,
+                user: req.user,
+                ratingID,
             });
             res.status(200).json(ratings);
         } catch (error) {
@@ -53,8 +35,8 @@ export function initializePrivate({
     const deleteFlag = async (req: Request, res: Response) => {
         try {
             await interactor.deleteFlag({
-                user: req['user'],
-                flagId: req.params.flagId,
+                user: req.user,
+                flagID: req.params.flagID,
             });
             res.sendStatus(200);
         } catch (error) {
@@ -65,12 +47,18 @@ export function initializePrivate({
 
     const createFlag = async (req: Request, res: Response) => {
         try {
-            const ratingId = req.params.ratingId;
+            const username = req.params.username;
+            const ratingID = req.params.ratingID;
+            const CUID = req.params.CUID;
+            const version = req.params.version;
             const flag = req.body;
             const flagNotifier: FlagNotifier = new SlackGateway();
             await interactor.flagRating({
-                ratingId,
-                user: req['user'],
+                username,
+                ratingID,
+                version,
+                CUID,
+                user: req.user,
                 flag,
                 flagNotifier,
             });
@@ -82,7 +70,7 @@ export function initializePrivate({
     };
 
     router.get('/flags', getAllFlags);
-    router.get('/learning-objects/:learningObjectId/ratings/:ratingId/flags', getRatingFlags);
-    router.delete('/learning-objects/:learningObjectId/ratings/:ratingId/flags/:flagId', deleteFlag);
-    router.post('/learning-objects/:learningObjectId/ratings/:ratingId/flags', createFlag);
+    router.get('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', getRatingFlags);
+    router.delete('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags/:flagID', deleteFlag);
+    router.post('/users/:username/learning-objects/:CUID/version/:version/ratings/:ratingID/flags', createFlag);
 }

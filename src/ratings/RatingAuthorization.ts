@@ -1,29 +1,33 @@
 import { RatingDataStore } from './interfaces/RatingDataStore';
 import { UserToken } from '../types/UserToken';
-import { ResourceError, ResourceErrorReason, ServiceError, ServiceErrorReason } from '../errors';
+import { ResourceError, ResourceErrorReason } from '../errors';
 import { getLearningObject } from '../drivers/LearningObjectServiceConnector';
-import { reportError } from '../drivers/SentryConnector';
 
 /**
- * Checks if a user has the authority to update a Rating
+ * Checks if a user has the authority to create a Rating
  *
  * @export
  * @typedef {Object} params
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID id of specified rating
  *
  * @returns Promise<boolean>
  */
 export async function hasRatingCreateAccess(params: {
+    username: string;
     user: UserToken;
-    learningObjectId: string;
+    CUID: string;
+    version: string;
 }): Promise<boolean> {
-    return !(
-        await isLearningObjectAuthor({
-            user: params.user,
-            learningObjectId: params.learningObjectId,
-        })
-    );
+    const isAuthor = await isLearningObjectAuthor({
+        username: params.username,
+        user: params.user,
+        CUID: params.CUID,
+        version: params.version,
+    });
+    // The author of a Learning Object cannot leave a rating
+    const hasCreateAccess = !isAuthor;
+    return hasCreateAccess;
 }
 
 /**
@@ -33,20 +37,20 @@ export async function hasRatingCreateAccess(params: {
  * @typedef {Object} params
  * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID id of specified rating
  *
  * @returns Promise<boolean>/
  */
 export async function hasRatingUpdateAccess(params: {
     dataStore: RatingDataStore;
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
     return(
         await isRatingAuthor({
             dataStore: params.dataStore,
             user: params.user,
-            ratingId: params.ratingId,
+            ratingID: params.ratingID,
         })
     );
 }
@@ -58,20 +62,20 @@ export async function hasRatingUpdateAccess(params: {
  * @typedef {Object} params
  * @property {DataStore} dataStore instance of DataStore
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID id of specified rating
  *
  * @returns Promise<boolean>/
  */
 export async function hasRatingDeleteAccess(params: {
     dataStore: RatingDataStore;
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
     return(
         await isRatingAuthor({
             dataStore: params.dataStore,
             user: params.user,
-            ratingId: params.ratingId,
+            ratingID: params.ratingID,
         }) ||
         await hasPrivilegedAccess({
             user: params.user,
@@ -86,28 +90,19 @@ export async function hasRatingDeleteAccess(params: {
  * @typedef {Object} params
  * @property {DataStore} dataStore instance of RatingDataStore
  * @property {UserToken} user UserToken object
- * @property {string} ratingId id of specified rating
+ * @property {string} ratingID id of specified rating
  *
  * @returns Promise<boolean>
  */
 async function isRatingAuthor(params: {
     dataStore: RatingDataStore;
     user: UserToken;
-    ratingId: string;
+    ratingID: string;
 }): Promise<boolean> {
-    try {
-        const rating = await params.dataStore.getRating({
-            ratingId: params.ratingId,
-        });
-        return rating.user.username === params.user.username;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
-        );
-    }
+    const rating = await params.dataStore.getRating({
+        ratingID: params.ratingID,
+    });
+    return rating.user.username === params.user.username;
 }
 
 /**
@@ -121,30 +116,23 @@ async function isRatingAuthor(params: {
  * @returns Promise<boolean>
  */
 async function isLearningObjectAuthor(params: {
+    username: string;
     user: UserToken;
-    learningObjectId: string;
+    CUID: string;
+    version: string;
 }): Promise<boolean> {
-    try {
-        const learningObject = await getLearningObject({
-            learningObjectId: params.learningObjectId,
-        });
-        if (learningObject === null) {
-            return Promise.reject(
-                new ResourceError(
-                    'Learning Object not found',
-                    ResourceErrorReason.NOT_FOUND,
-                ),
-            );
-        }
-        return learningObject.author.username === params.user.username;
-    } catch (error) {
-        reportError(error);
-        return Promise.reject(
-            new ServiceError(
-                ServiceErrorReason.INTERNAL,
-            ),
+    const learningObject = await getLearningObject({
+        username: params.username,
+        CUID: params.CUID,
+        version: params.version,
+    });
+    if (!learningObject) {
+        throw new ResourceError(
+            'Learning Object not found',
+            ResourceErrorReason.NOT_FOUND,
         );
     }
+    return learningObject.author.username === params.user.username;
 }
 
 /**
