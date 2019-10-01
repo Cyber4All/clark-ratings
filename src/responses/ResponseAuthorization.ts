@@ -88,7 +88,7 @@ async function isLearningObjectAuthorOrContributor(params: {
     });
     const learningObject = await getLearningObject({
         username: params.username,
-        CUID: rating.source.CUID,
+        CUID: rating.source.cuid,
         version: rating.source.version,
     });
     if (!learningObject) {
