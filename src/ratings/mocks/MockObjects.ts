@@ -12,7 +12,7 @@ export const MOCK_OBJECTS = {
         value:  2,
         comment: 'This is a mock rating',
         source: {
-            CUID: 'test_CUID',
+            cuid: 'test_CUID',
             version: '0',
         },
     },
