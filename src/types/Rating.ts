@@ -5,7 +5,7 @@ export type Rating = {
     value:  number;
     comment: string;
     source?: {
-        CUID: string;
+        cuid: string;
         version: string;
     };
 };

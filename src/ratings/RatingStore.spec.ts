@@ -12,9 +12,8 @@ describe('RatingStore', () => {
     });
 
     describe('getRating', () => {
-        it('Should fetch a document in the ratings collection', () => {
-          expect.assertions(1);
-          return expect(driver.getRating({
+        it('Should fetch a document in the ratings collection', async () => {
+          await expect(driver.getRating({
             ratingID: MOCK_OBJECTS.RATING._id,
           }))
           .resolves
@@ -23,9 +22,8 @@ describe('RatingStore', () => {
     });
 
     describe('getLearningObjectRatings', () => {
-        it('Should fetch all ratings that belong to a learning object', () => {
-          expect.assertions(1);
-          return expect(driver.getLearningObjectsRatings({
+        it('Should fetch all ratings that belong to a learning object', async () => {
+          await expect(driver.getLearningObjectsRatings({
             CUID: MOCK_OBJECTS.CUID,
           }))
           .resolves
@@ -34,9 +32,8 @@ describe('RatingStore', () => {
     });
 
     describe('createNewRating', () => {
-      it('Should fetch all ratings that belong to a learning object', () => {
-        expect.assertions(1);
-        return expect(driver.createNewRating({
+      it('Should fetch all ratings that belong to a learning object', async () => {
+        await expect(driver.createNewRating({
           rating: MOCK_OBJECTS.RATING,
           CUID: 'test_CUID',
           version: '0',
@@ -49,9 +46,8 @@ describe('RatingStore', () => {
   });
 
     describe('updateRating', () => {
-      it('Should update a document in the ratings collection', () => {
-        expect.assertions(1);
-        return expect(driver.updateRating({
+      it('Should update a document in the ratings collection', async () => {
+        await expect(driver.updateRating({
           ratingID: MOCK_OBJECTS.RATING._id,
           updates: MOCK_OBJECTS.RATING,
         }))
@@ -62,9 +58,8 @@ describe('RatingStore', () => {
     });
 
     describe('deleteRating', () => {
-      it('Should delete a document in the ratings collection', () => {
-        expect.assertions(1);
-        return expect(driver.deleteRating({
+      it('Should delete a document in the ratings collection', async () => {
+        await expect(driver.deleteRating({
           ratingID: MOCK_OBJECTS.RATING._id,
         }))
         .resolves
