@@ -1,10 +1,11 @@
 import { LEARNING_OBJECT_SERVICE_ROUTES } from '../routes';
-import { generateServiceToken } from './TokenManager';
+import { generateUserToken } from './TokenManager';
 import * as request from 'request-promise';
-import { ResourceError, ResourceErrorReason } from '../errors';
 import { reportError } from './SentryConnector';
+import { UserToken } from '../types/UserToken';
 
 export async function getLearningObject(params: {
+    user: UserToken;
     CUID: string;
     version: string;
     username: string;
@@ -22,8 +23,9 @@ export async function getLearningObject(params: {
         version: params.version,
         username: params.username,
     });
-    options.headers.Authorization = `Bearer ${generateServiceToken()}`;
-
+    if (params.user) {
+        options.headers.Authorization = `Bearer ${generateUserToken(params.user)}`;
+    }
     try {
         const response = await request(options);
         return response[0];

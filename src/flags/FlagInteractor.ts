@@ -44,6 +44,7 @@ export async function flagRating(params: {
     });
     const rating = await getRating(params.ratingID);
     const learningObject = await getLearningObject({
+        user: params.user,
         username: params.username,
         CUID: params.CUID,
         version: params.version,

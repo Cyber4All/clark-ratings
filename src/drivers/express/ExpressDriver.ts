@@ -6,14 +6,16 @@ import * as cookieParser from 'cookie-parser';
 import * as http from 'http';
 import * as Sentry from '@sentry/node';
 import { ExpressRouteDriver, ExpressAuthRouteDriver } from '../drivers';
-import { enforceAuthenticatedAccess } from '../../middleware/jwt.config';
+import { enforceAuthenticatedAccess } from '../../middleware/authenticated-access';
 import { enforceEmailVerification } from '../../middleware/email-verification';
+import { processToken, handleProcessTokenError } from '../../middleware/process-token';
 
 export class ExpressDriver {
     static app = express();
     static start(
     ) {
       Sentry.init({ dsn: process.env.SENTRY_URI });
+      this.app.use(processToken, handleProcessTokenError);
       this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
       this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
       // configure app to use bodyParser()

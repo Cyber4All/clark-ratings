@@ -60,6 +60,7 @@ export async function updateRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        user: params.user,
         username: params.username,
         CUID: params.CUID,
         version: params.version,
@@ -107,6 +108,7 @@ export async function deleteRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        user: params.user,
         username: params.username,
         CUID: params.CUID,
         version: params.version,
@@ -132,11 +134,13 @@ export async function deleteRating(params: {
  * @returns { Promise<void> }
  */
 export async function getLearningObjectRatings(params: {
+    user: UserToken;
     CUID: string;
     version: string;
     username: string;
 }): Promise<object> {
     const learningObject = await getLearningObject({
+        user: params.user,
         CUID: params.CUID,
         version: params.version,
         username: params.username,
@@ -188,6 +192,7 @@ export async function createRating(params: {
     }
 
     const learningObject = await getLearningObject({
+        user: params.user,
         username: params.username,
         CUID: params.CUID,
         version: params.version,
