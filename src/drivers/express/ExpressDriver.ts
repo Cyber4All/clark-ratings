@@ -15,7 +15,6 @@ export class ExpressDriver {
     static start(
     ) {
       Sentry.init({ dsn: process.env.SENTRY_URI });
-      this.app.use(processToken, handleProcessTokenError);
       this.app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
       this.app.use(Sentry.Handlers.errorHandler() as express.ErrorRequestHandler);
       // configure app to use bodyParser()
@@ -37,6 +36,7 @@ export class ExpressDriver {
       );
       // Set up cookie parser
       this.app.use(cookieParser());
+      this.app.use(processToken, handleProcessTokenError);
 
       // Set our public api routes
       this.app.use(
