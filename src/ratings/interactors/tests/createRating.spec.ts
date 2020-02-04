@@ -3,6 +3,17 @@ import { Rating } from '../../../types/Rating';
 import { createRating } from '../RatingsInteractor';
 import { UserToken } from '../../../types/UserToken';
 
+class StubNotifier implements RatingNotifier {
+    sendRatingNotification(params: {
+        ratingAuthor: string;
+        ratingComment: string;
+        learningObjectCuid: string;
+        learningObjectAuthorUsername: string;
+    }): Promise<void> {
+        return;
+    }
+}
+
 const stubRating: Rating = {
     value: 0,
     comment: 'test comment',
@@ -16,17 +27,6 @@ const stubUserToken: UserToken = {
     emailVerified: true,
     accessGroups: [''],
 };
-
-class StubNotifier implements RatingNotifier {
-    sendRatingNotification(params: {
-        ratingAuthor: string;
-        ratingComment: string;
-        learningObjectCuid: string;
-        learningObjectAuthorUsername: string;
-    }): Promise<void> {
-        return;
-    }
-}
 
 jest.mock('../../RatingStore', () => ({
     __esModule: true,
