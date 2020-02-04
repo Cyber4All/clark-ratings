@@ -17,7 +17,7 @@ export class SlackGateway implements RatingNotifier {
     private initializePayload(params: {
         ratingAuthor: string,
         ratingComment: string,
-        learningObjectName: string,
+        learningObjectCuid: string,
         learningObjectAuthorUsername: string,
     }) {
         return {
@@ -27,12 +27,12 @@ export class SlackGateway implements RatingNotifier {
                     'fallback': `<https://clark.center/details/${
                             encodeURIComponent(params.learningObjectAuthorUsername)
                         }/${
-                            encodeURIComponent(params.learningObjectName)
+                            encodeURIComponent(params.learningObjectCuid)
                         }|View Rating>`,
                     'pretext': `<https://clark.center/details/${
                             encodeURIComponent(params.learningObjectAuthorUsername)
                         }/${
-                            encodeURIComponent(params.learningObjectName)
+                            encodeURIComponent(params.learningObjectCuid)
                         }|View Rating>`,
                     'color': '#0000ff',
                     'fields': [
@@ -53,7 +53,7 @@ export class SlackGateway implements RatingNotifier {
     async sendRatingNotification(params: {
         ratingAuthor: string;
         ratingComment: string;
-        learningObjectName: string;
+        learningObjectCuid: string;
         learningObjectAuthorUsername: string;
     }): Promise<void> {
         if (nodeEnv === 'production') {
@@ -63,8 +63,8 @@ export class SlackGateway implements RatingNotifier {
                 body: this.initializePayload({
                     ratingAuthor: params.ratingAuthor,
                     ratingComment: params.ratingComment,
-                    learningObjectAuthorUsername: params.learningObjectName,
-                    learningObjectName: params.learningObjectName,
+                    learningObjectAuthorUsername: params.learningObjectAuthorUsername,
+                    learningObjectCuid: params.learningObjectCuid,
                 }),
                 method: 'POST',
             };

@@ -213,7 +213,7 @@ export async function createRating(params: {
     await params.ratingNotifier.sendRatingNotification({
         ratingAuthor: params.user.username,
         ratingComment: params.rating.comment,
-        learningObjectName: learningObject.name,
+        learningObjectCuid: learningObject.cuid,
         learningObjectAuthorUsername: learningObject.author.username,
     });
 }

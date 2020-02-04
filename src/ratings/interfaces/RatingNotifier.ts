@@ -8,13 +8,13 @@ export interface RatingNotifier {
      *
      * @param ratingAuthor [the username of the user that created the rating]
      * @param ratingComment [the comment that was left with the rating]
-     * @param learningObjectName [the name of the Learning Object]
+     * @param learningObjectCuid [the cuid of the learning object]
      * @param learningObjectAuthorUsername [the username of the user that created the Learning Object]
      */
     sendRatingNotification(params: {
         ratingAuthor: string;
         ratingComment: string;
-        learningObjectName: string;
+        learningObjectCuid: string;
         learningObjectAuthorUsername: string;
     }): Promise<void>;
 }
