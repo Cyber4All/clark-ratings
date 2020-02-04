@@ -68,7 +68,6 @@ export class SlackGateway implements RatingNotifier {
                 }),
                 method: 'POST',
             };
-            console.log(options.body);
             await request(options);
         } else {
             console.log('Sent to Slack');

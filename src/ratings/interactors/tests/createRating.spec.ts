@@ -21,7 +21,7 @@ class StubNotifier implements RatingNotifier {
     sendRatingNotification(params: {
         ratingAuthor: string;
         ratingComment: string;
-        learningObjectName: string;
+        learningObjectCuid: string;
         learningObjectAuthorUsername: string;
     }): Promise<void> {
         return;
