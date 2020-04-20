@@ -132,7 +132,7 @@ describe('When updateRating is called', () => {
                     version: 'test_version',
                     user: { ...stubUserToken },
                 }))
-                .resolves
+                .rejects
                 .toThrowError();
             });
         });

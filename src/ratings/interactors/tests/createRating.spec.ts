@@ -136,7 +136,7 @@ describe('When createRating is called', () => {
                     user: { ...stubUserToken },
                     ratingNotifier: new StubNotifier(),
                 }))
-                .resolves
+                .rejects
                 .toThrowError();
             });
         });
