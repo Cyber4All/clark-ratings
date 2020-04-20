@@ -72,6 +72,13 @@ export async function updateRating(params: {
         );
     }
 
+    if (learningObject.status !== 'released') {
+        throw new ResourceError(
+            'Invalid Access: You cannot update a review to an object in the review process',
+            ResourceErrorReason.INVALID_ACCESS
+        );
+    }
+
     await getDataStore().updateRating({
         ratingID: params.ratingID,
         updates: params.updates,
@@ -197,6 +204,14 @@ export async function createRating(params: {
         CUID: params.CUID,
         version: params.version,
     });
+
+    // Throw error if trying to write a rating to an in review object
+    if (learningObject.status !== 'released') {
+        throw new ResourceError(
+            'Invalid Access: You cannot write a review to an object in the review process',
+            ResourceErrorReason.INVALID_ACCESS
+        );
+    }
 
     const ratingUser = {
         username: params.user.username,
