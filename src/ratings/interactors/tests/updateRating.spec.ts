@@ -94,6 +94,7 @@ describe('When updateRating is called', () => {
                         author: {
                             username: 'learning_object_author',
                         },
+                        status: 'released',
                     };
                 });
 
@@ -107,6 +108,31 @@ describe('When updateRating is called', () => {
                 }))
                 .resolves
                 .not
+                .toThrowError();
+            });
+
+            it('should throw an error if it is not released', async () => {
+                getLearningObject['mockImplementation']((params: {
+                    CUID: string;
+                    version: string;
+                }): any => {
+                    return {
+                        author: {
+                            username: 'learning_object_author',
+                        },
+                        status: 'waiting',
+                    };
+                });
+
+                await expect(updateRating({
+                    username: 'test_username',
+                    ratingID: 'test_ratingID',
+                    CUID: 'test_CUID',
+                    updates: stubUpdates,
+                    version: 'test_version',
+                    user: { ...stubUserToken },
+                }))
+                .resolves
                 .toThrowError();
             });
         });

@@ -100,6 +100,7 @@ describe('When createRating is called', () => {
                         author: {
                             username: 'learning_object_author',
                         },
+                        status: 'released',
                     };
                 });
                 await expect(createRating({
@@ -112,6 +113,30 @@ describe('When createRating is called', () => {
                 }))
                 .resolves
                 .not
+                .toThrowError();
+            });
+
+            it('should throw an error for a not released object', async () => {
+                getLearningObject['mockImplementation']((params: {
+                    CUID: string;
+                    version: string;
+                }): any => {
+                    return {
+                        author: {
+                            username: 'learning_object_author',
+                        },
+                        status: 'waiting',
+                    };
+                });
+                await expect(createRating({
+                    username: 'test_username',
+                    rating: stubRating,
+                    CUID: 'test_CUID',
+                    version: 'test_version',
+                    user: { ...stubUserToken },
+                    ratingNotifier: new StubNotifier(),
+                }))
+                .resolves
                 .toThrowError();
             });
         });
