@@ -75,7 +75,7 @@ export async function updateRating(params: {
     if (learningObject.status !== 'released') {
         throw new ResourceError(
             'Invalid Access: You cannot update a review to an object in the review process',
-            ResourceErrorReason.INVALID_ACCESS
+            ResourceErrorReason.INVALID_ACCESS,
         );
     }
 
@@ -209,7 +209,7 @@ export async function createRating(params: {
     if (learningObject.status !== 'released') {
         throw new ResourceError(
             'Invalid Access: You cannot write a review to an object in the review process',
-            ResourceErrorReason.INVALID_ACCESS
+            ResourceErrorReason.INVALID_ACCESS,
         );
     }
 
