@@ -28,6 +28,7 @@ export class SendgridDriver {
         const msg = {
             to,
             from: 'no-reply@clark.center',
+            subject: 'CLARK - New Rating',
             templateId: 'd-03ad7a19fc29497e9015bc2473ff6451',
             dynamic_template_data: data
         };

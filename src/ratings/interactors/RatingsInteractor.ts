@@ -245,7 +245,7 @@ export async function createRating(params: {
         object: {
             cuid: learningObject.cuid,
             name: learningObject.name,
-            rating: ratings.avgValue
+            avgRating: ratings.avgValue
         }
     };
     await SendgridDriver.getInstance().sendNewRatingEmail(learningObject.author.email, data);

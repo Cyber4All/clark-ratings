@@ -10,6 +10,6 @@ export interface NewRatingData {
     object: {
         name: string,
         cuid: string,
-        rating: number
+        avgRating: number
     }
 }
