@@ -236,7 +236,7 @@ export async function createRating(params: {
 
     // Send new rating email to author
     const ratings = await getDataStore().getLearningObjectsRatings({CUID: learningObject.cuid});
-    const name: Array<string> = learningObject.author.name.split(' ')
+    const name: Array<string> = learningObject.author.name ? learningObject.author.name.split(' ') : 'Contributor';
     const data: NewRatingData = {
         user: {
             firstName: name[0].charAt(0).toUpperCase() + name[0].substring(1),
