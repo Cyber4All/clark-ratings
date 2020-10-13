@@ -5,7 +5,7 @@ import { hasRatingDeleteAccess, hasRatingUpdateAccess, hasRatingCreateAccess } f
 import { RatingStore } from '../RatingStore';
 import { RatingNotifier } from '../interfaces/RatingNotifier';
 import { getLearningObject } from '../../drivers/LearningObjectServiceConnector';
-import { SendgridDriver } from '../../drivers/SendgridDriver';
+import { EMAIL_TYPE, SendgridDriver } from '../../drivers/SendgridDriver';
 import { NewRatingData } from '../../types/NewRatingData';
 
 /**
@@ -248,7 +248,7 @@ export async function createRating(params: {
             avgRating: ratings.avgValue
         }
     };
-    await SendgridDriver.getInstance().sendNewRatingEmail(learningObject.author.email, data);
+    await SendgridDriver.getInstance().sendEmail(learningObject.author.email, EMAIL_TYPE.NEW_RATING, data);
 }
 
 function getDataStore() {
