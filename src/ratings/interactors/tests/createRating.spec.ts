@@ -47,10 +47,13 @@ jest.mock('../../../drivers/SendgridDriver', () => ({
     __esModule: true,
     SendgridDriver: {
         getInstance: () => ({
-            sendNewRatingEmail: jest
+            sendEmail: jest
                 .fn()
                 .mockResolvedValue( Promise.resolve() )
         })
+    },
+    EMAIL_TYPE: {
+        NEW_RATING: jest.fn().mockReturnValue( 'this id does not exist' )
     },
 }));
 

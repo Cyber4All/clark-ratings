@@ -1,6 +1,8 @@
 import * as sendgrid from '@sendgrid/mail'
 import { NewRatingData } from '../types/NewRatingData';
 
+// Note for future tests
+// Enums are not supported in ts-jest: https://github.com/kulshekhar/ts-jest/pull/308/files
 export enum EMAIL_TYPE {
     NEW_RATING = 'd-03ad7a19fc29497e9015bc2473ff6451'
 }
