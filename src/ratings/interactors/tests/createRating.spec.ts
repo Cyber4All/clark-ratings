@@ -2,6 +2,7 @@ import { RatingNotifier } from '../../interfaces/RatingNotifier';
 import { Rating } from '../../../types/Rating';
 import { createRating } from '../RatingsInteractor';
 import { UserToken } from '../../../types/UserToken';
+import { MOCK_OBJECTS } from '../../mocks/MockObjects'
 
 class StubNotifier implements RatingNotifier {
     sendRatingNotification(params: {
@@ -35,7 +36,24 @@ jest.mock('../../RatingStore', () => ({
             createNewRating: jest
                 .fn()
                 .mockResolvedValue( Promise.resolve() ),
+            getLearningObjectsRatings: jest
+                .fn()
+                .mockResolvedValue( Promise.resolve(MOCK_OBJECTS.LEARNING_OBJECT_GROUPING) ),
         }),
+    },
+}));
+
+jest.mock('../../../drivers/SendgridDriver', () => ({
+    __esModule: true,
+    SendgridDriver: {
+        getInstance: () => ({
+            sendEmail: jest
+                .fn()
+                .mockResolvedValue( Promise.resolve() )
+        })
+    },
+    EMAIL_TYPE: {
+        NEW_RATING: jest.fn().mockReturnValue( 'this id does not exist' )
     },
 }));
 
