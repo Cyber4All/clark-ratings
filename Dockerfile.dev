@@ -1,13 +1,29 @@
+# ------------------------------------------------------
+# Install dependencies and run the build command
+# note that we must stay at node 8 for this process till
+# gulp is updated from version 3.9.1
+# ------------------------------------------------------
+
+# ------------------------------------------------------
+# STAGE BUILD
+# ------------------------------------------------------
 FROM node:8 as build
 WORKDIR /build
 COPY . .
+# install dependencies and build
 RUN npm install
 RUN npm run build
 
+# ------------------------------------------------------
+# STAGE SERVE
+# ------------------------------------------------------
 FROM node:12-alpine as serve
 WORKDIR /opt/app
+# copy over package.json/dist folder from build and the
+# package lock/env file if they exist
 COPY package.json package-lock.json* .env* ./
 COPY --from=build /build/dist ./dist
+# install only production dependencies and serve the app
 RUN npm install --only=prod
 EXPOSE 3005
 CMD [ "node", "dist/app.js" ]
