@@ -64,7 +64,7 @@ export class ExpressDriver {
       /**
        * Get port from environment and store in Express.
        */
-      const port = process.env.PORT || '3005';
+      const port = process.env.PORT || '3000';
       this.app.set('port', port);
 
       // Allow Proxy
