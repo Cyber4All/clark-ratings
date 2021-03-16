@@ -25,8 +25,7 @@
     "mongodb": "^3.1.13",
     "mongodb-memory-server": "^3.0.0",
     "morgan": "^1.9.1",
-    "request": "^2.87.0",
-    "request-promise": "^4.2.2"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.1",
@@ -38,10 +37,8 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/mongodb": "^3.1.19",
     "@types/morgan": "^1.7.35",
-    "@types/node": "^10.5.2",
+    "@types/node": "^14.14.35",
     "@types/raven": "^2.5.2",
-    "@types/request": "^2.47.1",
-    "@types/request-promise": "^4.1.42",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.3",
     "ts-node": "^9.1.1",

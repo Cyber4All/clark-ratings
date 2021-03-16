@@ -1,6 +1,7 @@
 import { reportError } from '../../drivers/SentryConnector';
-import * as request from 'request-promise';
 import { FlagNotifier } from '../interfaces/FlagNotifier';
+
+const fetch = require('node-fetch');
 
 const slackURI = process.env.SLACK_URI;
 const nodeEnv = process.env.NODE_ENV;
@@ -46,11 +47,11 @@ export class SlackGateway implements FlagNotifier {
             try {
                 const options = {
                     uri: slackURI,
-                    json: true,
-                    body: this.initializePayload(username, ratingComment, loName, loAuthor),
-                    method: 'POST',
+                    body: JSON.stringify(this.initializePayload(username, ratingComment, loName, loAuthor)),
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json' },
                 };
-                await request(options);
+                await fetch(options.uri, options);
             } catch (error) {
                 reportError(error);
             }
