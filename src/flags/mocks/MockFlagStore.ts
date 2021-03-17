@@ -4,7 +4,7 @@ import { MOCK_OBJECTS } from './MockObjects';
 
 export class MockFlagStore implements FlagDataStore {
     flagRating(params: {
-        ratingId: string;
+        ratingID: string;
         flag: Flag;
     }): Promise<void> {
         return Promise.resolve();
@@ -23,12 +23,12 @@ export class MockFlagStore implements FlagDataStore {
         return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
     getRatingFlags(params: {
-        ratingId: string;
+        ratingID: string;
     }): Promise<Flag[]> {
         return Promise.resolve([MOCK_OBJECTS.FLAG]);
     }
     deleteFlag(params: {
-        flagId: string;
+        flagID: string;
     }): Promise<void> {
         return Promise.resolve();
     }

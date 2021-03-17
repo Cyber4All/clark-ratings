@@ -1,5 +1,6 @@
-import * as request from 'request-promise';
 import { RatingNotifier } from '../interfaces/RatingNotifier';
+
+const fetch = require('node-fetch');
 
 const slackURI = process.env.SLACK_URI;
 const nodeEnv = process.env.NODE_ENV;
@@ -59,16 +60,16 @@ export class SlackGateway implements RatingNotifier {
         if (nodeEnv === 'production') {
             const options = {
                 uri: slackURI,
-                json: true,
-                body: this.initializePayload({
+                body: JSON.stringify(this.initializePayload({
                     ratingAuthor: params.ratingAuthor,
                     ratingComment: params.ratingComment,
                     learningObjectAuthorUsername: params.learningObjectAuthorUsername,
                     learningObjectCuid: params.learningObjectCuid,
-                }),
-                method: 'POST',
+                })),
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
             };
-            await request(options);
+            await fetch(options.uri, options);
         } else {
             console.log('Sent to Slack');
         }

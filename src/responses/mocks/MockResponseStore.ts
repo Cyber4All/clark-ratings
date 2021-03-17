@@ -3,19 +3,19 @@ import { Response } from '../../types/Response';
 import { MOCK_OBJECTS } from './MockObjects';
 
 export class MockResponseStore implements ResponseDataStore {
-    getResponses(params: { ratingId: string; }): Promise<Response[]> {
+    getResponses(params: { ratingIDs: string[]; }): Promise<Response[]> {
         return Promise.resolve([MOCK_OBJECTS.RESPONSE]);
     }
-    getResponseById(params: { responseId: string; }): Promise<Response> {
+    getResponseById(params: { responseID: string; }): Promise<Response> {
         return Promise.resolve(MOCK_OBJECTS.RESPONSE);
     }
-    deleteResponse(params: { responseId: string; }): Promise<void> {
+    deleteResponse(params: { responseID: string; }): Promise<void> {
         return Promise.resolve();
     }
-    updateResponse(params: { responseId: string; updates: Response; }): Promise<void> {
+    updateResponse(params: { responseID: string; updates: Response; }): Promise<void> {
         return Promise.resolve();
     }
-    createResponse(params: { ratingId: string; response: Response; }): Promise<void> {
+    createResponse(params: { ratingID: string; response: Response; }): Promise<void> {
         return Promise.resolve();
     }
 }

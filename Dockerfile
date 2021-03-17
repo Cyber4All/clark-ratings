@@ -1,5 +1,5 @@
 # Anything beyond local dev should pin this to a specific version at https://hub.docker.com/_/node/
-FROM node:8 as builder
+FROM node:12 as builder
 
 ARG CLARK_DB_URI_TEST
 ARG OTA_CODE_SECRET=TEST_SECRET
@@ -36,14 +36,14 @@ COPY . /opt/app
 # Build source and clean up
 RUN npm run build
 
-FROM node:8 as tester
+FROM node:12 as tester
 COPY --from=builder . .
 ENV PATH /opt/node_modules/.bin:$PATH
 # Swtich working dir to opt to use node_modules for testing
 WORKDIR /opt
 RUN npm test
 
-FROM node:8-alpine
+FROM node:12-alpine
 # Defaults the node environment to production, however compose will override this to use development
 # when working locally
 ARG NODE_ENV=production
