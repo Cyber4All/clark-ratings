@@ -21,11 +21,12 @@ export class MongoDriver {
    */
   private async connect(dbURI: string, retryAttempt?: number): Promise<void> {
     try {
-      MongoDriver.mongoClient = await MongoClient.connect(dbURI);
+      MongoDriver.mongoClient = await MongoClient.connect(dbURI, { useNewUrlParser: true });
       MongoDriver.db = MongoDriver.mongoClient.db();
     } catch (error) {
-      if (!retryAttempt) {
-        this.connect(dbURI, 1);
+      if (retryAttempt) {
+        await this.timeout(3000);
+        this.connect(dbURI, retryAttempt--);
       } else {
         reportError(error);
         return Promise.reject(
@@ -49,7 +50,7 @@ export class MongoDriver {
     try {
       if (!MongoDriver.mongoClient) {
         const driver = new MongoDriver();
-        await driver.connect(dburi);
+        await driver.connect(dburi, 3);
       } else {
         return Promise.reject(
           new Error('There can be only one MongoClient'),
@@ -64,6 +65,16 @@ export class MongoDriver {
       );
     }
 
+  }
+
+  /**
+   * Simple function that will wait x amount of milliseconds
+   * 
+   * @param ms the milliseconds to wait
+   * @returns a promise to await
+   */
+  private timeout(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   static getConnection() {
