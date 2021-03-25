@@ -156,7 +156,7 @@ export class RatingStore implements RatingDataStore {
       user: UserInfo;
     }): Promise<void> {
       await this.db.collection(Collections.RATINGS)
-        .insert({
+        .insertOne({
           ...params.rating,
           user: params.user,
           source: {

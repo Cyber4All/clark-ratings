@@ -124,7 +124,7 @@ export class ResponseStore implements ResponseDataStore {
     }): Promise<void> {
         await this.db
             .collection(Collections.RESPONSES)
-            .insert({
+            .insertOne({
                 ...params.response,
                 source: new ObjectId(params.ratingID),
                 user: params.user,
