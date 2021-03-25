@@ -1,6 +1,6 @@
 {
   "name": "clark-ratings",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "A microservice for handlingy learning object ratings in the CLARK platform.",
   "main": "app.js",
   "scripts": {

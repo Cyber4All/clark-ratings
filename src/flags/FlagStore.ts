@@ -40,7 +40,7 @@ export class FlagStore implements FlagDataStore {
     }): Promise<void> {
         params.flag.date = Date.now();
         await this.db.collection(Collections.FLAGS)
-            .insert({
+            .insertOne({
                 ...params.flag,
                 ratingID: new ObjectId(params.ratingID),
             });

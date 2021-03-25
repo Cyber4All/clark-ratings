@@ -27,7 +27,7 @@ export async function getLearningObject(params: {
         options.headers.Authorization = `Bearer ${generateUserToken(params.user)}`;
     }
     try {
-        const response = await (await fetch(options.uri, options).json());
+        const response = await (await fetch(options.uri, options)).json();
         return response[0];
     } catch (error) {
         // If the response has a status code of 500 or above
