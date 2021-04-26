@@ -40,7 +40,7 @@ export class SendgridDriver {
         if (this.validateData(type, data)) {
             const msg = {
                 to,
-                from: 'no-reply@clark.center',
+                from: 'no-reply@secured.team',
                 subject: this.map.get(type),
                 templateId: type,
                 dynamic_template_data: data
