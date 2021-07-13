@@ -14,7 +14,6 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - install-docker
       - setup_remote_docker
       - run:
           name: Build Image & Unit Test
@@ -40,7 +39,6 @@ jobs:
       - attach_workspace: 
           at: ~/rating-service
       - checkout
-      - install-docker
       - setup_remote_docker
       - run:
           name: Pull Image
@@ -56,7 +54,6 @@ jobs:
       - attach_workspace: 
           at: ~/rating-service
       - checkout
-      - install-docker
       - setup_remote_docker
       - setup-aws-cli:
           aws-access-key-id: AWS_ECS_AccessKey
