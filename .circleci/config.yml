@@ -2,12 +2,19 @@ defaults: &defaults
   working_directory: ~/rating-service
   docker:
     - image: cyber4all/circleci-aws:docker-git
+orbs:
+  aws-cli: circleci/aws-cli@1.2.1
+  docker: circleci/docker@1.4.0
+commands:
+  install-aws: aws-cli/install
+  setup-aws-cli: aws-cli/setup
 version: 2
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
+      - install-docker
       - setup_remote_docker
       - run:
           name: Build Image & Unit Test
@@ -32,6 +39,8 @@ jobs:
     steps:
       - attach_workspace: 
           at: ~/rating-service
+      - checkout
+      - install-docker
       - setup_remote_docker
       - run:
           name: Pull Image
@@ -46,7 +55,14 @@ jobs:
     steps:
       - attach_workspace: 
           at: ~/rating-service
+      - checkout
+      - install-docker
       - setup_remote_docker
+      - setup-aws-cli:
+          aws-access-key-id: AWS_ECS_AccessKey
+          aws-region: AWS_REGION_N_VA
+          aws-secret-access-key: AWS_ECS_SecretKey
+          version: "1"
       - run:
           name: Login to docker
           command: docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
@@ -107,6 +123,7 @@ workflows:
             - integration-test
           context:
             - DockerHub
+            - AWS
           filters:
             branches:
               only: /master/
