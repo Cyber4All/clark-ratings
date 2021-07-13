@@ -3,12 +3,12 @@ defaults: &defaults
   docker:
     - image: cyber4all/circleci-aws:docker-git
 orbs:
+  node: circleci/node@4.1.0
   aws-cli: circleci/aws-cli@1.2.1
-  docker: circleci/docker@1.4.0
 commands:
   install-aws: aws-cli/install
   setup-aws-cli: aws-cli/setup
-version: 2
+version: 2.1
 jobs:
   build:
     <<: *defaults
@@ -52,7 +52,6 @@ jobs:
     steps:
       - attach_workspace: 
           at: ~/rating-service
-      - checkout
       - setup_remote_docker
       - setup-aws-cli:
           aws-access-key-id: AWS_ECS_AccessKey
@@ -80,7 +79,7 @@ jobs:
             sh ./deploy.sh
             
 workflows:
-  version: 2
+  version: 2.1
   build-and-test:
     jobs:
       - build:
