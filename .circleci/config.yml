@@ -38,7 +38,6 @@ jobs:
     steps:
       - attach_workspace: 
           at: ~/rating-service
-      - checkout
       - setup_remote_docker
       - run:
           name: Pull Image
